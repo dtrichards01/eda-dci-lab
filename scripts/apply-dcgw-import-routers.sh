@@ -1,11 +1,7 @@
 #!/usr/bin/env bash
-# L2 import-side bridge domains on remote DCGWs (post-restore).
+# DEPRECATED — cross-DC BridgeDomainDeployment breaks native vnet ownership.
+# L2 DCI uses reciprocal BDI RT import only. See docs/L2-DCI-GUIDE.md
 set -eu
-NS="${NS:-clab-srl-leaf-spine-dcgw}"
-ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-
-echo "==> BridgeDomainDeployment: bd-3 on DC2, bd-4 on DC1 DCGWs"
-kubectl apply -f "$ROOT/services/l2/bridge-domain-deployments/"
-
-echo "==> Status"
-kubectl get bridgedomaindeployments -n "$NS"
+echo "==> apply-dcgw-import-routers.sh is deprecated for vnet-3/4 L2 DCI."
+echo "    Running cleanup-l2-bd-deployments.sh instead."
+exec bash "$(dirname "$0")/cleanup-l2-bd-deployments.sh"

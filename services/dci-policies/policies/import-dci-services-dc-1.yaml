@@ -1,7 +1,4 @@
-# WAN import on DC1 DCI BGP peers (VPNv4-only trial — validated vnet-1 ↔ vnet-2).
-
-# Reject all remote EVPN; accept hub stitch VPNv4 (RT 101); tag-20 for loop marking.
-
+# WAN import on DC1 DCI BGP peers — hybrid L3 VPNv4 + L2 EVPN type-2/3 (RT 301).
 apiVersion: routingpolicies.eda.nokia.com/v1
 
 kind: Policy

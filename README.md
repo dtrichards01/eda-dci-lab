@@ -13,7 +13,8 @@ Datacenter interconnect (DCI) service definitions for the Talos EDA cluster and 
 ## Service model
 
 See `docs/DCI-ALIGNMENT.md` for hub/spoke RTs and apply order.  
-See `docs/L3VPN-DCI-GUIDE.md` for policies, AFIs, MPLS/LDP checks, and WAN fabric isolation.
+See `docs/L3VPN-DCI-GUIDE.md` for L3 policies, AFIs, MPLS/LDP checks, and WAN fabric isolation.  
+See `docs/L2-DCI-GUIDE.md` for L2 BDI, hybrid WAN EVPN (type-2/3), and vnet-3/4 stitch.
 
 | Tier | Virtual networks | Interconnect CR | Stitch RTs |
 |------|------------------|-----------------|------------|
@@ -81,20 +82,23 @@ See `clab/README.md` for path layout and migration from `~/3-tier-dci`.
 
 ## DCI routing policies
 
-**Full policy map (what is applied where, why, WAN fabric isolation):** `docs/L3VPN-DCI-GUIDE.md`
+**Policy maps:** `docs/L3VPN-DCI-GUIDE.md` (L3 + WAN hybrid), `docs/L2-DCI-GUIDE.md` (L2 EVPN stitch).
 
-| Policy (live on WAN peers) | Role |
-|----------------------------|------|
-| `export-dc-1-routes-and-add-soo` | DC1 WAN export — VPNv4 RT `100` + `102`, SOO, no EVPN |
-| `export-dc-2-routes-and-add-soo` | DC2 WAN export — VPNv4 RT `101`, SOO, no EVPN |
-| `import-dci-services-dc-1` | DC1 WAN import — hub VPNv4 RT `101` only |
-| `import-dci-services-dc-2` | DC2 WAN import — spoke VPNv4 RT `100` + `102` |
+WAN peers use **hybrid** address families: `vpnIPv4Unicast` (L3) + `l2VPNEVPN` (L2 type-2/3 only). Fabric EVPN is blocked by explicit policy accept/reject lists — not by disabling the EVPN AFI.
 
-| Policy (live on hub RIC) | Role |
-|--------------------------|------|
+| Policy (WAN peers) | Role |
+|--------------------|------|
+| `import-dci-services-dc-1` | DC1 import — VPNv4 RT 101; EVPN type-2/3 RT 301 |
+| `import-dci-services-dc-2` | DC2 import — VPNv4 RT 100 + 102; EVPN type-2/3 RT 300 |
+| `export-dc-1-prefixes-and-add-soo` | `dcgw-1-dcgw-3` — VPNv4 RT 100+102; EVPN type-2/3 RT 300 |
+| `export-dc-1-routes-and-add-soo` | `dcgw-2-dcgw-4` — same as above |
+| `export-dc-2-routes-and-add-soo` | DC2 export — VPNv4 RT 101; EVPN type-2/3 RT 301 |
+
+| Policy (hub RIC) | Role |
+|------------------|------|
 | `multi-rt-import` | Hub import spoke stitch RTs `100` + `102` |
 
-WAN peers: **VPNv4 only** (`l2VPNEVPN` / `ipv4Unicast` disabled). See guide §1–2 for fabric address isolation.
+Apply L2 WAN policies: `bash scripts/apply-l2-wan-evpn.sh` or `bash scripts/apply-l2-dci.sh`.
 
 ## Layout
 
@@ -110,7 +114,8 @@ clab/
   configs/client-config.sh
   configs/base-configs/mh-dc1a.sh … mh-dc2b.sh
 docs/
-  L3VPN-DCI-GUIDE.md         # Policy map, AFIs, WAN fabric isolation, MPLS checks
+  L3VPN-DCI-GUIDE.md         # L3 policy map, hybrid WAN, MPLS checks
+  L2-DCI-GUIDE.md            # L2 BDI, WAN EVPN type-2/3, vnet-3/4
   DCI-ALIGNMENT.md
   CLAB-VALIDATION.md
   EDGE-INTERFACES.md
@@ -125,7 +130,9 @@ services/
 scripts/
   sync-repo-to-talos.sh        # Windows → Talos file sync
   sync-and-apply-talos.sh      # sync + apply-all
-  apply-all.sh
+  apply-l2-dci.sh            # BDI + edges + apply-l2-wan-evpn
+  apply-l2-wan-evpn.sh       # Hybrid WAN policies + l2VPNEVPN on peers
+  cleanup-l2-bd-deployments.sh
   cleanup-mh-stale.sh          # remove orphan MH YAML/CRs
   mh-bond-setup-11-13.sh         # fix MH client bonds on k0r4
 ```

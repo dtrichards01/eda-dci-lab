@@ -11,8 +11,8 @@ echo "==> BridgeDomainInterconnect (EVPN-VXLAN fabric -> EVPN-MPLS on DCGW)"
 kubectl apply -f "$ROOT/services/l2/bridge-domain-interconnect/bd-interconnect-vnet-3.yaml"
 kubectl apply -f "$ROOT/services/l2/bridge-domain-interconnect/bd-interconnect-vnet-4.yaml"
 
-echo "==> Import-side BridgeDomainDeployment on remote DCGWs"
-kubectl apply -f "$ROOT/services/l2/bridge-domain-deployments/"
+echo "==> WAN EVPN for L2 stitch (RT 300/301) — skip BridgeDomainDeployment (BDI reciprocal import)"
+bash "$(dirname "$0")/apply-l2-wan-evpn.sh"
 
 echo "==> Status"
 kubectl get bridgedomains -n "$NS" -o custom-columns=NAME:.metadata.name,EVI:.status.evi,STATE:.status.operationalState,NODES:.status.nodes

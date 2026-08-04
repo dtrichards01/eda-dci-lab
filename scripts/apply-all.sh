@@ -23,9 +23,9 @@ bash "$DIR/apply-l2-dci.sh"
 bash "$DIR/apply-sh-dci.sh"
 bash "$DIR/apply-mh-dci.sh"
 bash "$DIR/apply-vnet-5-hub-spoke.sh"
-bash "$DIR/apply-dcgw-import-routers.sh"
 bash "$DIR/apply-edge-interfaces.sh"
 bash "$DIR/apply-dci-policies.sh"
+bash "$DIR/cleanup-l2-bd-deployments.sh"
 
 echo "==> Summary"
 kubectl get virtualnetwork -n "$NS" -o custom-columns=NAME:.metadata.name,STATE:.status.operationalState

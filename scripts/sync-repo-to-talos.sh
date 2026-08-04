@@ -7,9 +7,13 @@ SRC="$(cd "$(dirname "$0")/.." && pwd)"
 SSH_OPTS="-o StrictHostKeyChecking=no"
 REMOTE=~/eda-dci-lab
 
-if [ -n "$PASS" ]; then
+if [ -n "$PASS" ] && command -v sshpass >/dev/null 2>&1; then
   run_ssh() { sshpass -p "$PASS" ssh $SSH_OPTS "$HOST" "$@"; }
   run_scp() { sshpass -p "$PASS" scp $SSH_OPTS -r "$@"; }
+elif [ -n "$PASS" ]; then
+  echo "WARN: TALOS_PASS set but sshpass not installed — using SSH keys (unset TALOS_PASS or apt install sshpass)"
+  run_ssh() { ssh $SSH_OPTS "$HOST" "$@"; }
+  run_scp() { scp $SSH_OPTS -r "$@"; }
 else
   run_ssh() { ssh $SSH_OPTS "$HOST" "$@"; }
   run_scp() { scp $SSH_OPTS -r "$@"; }

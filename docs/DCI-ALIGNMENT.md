@@ -49,7 +49,7 @@ MH client scripts: `clab/configs/base-configs/mh-dc1a.sh` … `mh-dc2b.sh` — *
 
 Spokes use **`importTarget` / `exportTarget`** on RIC CRs. Hub vnet-2 uses **`importPolicy: multi-rt-import`** with community set `vpn-import-rts` (RT `100` + `102`). EDA allows **either** `importTarget`/`exportTarget` **or** `importPolicy`/`exportPolicy` on a single RIC — not both.
 
-**WAN policies:** VPNv4-only on WAN peers; see `docs/L3VPN-DCI-GUIDE.md`.
+**WAN policies:** Hybrid VPNv4 (L3) + selective EVPN type-2/3 (L2 RT 300/301). See `docs/L3VPN-DCI-GUIDE.md` and `docs/L2-DCI-GUIDE.md`.
 
 
 
@@ -133,13 +133,17 @@ bash ~/eda-dci-lab/scripts/apply-mh-dci.sh
 bash ~/eda-dci-lab/scripts/apply-vnet-5-hub-spoke.sh
 bash ~/eda-dci-lab/scripts/apply-edge-interfaces.sh
 bash ~/eda-dci-lab/scripts/test-l3-cross-dc-ping.sh
+bash ~/eda-dci-lab/scripts/test-l2-cross-dc-ping.sh
 ```
+
+Do **not** apply `services/l2/bridge-domain-deployments/` — use BDI reciprocal RT import only (`docs/L2-DCI-GUIDE.md`). `apply-dcgw-import-routers.sh` runs cleanup instead.
 
 ## Cluster alignment (2026-08-04)
 
 | Resource | Expected |
 |----------|----------|
 | L3 hub-spoke | vnet-1 ↔ vnet-2 and vnet-5 ↔ vnet-2 **working** (IPVPN RIC + VPNv4 WAN) |
+| L2 vnet-3 ↔ vnet-4 | BDI + hybrid WAN EVPN type-2/3 (RT 300/301) — see `L2-DCI-GUIDE.md` |
 | VirtualNetworks | vnet-1…7 Up; `vnet-mh-l3-dc1a/dc2a` Up; `vnet-mh-l3-dc1b/dc2b` Degraded (single-active standby) |
 | MH LAGs | All four `mh-dc*a/b-lag-*` Up |
 | MH RICs | `router-interconnect-mh-l3-dc1a/b`, `dc2a/b` Up |

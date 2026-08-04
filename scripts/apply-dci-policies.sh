@@ -20,6 +20,10 @@ kubectl apply -f "$DIR/policies/export-wan-routes-only-dc-1.yaml"
 kubectl apply -f "$DIR/policies/export-wan-routes-only-dc-2.yaml"
 kubectl apply -f "$DIR/policies/export-dc-1-routes-and-add-soo.yaml"
 kubectl apply -f "$DIR/policies/export-dc-2-routes-and-add-soo.yaml"
+kubectl apply -f "$DIR/policies/export-dc-1-prefixes-and-add-soo.yaml"
+
+echo "==> L2 WAN EVPN (hybrid AFI + policy refresh)"
+bash "$(dirname "$0")/apply-l2-wan-evpn.sh"
 
 echo "==> Remove obsolete interconnect / stretched-leg CRs"
 bash "$(dirname "$0")/cleanup-obsolete-dci.sh"
