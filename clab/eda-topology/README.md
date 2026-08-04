@@ -15,6 +15,13 @@ Manual **Interface + TopoLink** bundle for when **clab-connector** integration i
 | `topolinks-edge.yaml` | Linux clients → leaf (no client Interface CRs) |
 | `gen_clab_eda_cr.py` | Regenerator (reads `clab-leaf-spine-dcgw-srl-only.yaml`) |
 
+**Related (exported from cluster):**
+
+| Path | Contents |
+|------|----------|
+| `../eda-fabric/` | 3 Fabric CRs + 6 ISL CRs (DCGW mesh / PE WAN) |
+| `../eda-mpls-ldp/` | LabelBlock, DefaultLDPRouter, DefaultLDPInterface |
+
 ## Regenerate
 
 ```bash
@@ -26,6 +33,7 @@ python3 clab/eda-topology/gen_clab_eda_cr.py
 
 ```bash
 cd ~/eda-dci-lab
+bash scripts/apply-fabric-mpls.sh      # fabrics + MPLS/LDP + ISL CRs
 bash scripts/apply-topology-cr.sh
 bash scripts/apply-edge-interfaces.sh   # vnet / MH labels on edge ports
 bash scripts/apply-all.sh               # or apply-sh-dci / apply-mh-dci as needed

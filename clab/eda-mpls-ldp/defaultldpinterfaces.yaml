@@ -1,0 +1,176 @@
+apiVersion: mpls.eda.nokia.com/v1alpha1
+kind: DefaultLDPInterface
+metadata:
+  name: dcgw-1-ethernet-1-3
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  defaultLDPRouter: dcgw-1
+  interface: interface-dcgw-1-ethernet-1-3
+  ipv4:
+    enabled: true
+---
+apiVersion: mpls.eda.nokia.com/v1alpha1
+kind: DefaultLDPInterface
+metadata:
+  name: dcgw-1-ethernet-1-5
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  defaultLDPRouter: dcgw-1
+  interface: interface-dcgw-1-ethernet-1-5
+  ipv4:
+    enabled: true
+---
+apiVersion: mpls.eda.nokia.com/v1alpha1
+kind: DefaultLDPInterface
+metadata:
+  name: dcgw-2-ethernet-1-3
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  defaultLDPRouter: dcgw-2
+  interface: interface-dcgw-2-ethernet-1-3
+  ipv4:
+    enabled: true
+---
+apiVersion: mpls.eda.nokia.com/v1alpha1
+kind: DefaultLDPInterface
+metadata:
+  name: dcgw-2-ethernet-1-5
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  defaultLDPRouter: dcgw-2
+  interface: interface-dcgw-2-ethernet-1-5
+  ipv4:
+    enabled: true
+---
+apiVersion: mpls.eda.nokia.com/v1alpha1
+kind: DefaultLDPInterface
+metadata:
+  name: dcgw-3-ethernet-1-3
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  defaultLDPRouter: dcgw-3
+  interface: interface-dcgw-3-ethernet-1-3
+  ipv4:
+    enabled: true
+---
+apiVersion: mpls.eda.nokia.com/v1alpha1
+kind: DefaultLDPInterface
+metadata:
+  name: dcgw-3-ethernet-1-6
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  defaultLDPRouter: dcgw-3
+  interface: interface-dcgw-3-ethernet-1-6
+  ipv4:
+    enabled: true
+---
+apiVersion: mpls.eda.nokia.com/v1alpha1
+kind: DefaultLDPInterface
+metadata:
+  name: dcgw-4-ethernet-1-3
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  defaultLDPRouter: dcgw-4
+  interface: interface-dcgw-4-ethernet-1-3
+  ipv4:
+    enabled: true
+---
+apiVersion: mpls.eda.nokia.com/v1alpha1
+kind: DefaultLDPInterface
+metadata:
+  name: dcgw-4-ethernet-1-6
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  defaultLDPRouter: dcgw-4
+  interface: interface-dcgw-4-ethernet-1-6
+  ipv4:
+    enabled: true
+---
+apiVersion: mpls.eda.nokia.com/v1alpha1
+kind: DefaultLDPInterface
+metadata:
+  name: pe-1-ethernet-1-1
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  defaultLDPRouter: pe-1
+  interface: interface-sros-pe-1-ethernet-1-1-1
+  ipv4:
+    enabled: true
+---
+apiVersion: mpls.eda.nokia.com/v1alpha1
+kind: DefaultLDPInterface
+metadata:
+  name: pe-1-ethernet-1-2
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  defaultLDPRouter: pe-1
+  interface: interface-sros-pe-1-ethernet-1-a-2-1
+  ipv4:
+    enabled: true
+---
+apiVersion: mpls.eda.nokia.com/v1alpha1
+kind: DefaultLDPInterface
+metadata:
+  name: pe-1-ethernet-1-5
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  defaultLDPRouter: pe-1
+  interface: interface-sros-pe-1-ethernet-1-a-5-1
+  ipv4:
+    enabled: true
+---
+apiVersion: mpls.eda.nokia.com/v1alpha1
+kind: DefaultLDPInterface
+metadata:
+  name: pe-1-ethernet-1-6
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  defaultLDPRouter: pe-1
+  interface: interface-sros-pe-1-ethernet-1-a-6-1
+  ipv4:
+    enabled: true
+---
+apiVersion: mpls.eda.nokia.com/v1alpha1
+kind: DefaultLDPInterface
+metadata:
+  name: pe-2-ethernet-1-3
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  defaultLDPRouter: pe-2
+  interface: interface-sros-pe-2-ethernet-1-a-3-1
+  ipv4:
+    enabled: true
+---
+apiVersion: mpls.eda.nokia.com/v1alpha1
+kind: DefaultLDPInterface
+metadata:
+  name: pe-2-ethernet-1-4
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  defaultLDPRouter: pe-2
+  interface: interface-sros-pe-2-ethernet-1-a-4-1
+  ipv4:
+    enabled: true
+---
+apiVersion: mpls.eda.nokia.com/v1alpha1
+kind: DefaultLDPInterface
+metadata:
+  name: pe-2-ethernet-1-5
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  defaultLDPRouter: pe-2
+  interface: interface-sros-pe-2-ethernet-1-a-5-1
+  ipv4:
+    enabled: true
+---
+apiVersion: mpls.eda.nokia.com/v1alpha1
+kind: DefaultLDPInterface
+metadata:
+  name: pe-2-ethernet-1-6
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  defaultLDPRouter: pe-2
+  interface: interface-sros-pe-2-ethernet-1-a-6-1
+  ipv4:
+    enabled: true
+---

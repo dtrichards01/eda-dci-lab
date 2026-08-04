@@ -1,0 +1,54 @@
+apiVersion: mpls.eda.nokia.com/v1alpha1
+kind: DefaultLDPRouter
+metadata:
+  name: dcgw-1
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  enabled: true
+  longestPrefixMatch: false
+---
+apiVersion: mpls.eda.nokia.com/v1alpha1
+kind: DefaultLDPRouter
+metadata:
+  name: dcgw-2
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  enabled: true
+  longestPrefixMatch: false
+---
+apiVersion: mpls.eda.nokia.com/v1alpha1
+kind: DefaultLDPRouter
+metadata:
+  name: dcgw-3
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  enabled: true
+  longestPrefixMatch: false
+---
+apiVersion: mpls.eda.nokia.com/v1alpha1
+kind: DefaultLDPRouter
+metadata:
+  name: dcgw-4
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  enabled: true
+  longestPrefixMatch: false
+---
+apiVersion: mpls.eda.nokia.com/v1alpha1
+kind: DefaultLDPRouter
+metadata:
+  name: pe-1
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  enabled: true
+  longestPrefixMatch: false
+---
+apiVersion: mpls.eda.nokia.com/v1alpha1
+kind: DefaultLDPRouter
+metadata:
+  name: pe-2
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  enabled: true
+  longestPrefixMatch: false
+---

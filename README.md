@@ -101,6 +101,9 @@ WAN peers: **VPNv4 only** (`l2VPNEVPN` / `ipv4Unicast` disabled). See guide §1�
 ```
 clab/
   clab-leaf-spine-dcgw-srl-only.yaml
+  eda-fabric/                  # 3 fabrics + WAN ISL CRs
+  eda-mpls-ldp/                # LDP routers, interfaces, label block
+  eda-topology/                # TopoLink + Interface ISLs
   configs/client-config.sh
   configs/base-configs/mh-dc1a.sh … mh-dc2b.sh
 docs/

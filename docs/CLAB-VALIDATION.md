@@ -56,6 +56,7 @@ cd ~/eda-dci-lab/clab
 clab deploy -t clab-leaf-spine-dcgw-srl-only.yaml
 bash ~/eda-dci-lab/scripts/mh-bond-setup-11-13.sh   # if MH LAGs Down
 bash ~/eda-dci-lab/scripts/apply-topology-cr.sh     # after EDA re-import
+bash ~/eda-dci-lab/scripts/apply-fabric-mpls.sh     # fabrics + MPLS/LDP + ISL CRs
 bash ~/eda-dci-lab/scripts/apply-all.sh
 ```
 

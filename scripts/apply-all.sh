@@ -14,6 +14,8 @@ if [ -f "$DIR/../clab/eda-topology/interfaces-isl.yaml" ]; then
   bash "$DIR/apply-topology-cr.sh" || true
 fi
 
+bash "$DIR/apply-fabric-mpls.sh"
+
 bash "$DIR/apply-l3-dci.sh"
 bash "$DIR/apply-l2-dci.sh"
 bash "$DIR/apply-sh-dci.sh"

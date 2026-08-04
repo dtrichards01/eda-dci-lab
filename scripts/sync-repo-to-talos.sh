@@ -16,7 +16,7 @@ else
 fi
 
 echo "==> Sync to $HOST:$REMOTE"
-run_ssh "mkdir -p $REMOTE/services $REMOTE/scripts $REMOTE/docs $REMOTE/clab/configs/base-configs $REMOTE/clab/eda-topology"
+run_ssh "mkdir -p $REMOTE/services $REMOTE/scripts $REMOTE/docs $REMOTE/clab/configs/base-configs $REMOTE/clab/eda-topology $REMOTE/clab/eda-fabric $REMOTE/clab/eda-mpls-ldp"
 
 run_scp "$SRC/scripts/" "$HOST:$REMOTE/scripts/"
 run_scp "$SRC/services/" "$HOST:$REMOTE/services/"
@@ -25,6 +25,8 @@ run_scp "$SRC/clab/clab-leaf-spine-dcgw-srl-only.yaml" "$HOST:$REMOTE/clab/"
 run_scp "$SRC/clab/configs/client-config.sh" "$HOST:$REMOTE/clab/configs/"
 run_scp "$SRC/clab/configs/base-configs/mh-"*.sh "$HOST:$REMOTE/clab/configs/base-configs/"
 run_scp "$SRC/clab/eda-topology/" "$HOST:$REMOTE/clab/eda-topology/"
+run_scp "$SRC/clab/eda-fabric/" "$HOST:$REMOTE/clab/eda-fabric/"
+run_scp "$SRC/clab/eda-mpls-ldp/" "$HOST:$REMOTE/clab/eda-mpls-ldp/"
 
 echo "==> Fix script line endings + permissions"
 run_ssh "find $REMOTE/scripts -name '*.sh' -exec perl -pi -e 's/\r//g' {} +; chmod +x $REMOTE/scripts/*.sh"

@@ -1,0 +1,112 @@
+apiVersion: fabrics.eda.nokia.com/v1
+kind: Fabric
+metadata:
+  labels:
+    fabric: backbone
+  name: backbone-simulation
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  borderLeafs:
+    borderLeafNodeSelectors:
+    - role = backbone, fabric = backbone
+  interSwitchLinks:
+    linkSelectors:
+    - eda.nokia.com/role = wan-interSwitch
+    poolIPv4: ipv4-pool
+  systemPoolIPv4: systemipv4-pool
+  underlayProtocol:
+    protocols:
+    - OSPFv2
+---
+apiVersion: fabrics.eda.nokia.com/v1
+kind: Fabric
+metadata:
+  labels:
+    fabric: pod-1
+  name: pod-1
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  fabricSelectors: []
+  interSwitchLinks:
+    linkSelectors:
+    - eda.nokia.com/role=interSwitch
+    poolIPv4: ipv4-pool
+  leafs:
+    leafNodeSelectors:
+    - role=leaf,fabric=pod-1
+  overlayProtocol:
+    bgp:
+      autonomousSystem: 65401
+      clusterID: 1.1.1.1
+      rrClientNodeSelectors:
+      - fabric=pod-1, eda.nokia.com/role=spine
+      - fabric=pod-1, eda.nokia.com/role=leaf
+      rrNodeSelectors:
+      - fabric=pod-1, eda.nokia.com/role=dcgw
+    protocol: IBGP
+  spines:
+    spineNodeSelectors:
+    - role=spine,fabric=pod-1
+  superSpines:
+    asnPool: asn-pool
+    superSpineNodeSelectors:
+    - role=dcgw,fabric=pod-1
+  systemPoolIPv4: systemipv4-pool
+  underlayProtocol:
+    bfd:
+      desiredMinTransmitIntMs: 1000
+      detectionMultiplier: 3
+      enabled: true
+      requiredMinEchoReceiveIntMs: 1000
+      requiredMinReceiveIntMs: 1000
+    bgp:
+      asnPool: asn-pool
+    protocols:
+    - EBGP
+---
+apiVersion: fabrics.eda.nokia.com/v1
+kind: Fabric
+metadata:
+  labels:
+    fabric: pod-2
+  name: pod-2
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  fabricSelectors: []
+  interSwitchLinks:
+    linkSelectors:
+    - eda.nokia.com/role=interSwitch
+    poolIPv4: ipv4-pool
+  leafs:
+    leafNodeSelectors:
+    - role=leaf,fabric=pod-2
+  overlayProtocol:
+    bgp:
+      autonomousSystem: 65402
+      clusterID: 1.1.1.2
+      rrClientNodeSelectors:
+      - fabric=pod-2, eda.nokia.com/role=spine
+      - fabric=pod-2, eda.nokia.com/role=leaf
+      rrNodeSelectors:
+      - fabric=pod-2, eda.nokia.com/role=dcgw
+    protocol: IBGP
+  spines:
+    spineNodeSelectors:
+    - role=spine,fabric=pod-2
+  superSpines:
+    asnPool: asn-pool
+    superSpineNodeSelectors:
+    - role=dcgw,fabric=pod-2
+  systemPoolIPv4: systemipv4-pool
+  underlayProtocol:
+    bfd:
+      desiredMinTransmitIntMs: 1000
+      detectionMultiplier: 3
+      enabled: true
+      requiredMinEchoReceiveIntMs: 1000
+      requiredMinReceiveIntMs: 1000
+    bgp:
+      asnPool: asn-pool
+    protocols:
+    - EBGP
+---

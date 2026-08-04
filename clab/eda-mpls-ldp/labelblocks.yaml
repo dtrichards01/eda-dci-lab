@@ -1,0 +1,12 @@
+apiVersion: mpls.eda.nokia.com/v1alpha1
+kind: LabelBlock
+metadata:
+  labels:
+    eda.nokia.com/bootstrap: "true"
+  name: eda-default-ldp-label-block
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  endLabel: 298000
+  startLabel: 256001
+  type: Dynamic
+---

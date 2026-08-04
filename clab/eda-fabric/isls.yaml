@@ -1,0 +1,114 @@
+apiVersion: fabrics.eda.nokia.com/v1
+kind: ISL
+metadata:
+  name: dcgw-1-to-dcgw-2
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  localDefaultRouter: router-dcgw-1
+  localInterface: dcgw-1-ethernet-1-3
+  ospf:
+    enabled: true
+    ospfv2:
+      localIPv4Area: backbone-0
+      localIPv4Instance: ospf-instance-1
+      remoteIPv4Area: backbone-0
+      remoteIPv4Instance: ospf-instance-1
+  poolIPv4: ipv4-pool
+  remoteDefaultRouter: router-dcgw-2
+  remoteInterface: dcgw-2-ethernet-1-3
+---
+apiVersion: fabrics.eda.nokia.com/v1
+kind: ISL
+metadata:
+  name: dcgw-1-to-pe-1
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  localDefaultRouter: router-sros-pe-1
+  localInterface: sros-pe-1-ethernet-1-1-1
+  ospf:
+    enabled: true
+    ospfv2:
+      localIPv4Area: backbone-simulation-ospfv2-ipv4-0.0.0.0
+      localIPv4Instance: backbone-simulation-ospfv2-ipv4
+      remoteIPv4Area: backbone-0
+      remoteIPv4Instance: ospf-instance-1
+  poolIPv4: ipv4-pool
+  remoteDefaultRouter: router-dcgw-1
+  remoteInterface: dcgw-1-ethernet-1-5
+---
+apiVersion: fabrics.eda.nokia.com/v1
+kind: ISL
+metadata:
+  name: dcgw-2-pe-1
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  localDefaultRouter: router-sros-pe-1
+  localInterface: sros-pe-1-ethernet-1-a-2-1
+  ospf:
+    enabled: true
+    ospfv2:
+      localIPv4Area: backbone-simulation-ospfv2-ipv4-0.0.0.0
+      localIPv4Instance: backbone-simulation-ospfv2-ipv4
+      remoteIPv4Area: backbone-0
+      remoteIPv4Instance: ospf-instance-1
+  poolIPv4: ipv4-pool
+  remoteDefaultRouter: router-dcgw-2
+  remoteInterface: dcgw-2-ethernet-1-5
+---
+apiVersion: fabrics.eda.nokia.com/v1
+kind: ISL
+metadata:
+  name: dcgw-3-to-dcgw-4
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  localDefaultRouter: router-dcgw-3
+  localInterface: dcgw-3-ethernet-1-3
+  ospf:
+    enabled: true
+    ospfv2:
+      localIPv4Area: backbone-0
+      localIPv4Instance: ospf-instance-2
+      remoteIPv4Area: backbone-0
+      remoteIPv4Instance: ospf-instance-2
+  poolIPv4: ipv4-pool
+  remoteDefaultRouter: router-dcgw-4
+  remoteInterface: dcgw-4-ethernet-1-3
+---
+apiVersion: fabrics.eda.nokia.com/v1
+kind: ISL
+metadata:
+  name: dcgw-3-to-pe-2
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  localDefaultRouter: router-sros-pe-2
+  localInterface: sros-pe-2-ethernet-1-a-3-1
+  ospf:
+    enabled: true
+    ospfv2:
+      localIPv4Area: backbone-simulation-ospfv2-ipv4-0.0.0.0
+      localIPv4Instance: backbone-simulation-ospfv2-ipv4
+      remoteIPv4Area: backbone-0
+      remoteIPv4Instance: ospf-instance-2
+  poolIPv4: ipv4-pool
+  remoteDefaultRouter: router-dcgw-3
+  remoteInterface: dcgw-3-ethernet-1-6
+---
+apiVersion: fabrics.eda.nokia.com/v1
+kind: ISL
+metadata:
+  name: dcgw-4-to-pe-2
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  localDefaultRouter: router-sros-pe-2
+  localInterface: sros-pe-2-ethernet-1-a-4-1
+  ospf:
+    enabled: true
+    ospfv2:
+      localIPv4Area: backbone-simulation-ospfv2-ipv4-0.0.0.0
+      localIPv4Instance: backbone-simulation-ospfv2-ipv4
+      remoteIPv4Area: backbone-0
+      remoteIPv4Instance: ospf-instance-2
+  poolIPv4: ipv4-pool
+  remoteDefaultRouter: router-dcgw-4
+  remoteInterface: dcgw-4-ethernet-1-6
+---
