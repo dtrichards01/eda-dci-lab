@@ -10,6 +10,20 @@ This document is the **authoritative policy map**: which routing policies and co
 
 ---
 
+## Lab / demo vs production
+
+This repository describes a **CLAB + Talos EDA lab** design. It is suitable for **demonstration, learning, and controlled validation** — not as a blanket production reference architecture.
+
+| Path | Lab / demo | Production recommendation |
+|------|------------|---------------------------|
+| **L3 hub-spoke** (IPVPN RIC + VPNv4 WAN) | **Validated** in this lab (`vnet-1` / `vnet-5` ↔ `vnet-2`) | Reasonable **lab demo** of DCI L3 stitch. For production, require Nokia EDA/SRL release notes, scale/security review, and your org’s change controls — do not deploy from this repo without vendor and internal sign-off. |
+| **L2 cross-DC** (BDI + hybrid WAN EVPN type-2/3) | **Documented and demoable** (`vnet-3` ↔ `vnet-4`); end-to-end stitch may still need tuning | **Not recommended for production.** Enabling `l2VPNEVPN` on WAN peers increases exposure; isolation depends on policy discipline (RT 300/301 only). Prefer vendor-validated L2 DCI patterns and separate WAN policy review before any production use. |
+| **L3 EVPN RIC** (`eda-dci-evpn-lab` trial) | Experimental; EDA reconcile issues observed | **Not for production.** Await EDA/platform fixes for EVPN control plane on `RouterInterconnect`. |
+
+**Summary:** You can demo **both L2 and L3** with the current hybrid WAN policies on the same peers, but we **do not recommend** treating this combined L2+L3 WAN model as production-ready. Production L3 should stay on the validated **IPVPN RIC + VPNv4-only WAN** pattern until L2 WAN EVPN and/or EVPN L3 RIC are explicitly validated for your release and risk profile.
+
+---
+
 ## 1. Why two transports and three BGP address families
 
 Cross-DC L3 uses **different control planes on different legs**. That is intentional.

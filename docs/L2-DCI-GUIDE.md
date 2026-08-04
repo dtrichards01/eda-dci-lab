@@ -6,6 +6,8 @@
 
 Companion: `L3VPN-DCI-GUIDE.md` (L3 WAN + fabric isolation), `DCI-ALIGNMENT.md` (service model).
 
+**Production:** L2 DCI in this repo is **lab / demo only** — see `L3VPN-DCI-GUIDE.md` § Lab / demo vs production. Do not deploy hybrid WAN EVPN for L2 in production without vendor validation and a dedicated security review.
+
 ---
 
 ## 1. Architecture

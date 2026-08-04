@@ -100,6 +100,8 @@ WAN peers use **hybrid** address families: `vpnIPv4Unicast` (L3) + `l2VPNEVPN` (
 
 Apply L2 WAN policies: `bash scripts/apply-l2-wan-evpn.sh` or `bash scripts/apply-l2-dci.sh`.
 
+**Lab / demo only** — see `docs/L3VPN-DCI-GUIDE.md` § Lab / demo vs production. L3 IPVPN hub-spoke is validated here; combined L2+L3 hybrid WAN is demoable but not production-ready.
+
 ## Layout
 
 ```

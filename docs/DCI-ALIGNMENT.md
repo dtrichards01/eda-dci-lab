@@ -4,9 +4,9 @@
 
 Last checked against Talos `clab-srl-leaf-spine-dcgw` (native-per-DC + hub/spoke).
 
+**Scope:** Lab and demo only. L3 IPVPN hub-spoke is validated in this environment; L2 hybrid WAN EVPN and combined L2+L3 on the same WAN peers are **not recommended for production** — see `docs/L3VPN-DCI-GUIDE.md` § Lab / demo vs production.
 
-
-## CLAB topology file
+---
 
 
 
