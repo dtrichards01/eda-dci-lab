@@ -103,6 +103,8 @@ clab/
   clab-leaf-spine-dcgw-srl-only.yaml
   eda-fabric/                  # 3 fabrics + WAN ISL CRs
   eda-mpls-ldp/                # LDP routers, interfaces, label block
+  eda-wan-bgp/                 # DefaultBGPGroup + DefaultBGPPeer (dcgw 1-4)
+  eda-vnets/                   # VirtualNetwork vnet-1 .. vnet-5
   eda-topology/                # TopoLink + Interface ISLs
   configs/client-config.sh
   configs/base-configs/mh-dc1a.sh … mh-dc2b.sh

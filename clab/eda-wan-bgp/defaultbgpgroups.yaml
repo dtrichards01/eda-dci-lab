@@ -1,0 +1,30 @@
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultBGPGroup
+metadata:
+  name: default-bgp-group-dc-1
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  l2VPNEVPN:
+    enabled: false
+  localAS:
+    autonomousSystem: 1000
+  peerAS:
+    autonomousSystem: 1001
+  vpnIPv4Unicast:
+    enabled: true
+---
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultBGPGroup
+metadata:
+  name: default-bgp-group-dc-2
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  l2VPNEVPN:
+    enabled: false
+  localAS:
+    autonomousSystem: 1001
+  peerAS:
+    autonomousSystem: 1000
+  vpnIPv4Unicast:
+    enabled: true
+---

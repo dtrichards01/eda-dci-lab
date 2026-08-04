@@ -1,0 +1,29 @@
+apiVersion: services.eda.nokia.com/v2
+kind: VirtualNetwork
+metadata:
+  name: vnet-3
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  bridgeDomains:
+  - name: bd-3
+    spec:
+      encapOptions:
+        vxlan:
+          tunnelIndexPool: tunnel-index-pool
+          vniPool: vni-pool
+      eviPool: evi-pool
+      macLearning:
+        agingTimeSeconds: 300
+        enabled: true
+      macLimit: 2000
+      type: EVPNVXLAN
+  bridgeInterfaces: []
+  routedInterfaces: []
+  vlans:
+  - name: vlan-null-vnet-3
+    spec:
+      bridgeDomain: bd-3
+      interfaceSelectors:
+      - eda.nokia.com/vnet-3=vlan-bd-3
+      vlanID: "null"
+---

@@ -21,6 +21,8 @@ Manual **Interface + TopoLink** bundle for when **clab-connector** integration i
 |------|----------|
 | `../eda-fabric/` | 3 Fabric CRs + 6 ISL CRs (DCGW mesh / PE WAN) |
 | `../eda-mpls-ldp/` | LabelBlock, DefaultLDPRouter, DefaultLDPInterface |
+| `../eda-wan-bgp/` | DefaultBGPGroup + DefaultBGPPeer (dcgw 1–4 WAN) |
+| `../eda-vnets/` | VirtualNetwork `vnet-1` .. `vnet-5` |
 
 ## Regenerate
 

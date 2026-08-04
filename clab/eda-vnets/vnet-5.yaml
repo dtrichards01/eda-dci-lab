@@ -1,0 +1,80 @@
+apiVersion: services.eda.nokia.com/v2
+kind: VirtualNetwork
+metadata:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"services.eda.nokia.com/v2","kind":"VirtualNetwork","metadata":{"annotations":{},"labels":{"eda.nokia.com/dci":"spoke","eda.nokia.com/gbp":"blue-to-red"},"name":"vnet-5","namespace":"clab-srl-leaf-spine-dcgw"},"spec":{"bridgeDomains":[{"name":"bd-5","spec":{"encapOptions":{"vxlan":{"tunnelIndexPool":"tunnel-index-pool","vniPool":"vni-pool"}},"eviPool":"evi-pool","macLearning":{"agingTimeSeconds":300,"enabled":true},"macLimit":2000,"type":"EVPNVXLAN"}}],"bridgeInterfaces":[],"irbInterfaces":[{"name":"irb-5","spec":{"bridgeDomain":"bd-5","ipAddresses":[{"ipv4Address":{"ipPrefix":"172.16.151.254/24","primary":true}}],"ipMTU":1500,"ipv4":{"arpTimeoutSeconds":14400,"learnUnsolicitedARP":"Disabled"},"router":"router-3"}}],"routedInterfaces":[],"routers":[{"name":"router-3","spec":{"bgp":{"autonomousSystem":65401,"ebgpPreference":170,"enabled":true,"ibgpPreference":170,"ipv4Unicast":{"enabled":true},"minWaitToAdvertiseSeconds":0,"rapidWithdrawl":true,"waitForFIBInstall":false},"encapOptions":{"vxlan":{"tunnelIndexPool":"tunnel-index-pool","vniPool":"vni-pool"}},"eviPool":"evi-pool","routerID":"3.4.5.6","type":"EVPNVXLAN"}}],"vlans":[{"name":"vlan-null-vnet-5","spec":{"bridgeDomain":"bd-5","interfaceSelectors":["eda.nokia.com/vnet-5=vlan-bd-5"],"vlanID":"null"}}]}}
+  labels:
+    eda.nokia.com/dci: spoke
+    eda.nokia.com/gbp: blue-to-red
+  name: vnet-5
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  bridgeDomains:
+  - name: bd-5
+    spec:
+      encapOptions:
+        vxlan:
+          tunnelIndexPool: tunnel-index-pool
+          vniPool: vni-pool
+      eviPool: evi-pool
+      macLearning:
+        agingTimeSeconds: 300
+        enabled: true
+      macLimit: 2000
+      type: EVPNVXLAN
+  bridgeInterfaces: []
+  irbInterfaces:
+  - name: irb-5
+    spec:
+      bridgeDomain: bd-5
+      evpnRouteAdvertisementType:
+        arpDynamic: true
+        arpStatic: true
+        ndDynamic: true
+        ndStatic: true
+      hostRoutePopulate:
+        dynamic:
+          populate: true
+        evpn:
+          datapathProgramming: true
+          populate: true
+        static:
+          populate: true
+      ipAddresses:
+      - ipv4Address:
+          ipPrefix: 172.16.151.254/24
+          primary: true
+      ipMTU: 1500
+      ipv4:
+        arpTimeoutSeconds: 14400
+        learnUnsolicitedARP: Disabled
+      router: router-3
+  routedInterfaces: []
+  routers:
+  - name: router-3
+    spec:
+      bgp:
+        autonomousSystem: 65401
+        ebgpPreference: 170
+        enabled: true
+        ibgpPreference: 170
+        ipv4Unicast:
+          enabled: true
+        minWaitToAdvertiseSeconds: 0
+        rapidWithdrawl: true
+        waitForFIBInstall: false
+      encapOptions:
+        vxlan:
+          tunnelIndexPool: tunnel-index-pool
+          vniPool: vni-pool
+      eviPool: evi-pool
+      routerID: 3.4.5.6
+      type: EVPNVXLAN
+  vlans:
+  - name: vlan-null-vnet-5
+    spec:
+      bridgeDomain: bd-5
+      interfaceSelectors:
+      - eda.nokia.com/vnet-5=vlan-bd-5
+      vlanID: "null"
+---

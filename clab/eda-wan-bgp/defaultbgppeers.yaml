@@ -1,0 +1,120 @@
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultBGPPeer
+metadata:
+  name: dcgw-1-dcgw-3-bgp-peer
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  dynamicNeighbor: false
+  exportPolicies:
+  - export-dc-1-prefixes-and-add-soo
+  group: default-bgp-group-dc-1
+  importPolicies:
+  - import-dci-services-dc-1
+  interface: dcgw-1-system0
+  interfaceKind: SystemInterface
+  ipv4Unicast:
+    enabled: false
+  l2VPNEVPN:
+    enabled: false
+  localAS:
+    autonomousSystem: 65401
+  multiHopMaxHop: 5
+  nextHopSelf: true
+  peerAS:
+    autonomousSystem: 65402
+  peerIP: 11.0.0.15
+  peerInterface: dcgw-3-system0
+  peerInterfaceKind: SystemInterface
+  vpnIPv4Unicast:
+    enabled: true
+---
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultBGPPeer
+metadata:
+  name: dcgw-2-dcgw-4-bgp-peer
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  dynamicNeighbor: false
+  exportPolicies:
+  - export-dc-1-routes-and-add-soo
+  group: default-bgp-group-dc-1
+  importPolicies:
+  - import-dci-services-dc-1
+  interface: dcgw-2-system0
+  interfaceKind: SystemInterface
+  ipv4Unicast:
+    enabled: false
+  l2VPNEVPN:
+    enabled: false
+  localAS:
+    autonomousSystem: 65401
+  multiHopMaxHop: 5
+  nextHopSelf: true
+  peerAS:
+    autonomousSystem: 65402
+  peerIP: 11.0.0.16
+  peerInterface: dcgw-4-system0
+  peerInterfaceKind: SystemInterface
+  vpnIPv4Unicast:
+    enabled: true
+---
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultBGPPeer
+metadata:
+  name: dcgw-3-dcgw-1-bgp-peer
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  dynamicNeighbor: false
+  exportPolicies:
+  - export-dc-2-routes-and-add-soo
+  group: default-bgp-group-dc-2
+  importPolicies:
+  - import-dci-services-dc-2
+  interface: dcgw-3-system0
+  interfaceKind: SystemInterface
+  ipv4Unicast:
+    enabled: false
+  l2VPNEVPN:
+    enabled: false
+  localAS:
+    autonomousSystem: 65402
+  multiHopMaxHop: 5
+  nextHopSelf: true
+  peerAS:
+    autonomousSystem: 65401
+  peerIP: 11.0.0.7
+  peerInterface: dcgw-1-system0
+  peerInterfaceKind: SystemInterface
+  vpnIPv4Unicast:
+    enabled: true
+---
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultBGPPeer
+metadata:
+  name: dcgw-4-dcgw-2-bgp-peer
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  dynamicNeighbor: false
+  exportPolicies:
+  - export-dc-2-routes-and-add-soo
+  group: default-bgp-group-dc-2
+  importPolicies:
+  - import-dci-services-dc-2
+  interface: dcgw-4-system0
+  interfaceKind: SystemInterface
+  ipv4Unicast:
+    enabled: false
+  l2VPNEVPN:
+    enabled: false
+  localAS:
+    autonomousSystem: 65402
+  multiHopMaxHop: 5
+  nextHopSelf: true
+  peerAS:
+    autonomousSystem: 65401
+  peerIP: 11.0.0.8
+  peerInterface: dcgw-2-system0
+  peerInterfaceKind: SystemInterface
+  vpnIPv4Unicast:
+    enabled: true
+---

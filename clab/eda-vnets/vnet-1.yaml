@@ -1,0 +1,81 @@
+apiVersion: services.eda.nokia.com/v2
+kind: VirtualNetwork
+metadata:
+  name: vnet-1
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  bridgeDomains:
+  - name: bd-1
+    spec:
+      encapOptions:
+        vxlan:
+          tunnelIndexPool: tunnel-index-pool
+          vniPool: vni-pool
+      eviPool: evi-pool
+      macLearning:
+        agingTimeSeconds: 300
+        enabled: true
+      macLimit: 2000
+      type: EVPNVXLAN
+  bridgeInterfaces: []
+  irbInterfaces:
+  - name: irb-1
+    spec:
+      bridgeDomain: bd-1
+      evpnRouteAdvertisementType:
+        arpDynamic: true
+        arpStatic: true
+        ndDynamic: true
+        ndStatic: true
+      hostRoutePopulate:
+        dynamic:
+          populate: true
+        evpn:
+          datapathProgramming: true
+          populate: true
+        static:
+          populate: true
+      ipAddresses:
+      - ipv4Address:
+          ipPrefix: 172.16.101.254/24
+          primary: true
+      - ipv6Address:
+          ipPrefix: fc00:11::1/120
+          primary: true
+      ipMTU: 1500
+      ipv4:
+        arpTimeoutSeconds: 14400
+        learnUnsolicitedARP: Disabled
+      ipv6:
+        learnUnsolicitedNA: Disabled
+      router: router-1
+      virtualIPDiscovery: []
+  routedInterfaces: []
+  routers:
+  - name: router-1
+    spec:
+      bgp:
+        autonomousSystem: 65401
+        ebgpPreference: 170
+        enabled: true
+        ibgpPreference: 170
+        ipv4Unicast:
+          enabled: true
+        minWaitToAdvertiseSeconds: 0
+        rapidWithdrawl: true
+        waitForFIBInstall: false
+      encapOptions:
+        vxlan:
+          tunnelIndexPool: tunnel-index-pool
+          vniPool: vni-pool
+      eviPool: evi-pool
+      routerID: 1.2.3.4
+      type: EVPNVXLAN
+  vlans:
+  - name: vlan-null-vnet-1
+    spec:
+      bridgeDomain: bd-1
+      interfaceSelectors:
+      - eda.nokia.com/vnet-1=vlan-bd-1
+      vlanID: "null"
+---

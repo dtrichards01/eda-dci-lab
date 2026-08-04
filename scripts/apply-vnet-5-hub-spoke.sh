@@ -15,7 +15,7 @@ kubectl apply -f "$POL/policies/export-dc-1-routes-and-add-soo.yaml"
 kubectl apply -f "$POL/policies/import-dci-services-dc-2.yaml"
 
 echo "==> VirtualNetwork vnet-5 (spoke)"
-kubectl apply -f "$ROOT/services/l3/vnet-5/virtualnetwork-vnet-5.yaml"
+kubectl apply -f "$ROOT/clab/eda-vnets/vnet-5.yaml"
 kubectl patch virtualnetwork vnet-5 -n "$NS" --type=json \
   --patch-file="$POL/patches/vnet-irb-evpn-hostroutes-patch.json"
 
