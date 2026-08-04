@@ -1,0 +1,52 @@
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultOSPFInterface
+metadata:
+  name: system-dcgw-1-system0-ipv4
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  defaultOSPFArea: backbone-0
+  defaultOSPFInstance: ospf-instance-1
+  interface: dcgw-1-system0
+  interfaceKind: SystemInterface
+  passive: true
+  type: PointToPoint
+---
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultOSPFInterface
+metadata:
+  name: system-dcgw-2-system0-ipv4
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  defaultOSPFArea: backbone-0
+  defaultOSPFInstance: ospf-instance-1
+  interface: dcgw-2-system0
+  interfaceKind: SystemInterface
+  passive: true
+  type: PointToPoint
+---
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultOSPFInterface
+metadata:
+  name: system-dcgw-3-system0-ipv4
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  defaultOSPFArea: backbone-0
+  defaultOSPFInstance: ospf-instance-2
+  interface: dcgw-3-system0
+  interfaceKind: SystemInterface
+  passive: true
+  type: PointToPoint
+---
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultOSPFInterface
+metadata:
+  name: system-dcgw-4-system0-ipv4
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  defaultOSPFArea: backbone-0
+  defaultOSPFInstance: ospf-instance-2
+  interface: dcgw-4-system0
+  interfaceKind: SystemInterface
+  passive: true
+  type: PointToPoint
+---

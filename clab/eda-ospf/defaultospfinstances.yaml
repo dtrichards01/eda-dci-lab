@@ -1,0 +1,18 @@
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultOSPFInstance
+metadata:
+  name: ospf-instance-1
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  enabled: true
+  version: OSPFv2
+---
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultOSPFInstance
+metadata:
+  name: ospf-instance-2
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  enabled: true
+  version: OSPFv2
+---

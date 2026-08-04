@@ -3,7 +3,7 @@
 set -eu
 NS="${NS:-clab-srl-leaf-spine-dcgw}"
 OUT="${OUT:-/tmp/eda-cr-export}"
-mkdir -p "$OUT/mpls-ldp" "$OUT/vnets" "$OUT/wan-bgp"
+mkdir -p "$OUT/mpls-ldp" "$OUT/vnets" "$OUT/wan-bgp" "$OUT/ospf"
 
 clean() {
   sed -e '/^  resourceVersion:/d' \
@@ -41,6 +41,11 @@ export_kind defaultldprouters "$OUT/mpls-ldp/defaultldprouters.yaml"
 export_kind defaultldpinterfaces "$OUT/mpls-ldp/defaultldpinterfaces.yaml"
 export_kind labelblocks "$OUT/mpls-ldp/labelblocks.yaml"
 
+echo "==> Default OSPF (instances, areas, interfaces)"
+export_kind defaultospfinstances "$OUT/ospf/defaultospfinstances.yaml"
+export_kind defaultospfareas "$OUT/ospf/defaultospfareas.yaml"
+export_kind defaultospfinterfaces "$OUT/ospf/defaultospfinterfaces.yaml"
+
 echo "==> WAN BGP (DCGW peering)"
 : > "$OUT/wan-bgp/defaultbgpgroups.yaml"
 kubectl get -n "$NS" defaultbgpgroup/default-bgp-group-dc-1 -o yaml | clean >> "$OUT/wan-bgp/defaultbgpgroups.yaml"
@@ -62,4 +67,4 @@ for v in vnet-1 vnet-2 vnet-3 vnet-4 vnet-5; do
 done
 
 echo "==> Export complete: $OUT"
-echo "    Copy to repo: clab/eda-fabric/, clab/eda-mpls-ldp/, clab/eda-wan-bgp/, clab/eda-vnets/"
+echo "    Copy to repo: clab/eda-fabric/, clab/eda-mpls-ldp/, clab/eda-ospf/, clab/eda-wan-bgp/, clab/eda-vnets/"

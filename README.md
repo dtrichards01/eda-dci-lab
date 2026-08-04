@@ -103,6 +103,7 @@ clab/
   clab-leaf-spine-dcgw-srl-only.yaml
   eda-fabric/                  # 3 fabrics + WAN ISL CRs
   eda-mpls-ldp/                # LDP routers, interfaces, label block
+  eda-ospf/                    # DefaultOSPF instance, area, system interfaces
   eda-wan-bgp/                 # DefaultBGPGroup + DefaultBGPPeer (dcgw 1-4)
   eda-vnets/                   # VirtualNetwork vnet-1 .. vnet-5
   eda-topology/                # TopoLink + Interface ISLs

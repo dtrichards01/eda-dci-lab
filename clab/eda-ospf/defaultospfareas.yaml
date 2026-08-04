@@ -1,0 +1,9 @@
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultOSPFArea
+metadata:
+  name: backbone-0
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  areaID: 0.0.0.0
+  areaType: Normal
+---
