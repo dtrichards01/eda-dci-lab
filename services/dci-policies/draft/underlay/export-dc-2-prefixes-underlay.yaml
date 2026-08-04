@@ -1,0 +1,51 @@
+# WAN export DC2: VPNv4 vnet-2 hub (RT 101) only.
+# If live CR name differs (e.g. export-dc-2-prefixes-and-add-soo), change metadata.name to match.
+apiVersion: routingpolicies.eda.nokia.com/v1
+kind: Policy
+metadata:
+  name: export-dc-2-routes-and-add-soo
+  namespace: clab-srl-leaf-spine-dcgw
+  annotations:
+    l2: loop-avoidance
+  labels:
+    eda.nokia.com/dci: underlay-isolation-draft
+spec:
+  defaultAction:
+    policyResult: Reject
+  statements:
+    - name: reject-imported-evpn
+      action:
+        policyResult: Reject
+      match:
+        families:
+          - EVPN
+        tags:
+          tagSet: tag-20
+    - name: reject-imported-ipvpn
+      action:
+        policyResult: Reject
+      match:
+        protocol: BGP_IPVPN
+        tags:
+          tagSet: tag-20
+    - name: reject-all-local-evpn
+      action:
+        policyResult: Reject
+      match:
+        families:
+          - EVPN
+        tags:
+          tagSet: tag-20
+    - name: export-local-ipvpn-vnet-2
+      action:
+        policyResult: Accept
+        bgp:
+          communities:
+            addSets:
+              - soo-2211
+      match:
+        protocol: BGP_IPVPN
+        tags:
+          tagSet: tag-20
+        bgp:
+          communitySet: dci-rt-dc2-l3

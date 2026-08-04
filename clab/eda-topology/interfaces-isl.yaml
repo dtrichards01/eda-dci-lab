@@ -1,0 +1,1760 @@
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-1-ethernet-1-9
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-9
+      lacpPortPriority: 32768
+      node: srl-spine-1
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: dcgw-1-ethernet-1-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-1
+      lacpPortPriority: 32768
+      node: dcgw-1
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-1-ethernet-1-10
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-10
+      lacpPortPriority: 32768
+      node: srl-spine-1
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: dcgw-2-ethernet-1-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-1
+      lacpPortPriority: 32768
+      node: dcgw-2
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-2-ethernet-1-9
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-9
+      lacpPortPriority: 32768
+      node: srl-spine-2
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: dcgw-1-ethernet-1-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-2
+      lacpPortPriority: 32768
+      node: dcgw-1
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-2-ethernet-1-10
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-10
+      lacpPortPriority: 32768
+      node: srl-spine-2
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: dcgw-2-ethernet-1-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-2
+      lacpPortPriority: 32768
+      node: dcgw-2
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-3-ethernet-1-9
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-9
+      lacpPortPriority: 32768
+      node: srl-spine-3
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: dcgw-3-ethernet-1-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-1
+      lacpPortPriority: 32768
+      node: dcgw-3
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-3-ethernet-1-10
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-10
+      lacpPortPriority: 32768
+      node: srl-spine-3
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: dcgw-4-ethernet-1-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-1
+      lacpPortPriority: 32768
+      node: dcgw-4
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-4-ethernet-1-9
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-9
+      lacpPortPriority: 32768
+      node: srl-spine-4
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: dcgw-3-ethernet-1-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-2
+      lacpPortPriority: 32768
+      node: dcgw-3
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-4-ethernet-1-10
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-10
+      lacpPortPriority: 32768
+      node: srl-spine-4
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: dcgw-4-ethernet-1-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-2
+      lacpPortPriority: 32768
+      node: dcgw-4
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: dcgw-1-ethernet-1-3
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-3
+      lacpPortPriority: 32768
+      node: dcgw-1
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: dcgw-2-ethernet-1-3
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-3
+      lacpPortPriority: 32768
+      node: dcgw-2
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: dcgw-1-ethernet-1-4
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-4
+      lacpPortPriority: 32768
+      node: dcgw-1
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: dcgw-2-ethernet-1-4
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-4
+      lacpPortPriority: 32768
+      node: dcgw-2
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: dcgw-3-ethernet-1-3
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-3
+      lacpPortPriority: 32768
+      node: dcgw-3
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: dcgw-4-ethernet-1-3
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-3
+      lacpPortPriority: 32768
+      node: dcgw-4
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: dcgw-3-ethernet-1-4
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-4
+      lacpPortPriority: 32768
+      node: dcgw-3
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: dcgw-4-ethernet-1-4
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-4
+      lacpPortPriority: 32768
+      node: dcgw-4
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-1-ethernet-1-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-1
+      lacpPortPriority: 32768
+      node: srl-spine-1
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-1-ethernet-1-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-1
+      lacpPortPriority: 32768
+      node: srl-leaf-1
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-2-ethernet-1-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-1
+      lacpPortPriority: 32768
+      node: srl-spine-2
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-1-ethernet-1-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-2
+      lacpPortPriority: 32768
+      node: srl-leaf-1
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-1-ethernet-1-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-2
+      lacpPortPriority: 32768
+      node: srl-spine-1
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-1-ethernet-1-3
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-3
+      lacpPortPriority: 32768
+      node: srl-leaf-1
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-2-ethernet-1-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-2
+      lacpPortPriority: 32768
+      node: srl-spine-2
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-1-ethernet-1-4
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-4
+      lacpPortPriority: 32768
+      node: srl-leaf-1
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-1-ethernet-1-3
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-3
+      lacpPortPriority: 32768
+      node: srl-spine-1
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-2-ethernet-1-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-1
+      lacpPortPriority: 32768
+      node: srl-leaf-2
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-2-ethernet-1-3
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-3
+      lacpPortPriority: 32768
+      node: srl-spine-2
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-2-ethernet-1-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-2
+      lacpPortPriority: 32768
+      node: srl-leaf-2
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-1-ethernet-1-4
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-4
+      lacpPortPriority: 32768
+      node: srl-spine-1
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-2-ethernet-1-3
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-3
+      lacpPortPriority: 32768
+      node: srl-leaf-2
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-2-ethernet-1-4
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-4
+      lacpPortPriority: 32768
+      node: srl-spine-2
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-2-ethernet-1-4
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-4
+      lacpPortPriority: 32768
+      node: srl-leaf-2
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-1-ethernet-1-5
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-5
+      lacpPortPriority: 32768
+      node: srl-spine-1
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-3-ethernet-1-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-1
+      lacpPortPriority: 32768
+      node: srl-leaf-3
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-2-ethernet-1-5
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-5
+      lacpPortPriority: 32768
+      node: srl-spine-2
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-3-ethernet-1-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-2
+      lacpPortPriority: 32768
+      node: srl-leaf-3
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-1-ethernet-1-6
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-6
+      lacpPortPriority: 32768
+      node: srl-spine-1
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-3-ethernet-1-3
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-3
+      lacpPortPriority: 32768
+      node: srl-leaf-3
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-2-ethernet-1-6
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-6
+      lacpPortPriority: 32768
+      node: srl-spine-2
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-3-ethernet-1-4
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-4
+      lacpPortPriority: 32768
+      node: srl-leaf-3
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-1-ethernet-1-7
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-7
+      lacpPortPriority: 32768
+      node: srl-spine-1
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-4-ethernet-1-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-1
+      lacpPortPriority: 32768
+      node: srl-leaf-4
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-2-ethernet-1-7
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-7
+      lacpPortPriority: 32768
+      node: srl-spine-2
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-4-ethernet-1-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-2
+      lacpPortPriority: 32768
+      node: srl-leaf-4
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-1-ethernet-1-8
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-8
+      lacpPortPriority: 32768
+      node: srl-spine-1
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-4-ethernet-1-3
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-3
+      lacpPortPriority: 32768
+      node: srl-leaf-4
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-2-ethernet-1-8
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-8
+      lacpPortPriority: 32768
+      node: srl-spine-2
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-4-ethernet-1-4
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-4
+      lacpPortPriority: 32768
+      node: srl-leaf-4
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-3-ethernet-1-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-1
+      lacpPortPriority: 32768
+      node: srl-spine-3
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-5-ethernet-1-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-1
+      lacpPortPriority: 32768
+      node: srl-leaf-5
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-4-ethernet-1-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-1
+      lacpPortPriority: 32768
+      node: srl-spine-4
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-5-ethernet-1-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-2
+      lacpPortPriority: 32768
+      node: srl-leaf-5
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-3-ethernet-1-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-2
+      lacpPortPriority: 32768
+      node: srl-spine-3
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-5-ethernet-1-3
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-3
+      lacpPortPriority: 32768
+      node: srl-leaf-5
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-4-ethernet-1-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-2
+      lacpPortPriority: 32768
+      node: srl-spine-4
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-5-ethernet-1-4
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-4
+      lacpPortPriority: 32768
+      node: srl-leaf-5
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-3-ethernet-1-3
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-3
+      lacpPortPriority: 32768
+      node: srl-spine-3
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-6-ethernet-1-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-1
+      lacpPortPriority: 32768
+      node: srl-leaf-6
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-4-ethernet-1-3
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-3
+      lacpPortPriority: 32768
+      node: srl-spine-4
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-6-ethernet-1-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-2
+      lacpPortPriority: 32768
+      node: srl-leaf-6
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-3-ethernet-1-4
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-4
+      lacpPortPriority: 32768
+      node: srl-spine-3
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-6-ethernet-1-3
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-3
+      lacpPortPriority: 32768
+      node: srl-leaf-6
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-4-ethernet-1-4
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-4
+      lacpPortPriority: 32768
+      node: srl-spine-4
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-6-ethernet-1-4
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-4
+      lacpPortPriority: 32768
+      node: srl-leaf-6
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-3-ethernet-1-5
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-5
+      lacpPortPriority: 32768
+      node: srl-spine-3
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-7-ethernet-1-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-1
+      lacpPortPriority: 32768
+      node: srl-leaf-7
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-4-ethernet-1-5
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-5
+      lacpPortPriority: 32768
+      node: srl-spine-4
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-7-ethernet-1-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-2
+      lacpPortPriority: 32768
+      node: srl-leaf-7
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-3-ethernet-1-6
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-6
+      lacpPortPriority: 32768
+      node: srl-spine-3
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-7-ethernet-1-3
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-3
+      lacpPortPriority: 32768
+      node: srl-leaf-7
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-4-ethernet-1-6
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-6
+      lacpPortPriority: 32768
+      node: srl-spine-4
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-7-ethernet-1-4
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-4
+      lacpPortPriority: 32768
+      node: srl-leaf-7
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-3-ethernet-1-7
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-7
+      lacpPortPriority: 32768
+      node: srl-spine-3
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-8-ethernet-1-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-1
+      lacpPortPriority: 32768
+      node: srl-leaf-8
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-4-ethernet-1-7
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-7
+      lacpPortPriority: 32768
+      node: srl-spine-4
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-8-ethernet-1-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-2
+      lacpPortPriority: 32768
+      node: srl-leaf-8
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-3-ethernet-1-8
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-8
+      lacpPortPriority: 32768
+      node: srl-spine-3
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-8-ethernet-1-3
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-3
+      lacpPortPriority: 32768
+      node: srl-leaf-8
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-4-ethernet-1-8
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-8
+      lacpPortPriority: 32768
+      node: srl-spine-4
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-8-ethernet-1-4
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  enabled: true
+  encapType: 'Null'
+  ethernet:
+    stormControl: {}
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-4
+      lacpPortPriority: 32768
+      node: srl-leaf-8
+  type: Interface

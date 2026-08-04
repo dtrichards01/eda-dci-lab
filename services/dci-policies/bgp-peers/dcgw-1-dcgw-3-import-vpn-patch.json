@@ -1,0 +1,17 @@
+[
+  {
+    "op": "replace",
+    "path": "/spec/importPolicies",
+    "value": ["import-dci-services-dc-1"]
+  },
+  {
+    "op": "replace",
+    "path": "/spec/exportPolicies",
+    "value": ["export-wan-routes-only-dc-1"]
+  },
+  {
+    "op": "add",
+    "path": "/spec/vpnIPv4Unicast",
+    "value": { "enabled": true }
+  }
+]

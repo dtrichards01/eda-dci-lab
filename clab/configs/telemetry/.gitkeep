@@ -1,0 +1,4 @@
+# Telemetry configs are not stored in eda-dci-lab.
+# Copy from your existing lab before deploy, e.g.:
+#   cp -r ~/3-tier-dci/configs/telemetry ../clab/configs/telemetry
+# Or comment out gnmic / prometheus / grafana nodes in the topology YAML.

@@ -1,0 +1,323 @@
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-leaf-1-ethernet-1-5--client-1-vnet-1-dc1-eth1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: edge
+spec:
+  links:
+  - local:
+      node: srl-leaf-1
+      interface: ethernet-1-5
+      interfaceResource: srl-leaf-1-ethernet-1-5
+    remote:
+      node: client-1-vnet-1-dc1
+      interface: eth1
+      interfaceResource: eth1
+    type: edge
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-leaf-4-ethernet-1-5--client-2-vnet-1-dc1-eth1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: edge
+spec:
+  links:
+  - local:
+      node: srl-leaf-4
+      interface: ethernet-1-5
+      interfaceResource: srl-leaf-4-ethernet-1-5
+    remote:
+      node: client-2-vnet-1-dc1
+      interface: eth1
+      interfaceResource: eth1
+    type: edge
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-leaf-5-ethernet-1-5--client-3-vnet-2-dc2-eth1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: edge
+spec:
+  links:
+  - local:
+      node: srl-leaf-5
+      interface: ethernet-1-5
+      interfaceResource: srl-leaf-5-ethernet-1-5
+    remote:
+      node: client-3-vnet-2-dc2
+      interface: eth1
+      interfaceResource: eth1
+    type: edge
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-leaf-8-ethernet-1-5--client-4-vnet-2-dc2-eth1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: edge
+spec:
+  links:
+  - local:
+      node: srl-leaf-8
+      interface: ethernet-1-5
+      interfaceResource: srl-leaf-8-ethernet-1-5
+    remote:
+      node: client-4-vnet-2-dc2
+      interface: eth1
+      interfaceResource: eth1
+    type: edge
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-leaf-3-ethernet-1-5--client-5-vnet-5-dc1-eth1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: edge
+spec:
+  links:
+  - local:
+      node: srl-leaf-3
+      interface: ethernet-1-5
+      interfaceResource: srl-leaf-3-ethernet-1-5
+    remote:
+      node: client-5-vnet-5-dc1
+      interface: eth1
+      interfaceResource: eth1
+    type: edge
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-leaf-2-ethernet-1-6--client-6-vnet-3-dc1-eth1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: edge
+spec:
+  links:
+  - local:
+      node: srl-leaf-2
+      interface: ethernet-1-6
+      interfaceResource: srl-leaf-2-ethernet-1-6
+    remote:
+      node: client-6-vnet-3-dc1
+      interface: eth1
+      interfaceResource: eth1
+    type: edge
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-leaf-8-ethernet-1-6--client-7-vnet-4-dc2-eth1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: edge
+spec:
+  links:
+  - local:
+      node: srl-leaf-8
+      interface: ethernet-1-6
+      interfaceResource: srl-leaf-8-ethernet-1-6
+    remote:
+      node: client-7-vnet-4-dc2
+      interface: eth1
+      interfaceResource: eth1
+    type: edge
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-leaf-3-ethernet-1-6--client-8-dc1-sh-eth1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: edge
+spec:
+  links:
+  - local:
+      node: srl-leaf-3
+      interface: ethernet-1-6
+      interfaceResource: srl-leaf-3-ethernet-1-6
+    remote:
+      node: client-8-dc1-sh
+      interface: eth1
+      interfaceResource: eth1
+    type: edge
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-leaf-5-ethernet-1-6--client-9-dc2-sh-eth1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: edge
+spec:
+  links:
+  - local:
+      node: srl-leaf-5
+      interface: ethernet-1-6
+      interfaceResource: srl-leaf-5-ethernet-1-6
+    remote:
+      node: client-9-dc2-sh
+      interface: eth1
+      interfaceResource: eth1
+    type: edge
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-leaf-3-ethernet-1-10--client-10-dc1-mh-eth1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: edge
+spec:
+  links:
+  - local:
+      node: srl-leaf-3
+      interface: ethernet-1-10
+      interfaceResource: srl-leaf-3-ethernet-1-10
+    remote:
+      node: client-10-dc1-mh
+      interface: eth1
+      interfaceResource: eth1
+    type: edge
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-leaf-4-ethernet-1-10--client-10-dc1-mh-eth2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: edge
+spec:
+  links:
+  - local:
+      node: srl-leaf-4
+      interface: ethernet-1-10
+      interfaceResource: srl-leaf-4-ethernet-1-10
+    remote:
+      node: client-10-dc1-mh
+      interface: eth2
+      interfaceResource: eth2
+    type: edge
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-leaf-5-ethernet-1-10--client-11-dc2-mh-eth1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: edge
+spec:
+  links:
+  - local:
+      node: srl-leaf-5
+      interface: ethernet-1-10
+      interfaceResource: srl-leaf-5-ethernet-1-10
+    remote:
+      node: client-11-dc2-mh
+      interface: eth1
+      interfaceResource: eth1
+    type: edge
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-leaf-6-ethernet-1-10--client-11-dc2-mh-eth2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: edge
+spec:
+  links:
+  - local:
+      node: srl-leaf-6
+      interface: ethernet-1-10
+      interfaceResource: srl-leaf-6-ethernet-1-10
+    remote:
+      node: client-11-dc2-mh
+      interface: eth2
+      interfaceResource: eth2
+    type: edge
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-leaf-1-ethernet-1-10--client-12-dc1-mh-eth1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: edge
+spec:
+  links:
+  - local:
+      node: srl-leaf-1
+      interface: ethernet-1-10
+      interfaceResource: srl-leaf-1-ethernet-1-10
+    remote:
+      node: client-12-dc1-mh
+      interface: eth1
+      interfaceResource: eth1
+    type: edge
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-leaf-2-ethernet-1-10--client-12-dc1-mh-eth2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: edge
+spec:
+  links:
+  - local:
+      node: srl-leaf-2
+      interface: ethernet-1-10
+      interfaceResource: srl-leaf-2-ethernet-1-10
+    remote:
+      node: client-12-dc1-mh
+      interface: eth2
+      interfaceResource: eth2
+    type: edge
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-leaf-7-ethernet-1-10--client-13-dc2-mh-eth1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: edge
+spec:
+  links:
+  - local:
+      node: srl-leaf-7
+      interface: ethernet-1-10
+      interfaceResource: srl-leaf-7-ethernet-1-10
+    remote:
+      node: client-13-dc2-mh
+      interface: eth1
+      interfaceResource: eth1
+    type: edge
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-leaf-8-ethernet-1-10--client-13-dc2-mh-eth2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: edge
+spec:
+  links:
+  - local:
+      node: srl-leaf-8
+      interface: ethernet-1-10
+      interfaceResource: srl-leaf-8-ethernet-1-10
+    remote:
+      node: client-13-dc2-mh
+      interface: eth2
+      interfaceResource: eth2
+    type: edge

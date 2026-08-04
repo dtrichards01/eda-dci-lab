@@ -1,0 +1,28 @@
+# SH L3 DC1: vnet-6 / router-6 stitch (export RT 400, import RT 401 → vnet-7).
+apiVersion: services.eda.nokia.com/v2
+kind: RouterInterconnect
+metadata:
+  name: router-interconnect-vnet-6
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/dci: sh-dc1
+spec:
+  routerRef:
+    name: router-6
+  nodeSelectors:
+    - eda.nokia.com/dci=dc-1
+  primaryBGPInstance:
+    domainId: 65006:400
+  interconnectBGPInstance:
+    controlPlane: IPVPN
+    domainId: 65000:400
+    encapsulation: MPLS
+    evi: 1006
+    exportTarget: target:1:400
+    importTarget: target:1:401
+    mpls:
+      allowedTunnelTypes:
+        - LDP
+    routeDistinguisher:
+      type: Type 0
+      assignedNumber: "6"

@@ -1,0 +1,69 @@
+# Hub interconnect export: stitch RT 101 (SRL: 1 EVPN route-type per statement).
+apiVersion: routingpolicies.eda.nokia.com/v1
+kind: Policy
+metadata:
+  name: export-dci-stitch-dc2-hub
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/dci: l3-stitch
+spec:
+  defaultAction:
+    policyResult: Reject
+  statements:
+    - name: export-local-evpn-type-1
+      action:
+        policyResult: Accept
+      match:
+        families:
+          - EVPN
+        bgp:
+          communitySet: dci-rt-dc2-l3
+          evpnRouteTypes:
+            - 1
+    - name: export-local-evpn-type-2
+      action:
+        policyResult: Accept
+      match:
+        families:
+          - EVPN
+        bgp:
+          communitySet: dci-rt-dc2-l3
+          evpnRouteTypes:
+            - 2
+    - name: export-local-evpn-type-3
+      action:
+        policyResult: Accept
+      match:
+        families:
+          - EVPN
+        bgp:
+          communitySet: dci-rt-dc2-l3
+          evpnRouteTypes:
+            - 3
+    - name: export-local-evpn-type-4
+      action:
+        policyResult: Accept
+      match:
+        families:
+          - EVPN
+        bgp:
+          communitySet: dci-rt-dc2-l3
+          evpnRouteTypes:
+            - 4
+    - name: export-local-evpn-type-5
+      action:
+        policyResult: Accept
+      match:
+        families:
+          - EVPN
+        bgp:
+          communitySet: dci-rt-dc2-l3
+          evpnRouteTypes:
+            - 5
+    - name: export-local-ipvpn-stitch
+      action:
+        policyResult: Accept
+      match:
+        protocol: BGP_IPVPN
+        bgp:
+          communitySet: dci-rt-dc2-l3

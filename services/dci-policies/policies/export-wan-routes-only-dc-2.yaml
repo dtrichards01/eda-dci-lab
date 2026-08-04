@@ -1,0 +1,29 @@
+# Primary DC2->DC1 link (dcgw-3-dcgw-1): export imported remote routes only.
+apiVersion: routingpolicies.eda.nokia.com/v1
+kind: Policy
+metadata:
+  name: export-wan-routes-only-dc-2
+  namespace: clab-srl-leaf-spine-dcgw
+  annotations:
+    l2: loop-avoidance
+  labels:
+    eda.nokia.com/dci: l2-l3-stitch
+spec:
+  defaultAction:
+    policyResult: Accept
+  statements:
+    - name: reject-local-evpn
+      action:
+        policyResult: Reject
+      match:
+        families:
+          - EVPN
+        tags:
+          tagSet: tag-20
+    - name: reject-local-ipvpn
+      action:
+        policyResult: Reject
+      match:
+        protocol: BGP_IPVPN
+        tags:
+          tagSet: tag-20

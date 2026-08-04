@@ -1,0 +1,47 @@
+# L3 native DC2 hub edges for vnet-2 — client-3 (leaf-5), client-4 (leaf-8).
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-5-ethernet-1-5
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: edge
+    eda.nokia.com/vnet-2: vlan-bd-2
+spec:
+  description: edge L3 vnet-2 hub DC2 — client-3-vnet-2-dc2
+  enabled: true
+  encapType: "Null"
+  ethernet:
+    stormControl:
+      enabled: false
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-5
+      lacpPortPriority: 32768
+      node: srl-leaf-5
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-8-ethernet-1-5
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: edge
+    eda.nokia.com/vnet-2: vlan-bd-2
+spec:
+  description: edge L3 vnet-2 hub DC2 — client-4-vnet-2-dc2
+  enabled: true
+  encapType: "Null"
+  ethernet:
+    stormControl:
+      enabled: false
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-5
+      lacpPortPriority: 32768
+      node: srl-leaf-8
+  type: Interface

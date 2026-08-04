@@ -1,0 +1,12 @@
+# L3 vnet-1 / vnet-2 only — WAN type-5 + VPNv4 (no fabric RT 103).
+apiVersion: routingpolicies.eda.nokia.com/v1
+kind: CommunitySet
+metadata:
+  name: dci-rt-l3-wan-export
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/dci: l3-wan-draft
+spec:
+  members:
+    - target:1:100
+    - target:1:101

@@ -1,0 +1,26 @@
+# L3 hub DC2: export RT 101, import spoke RTs 100 + 102 via multi-rt-import.
+apiVersion: services.eda.nokia.com/v2
+kind: RouterInterconnect
+metadata:
+  name: router-interconnect-vnet-2
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  routerRef:
+    name: router-2
+  nodeSelectors:
+    - eda.nokia.com/dci=dc-2
+  primaryBGPInstance:
+    domainId: 65001:201
+  interconnectBGPInstance:
+    controlPlane: IPVPN
+    domainId: 65000:101
+    encapsulation: MPLS
+    evi: 1000
+    exportTarget: target:1:101
+    importPolicy: multi-rt-import
+    mpls:
+      allowedTunnelTypes:
+        - LDP
+    routeDistinguisher:
+      type: Type 0
+      assignedNumber: "2"

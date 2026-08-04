@@ -1,0 +1,47 @@
+# Stretched-homed L3 edges — vnet-6 DC1 (155.x), vnet-7 DC2 (156.x).
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-3-ethernet-1-6
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: edge
+    eda.nokia.com/vnet-6: vlan-bd-6
+spec:
+  description: edge L3 vnet-6 SH DC1 — client-8-dc1-sh
+  enabled: true
+  encapType: "Null"
+  ethernet:
+    stormControl:
+      enabled: false
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-6
+      lacpPortPriority: 32768
+      node: srl-leaf-3
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-5-ethernet-1-6
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: edge
+    eda.nokia.com/vnet-7: vlan-bd-7
+spec:
+  description: edge L3 vnet-7 SH DC2 — client-9-dc2-sh
+  enabled: true
+  encapType: "Null"
+  ethernet:
+    stormControl:
+      enabled: false
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-6
+      lacpPortPriority: 32768
+      node: srl-leaf-5
+  type: Interface

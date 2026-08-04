@@ -1,0 +1,355 @@
+# DCI test topology — native per DC + MH clients (see docs/DCI-ALIGNMENT.md).
+#
+# L3 native: vnet-1 DC1 (101.x), vnet-2 DC2 hub (201.x), vnet-5 DC1 spoke (151.x)
+# L2 native: vnet-3 DC1 (103.1), vnet-4 DC2 (103.2) — same subnet, pure L2 DCI
+# SH legs: vnet-6 DC1 (155.x), vnet-7 DC2 (156.x)
+# MH: vnet-mh-l3-dc1a/b / vnet-mh-l3-dc2a/b (VLAN 200 L3, one vnet per ES)
+#
+# Talos path: deploy from ~/eda-dci-lab/clab (see clab/README.md)
+name: srl-leaf-spine-dcgw
+prefix: ""
+
+mgmt:
+  network: dci-srl-network
+  ipv4-subnet: 172.65.10.0/24
+  ipv4-gw: 172.65.10.1
+
+topology:
+  kinds:
+    nokia_srlinux:
+      image: ghcr.io/nokia/srlinux:26.3.1
+      license: /home/nokia/darren/license/license-srl-26_3.key
+    nokia_srsim:
+      image: registry.srlinux.dev/pub/nokia_srsim:25.10.R1
+      license: /home/nokia/darren/license/license.key
+    linux:
+      image: ghcr.io/hellt/network-multitool
+    nokia_sros:
+      image: registry.srlinux.dev/pub/vr-sros:25.10.R1
+      license: /home/nokia/darren/license/license.key
+  nodes:
+    srl-leaf-1:
+      kind: nokia_srlinux
+      labels: { role: leaf, site: dc1 }
+      type: ixr-d2l
+      mgmt-ipv4: 172.65.10.100
+    srl-leaf-2:
+      kind: nokia_srlinux
+      labels: { role: leaf, site: dc1 }
+      type: ixr-d2l
+      mgmt-ipv4: 172.65.10.101
+    srl-leaf-3:
+      kind: nokia_srlinux
+      labels: { role: leaf, site: dc1 }
+      type: ixr-d3l
+      mgmt-ipv4: 172.65.10.102
+    srl-leaf-4:
+      kind: nokia_srlinux
+      labels: { role: leaf, site: dc1 }
+      type: ixr-d3l
+      mgmt-ipv4: 172.65.10.103
+    srl-spine-1:
+      kind: nokia_srlinux
+      labels: { role: spine, site: dc1 }
+      type: ixr-d4
+      mgmt-ipv4: 172.65.10.104
+    srl-spine-2:
+      kind: nokia_srlinux
+      labels: { role: spine, site: dc1 }
+      type: ixr-d4
+      mgmt-ipv4: 172.65.10.105
+    srl-leaf-5:
+      kind: nokia_srlinux
+      labels: { role: leaf, site: dc2 }
+      type: ixr-d2l
+      mgmt-ipv4: 172.65.10.106
+    srl-leaf-6:
+      kind: nokia_srlinux
+      labels: { role: leaf, site: dc2 }
+      type: ixr-d2l
+      mgmt-ipv4: 172.65.10.107
+    srl-leaf-7:
+      kind: nokia_srlinux
+      labels: { role: leaf, site: dc2 }
+      type: ixr-d3l
+      mgmt-ipv4: 172.65.10.108
+    srl-leaf-8:
+      kind: nokia_srlinux
+      labels: { role: leaf, site: dc2 }
+      type: ixr-d3l
+      mgmt-ipv4: 172.65.10.109
+    srl-spine-3:
+      kind: nokia_srlinux
+      labels: { role: spine, site: dc2 }
+      type: ixr-d4
+      mgmt-ipv4: 172.65.10.110
+    srl-spine-4:
+      kind: nokia_srlinux
+      labels: { role: spine, site: dc2 }
+      type: ixr-d4
+      mgmt-ipv4: 172.65.10.111
+    dcgw-1:
+      kind: nokia_srlinux
+      labels: { role: dcgw, site: dc1 }
+      type: ixr-x1b
+      mgmt-ipv4: 172.65.10.200
+    dcgw-2:
+      kind: nokia_srlinux
+      labels: { role: dcgw, site: dc1 }
+      type: ixr-x1b
+      mgmt-ipv4: 172.65.10.201
+    dcgw-3:
+      kind: nokia_srlinux
+      labels: { role: dcgw, site: dc2 }
+      type: ixr-x1b
+      mgmt-ipv4: 172.65.10.202
+    dcgw-4:
+      kind: nokia_srlinux
+      labels: { role: dcgw, site: dc2 }
+      type: ixr-x1b
+      mgmt-ipv4: 172.65.10.203
+    sros-pe-1:
+      kind: nokia_srsim
+      type: sr-1
+      mgmt-ipv4: 172.65.10.204
+      env:
+        NOKIA_SROS_MDA_1: me12-100gb-qsfp28
+        NOKIA_SROS_MDA_2: me12-100gb-qsfp28
+    sros-pe-2:
+      kind: nokia_srsim
+      type: sr-1
+      mgmt-ipv4: 172.65.10.205
+      env:
+        NOKIA_SROS_MDA_1: me12-100gb-qsfp28
+        NOKIA_SROS_MDA_2: me12-100gb-qsfp28
+
+    # --- Native DC clients ---
+    client-1-vnet-1-dc1:
+      kind: linux
+      mgmt-ipv4: 172.65.10.115
+      labels: { role: client, site: dc1, service: vnet-1, tier: l3 }
+      binds:
+        - configs/client-config.sh:/client-config.sh
+      exec:
+        - bash /client-config.sh 172.16.101.1/24 172.16.101.254 172.16.0.0/16
+
+    client-2-vnet-1-dc1:
+      kind: linux
+      mgmt-ipv4: 172.65.10.116
+      labels: { role: client, site: dc1, service: vnet-1, tier: l3 }
+      binds:
+        - configs/client-config.sh:/client-config.sh
+      exec:
+        - bash /client-config.sh 172.16.101.2/24 172.16.101.254 172.16.0.0/16
+
+    client-3-vnet-2-dc2:
+      kind: linux
+      mgmt-ipv4: 172.65.10.117
+      labels: { role: client, site: dc2, service: vnet-2, tier: l3 }
+      binds:
+        - configs/client-config.sh:/client-config.sh
+      exec:
+        - bash /client-config.sh 172.16.201.1/24 172.16.201.254 172.16.0.0/16
+
+    client-4-vnet-2-dc2:
+      kind: linux
+      mgmt-ipv4: 172.65.10.118
+      labels: { role: client, site: dc2, service: vnet-2, tier: l3 }
+      binds:
+        - configs/client-config.sh:/client-config.sh
+      exec:
+        - bash /client-config.sh 172.16.201.2/24 172.16.201.254 172.16.0.0/16
+
+    client-5-vnet-5-dc1:
+      kind: linux
+      mgmt-ipv4: 172.65.10.119
+      labels: { role: client, site: dc1, service: vnet-5, tier: l3 }
+      binds:
+        - configs/client-config.sh:/client-config.sh
+      exec:
+        - bash /client-config.sh 172.16.151.1/24 172.16.151.254 172.16.0.0/16
+
+    client-6-vnet-3-dc1:
+      kind: linux
+      mgmt-ipv4: 172.65.10.120
+      labels: { role: client, site: dc1, service: vnet-3, tier: l2 }
+      binds:
+        - configs/client-config.sh:/client-config.sh
+      exec:
+        - bash /client-config.sh 172.16.103.1/24 172.16.103.254 172.16.0.0/16
+
+    client-7-vnet-4-dc2:
+      kind: linux
+      mgmt-ipv4: 172.65.10.121
+      labels: { role: client, site: dc2, service: vnet-4, tier: l2 }
+      binds:
+        - configs/client-config.sh:/client-config.sh
+      exec:
+        - bash /client-config.sh 172.16.103.2/24 172.16.103.254 172.16.0.0/16
+
+    client-8-dc1-sh:
+      kind: linux
+      mgmt-ipv4: 172.65.10.124
+      labels: { role: client, site: dc1, service: vnet-6, tier: sh }
+      binds:
+        - configs/client-config.sh:/client-config.sh
+      exec:
+        - bash /client-config.sh 172.16.155.1/24 172.16.155.254 172.16.0.0/16
+
+    client-9-dc2-sh:
+      kind: linux
+      mgmt-ipv4: 172.65.10.125
+      labels: { role: client, site: dc2, service: vnet-7, tier: sh }
+      binds:
+        - configs/client-config.sh:/client-config.sh
+      exec:
+        - bash /client-config.sh 172.16.156.1/24 172.16.156.254 172.16.0.0/16
+
+    client-10-dc1-mh:
+      kind: linux
+      mgmt-ipv4: 172.65.10.126
+      labels: { role: client, site: dc1, service: vnet-mh-l3-dc1a, tier: mh, mh-es: mh-dc1a, mh-mode: all-active }
+      binds:
+        - configs/base-configs/mh-dc1a.sh:/base-configs/mh-dc1a.sh
+      exec:
+        - bash /base-configs/mh-dc1a.sh
+
+    client-11-dc2-mh:
+      kind: linux
+      mgmt-ipv4: 172.65.10.127
+      labels: { role: client, site: dc2, service: vnet-mh-l3-dc2a, tier: mh, mh-es: mh-dc2a, mh-mode: all-active }
+      binds:
+        - configs/base-configs/mh-dc2a.sh:/base-configs/mh-dc2a.sh
+      exec:
+        - bash /base-configs/mh-dc2a.sh
+
+    client-12-dc1-mh:
+      kind: linux
+      mgmt-ipv4: 172.65.10.128
+      labels: { role: client, site: dc1, service: vnet-mh-l3-dc1b, tier: mh, mh-es: mh-dc1b, mh-mode: single-active }
+      binds:
+        - configs/base-configs/mh-dc1b.sh:/base-configs/mh-dc1b.sh
+      exec:
+        - bash /base-configs/mh-dc1b.sh
+
+    client-13-dc2-mh:
+      kind: linux
+      mgmt-ipv4: 172.65.10.129
+      labels: { role: client, site: dc2, service: vnet-mh-l3-dc2b, tier: mh, mh-es: mh-dc2b, mh-mode: single-active }
+      binds:
+        - configs/base-configs/mh-dc2b.sh:/base-configs/mh-dc2b.sh
+      exec:
+        - bash /base-configs/mh-dc2b.sh
+
+    gnmic:
+      kind: linux
+      mgmt-ipv4: 172.65.10.175
+      image: ghcr.io/openconfig/gnmic:0.45.0
+      binds:
+        - configs/telemetry/gnmic/gnmic-config.yml:/gnmic-config.yml:ro
+      cmd: --config /gnmic-config.yml --log subscribe
+      labels: { role: telemetry, site: oob }
+      group: "10"
+    prometheus:
+      kind: linux
+      mgmt-ipv4: 172.65.10.176
+      image: quay.io/prometheus/prometheus:v3.11.3
+      binds:
+        - configs/telemetry/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      cmd: --config.file=/etc/prometheus/prometheus.yml
+      ports:
+        - 9090:9090
+      labels: { role: telemetry, site: oob }
+      group: "10"
+    grafana:
+      kind: linux
+      mgmt-ipv4: 172.65.10.177
+      image: grafana/grafana:13.0.1
+      binds:
+        - configs/telemetry/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yaml:ro
+        - configs/telemetry/grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yaml:ro
+        - configs/telemetry/grafana/dashboards:/var/lib/grafana/dashboards
+      ports:
+        - 3000:3000
+      env:
+        GF_INSTALL_PLUGINS: andrewbmchugh-flow-panel
+        GF_ORG_ROLE: Admin
+        GF_ORG_NAME: Main Org
+        GF_AUTH_ANONYMOUS_ENABLED: "true"
+        GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+        GF_AUTH_ANONYMOUS: "true"
+      labels: { role: telemetry, site: oob }
+      group: "10"
+
+  links:
+    - endpoints: ["dcgw-1:e1-1", "srl-spine-1:e1-9"]
+    - endpoints: ["dcgw-2:e1-1", "srl-spine-1:e1-10"]
+    - endpoints: ["dcgw-1:e1-2", "srl-spine-2:e1-9"]
+    - endpoints: ["dcgw-2:e1-2", "srl-spine-2:e1-10"]
+    - endpoints: ["dcgw-3:e1-1", "srl-spine-3:e1-9"]
+    - endpoints: ["dcgw-4:e1-1", "srl-spine-3:e1-10"]
+    - endpoints: ["dcgw-3:e1-2", "srl-spine-4:e1-9"]
+    - endpoints: ["dcgw-4:e1-2", "srl-spine-4:e1-10"]
+    - endpoints: ["dcgw-1:e1-3", "dcgw-2:e1-3"]
+    - endpoints: ["dcgw-1:e1-4", "dcgw-2:e1-4"]
+    - endpoints: ["dcgw-3:e1-3", "dcgw-4:e1-3"]
+    - endpoints: ["dcgw-3:e1-4", "dcgw-4:e1-4"]
+    - endpoints: ["dcgw-1:e1-5", "sros-pe-1:1/1/c1/1"]
+    - endpoints: ["dcgw-2:e1-5", "sros-pe-1:1/1/c2/1"]
+    - endpoints: ["dcgw-3:e1-6", "sros-pe-2:1/1/c3/1"]
+    - endpoints: ["dcgw-4:e1-6", "sros-pe-2:1/1/c4/1"]
+    - endpoints: ["sros-pe-1:1/1/c5/1", "sros-pe-2:1/1/c5/1"]
+    - endpoints: ["sros-pe-1:1/1/c6/1", "sros-pe-2:1/1/c6/1"]
+    - endpoints: ["srl-leaf-1:e1-1", "srl-spine-1:e1-1"]
+    - endpoints: ["srl-leaf-1:e1-2", "srl-spine-2:e1-1"]
+    - endpoints: ["srl-leaf-1:e1-3", "srl-spine-1:e1-2"]
+    - endpoints: ["srl-leaf-1:e1-4", "srl-spine-2:e1-2"]
+    - endpoints: ["srl-leaf-2:e1-1", "srl-spine-1:e1-3"]
+    - endpoints: ["srl-leaf-2:e1-2", "srl-spine-2:e1-3"]
+    - endpoints: ["srl-leaf-2:e1-3", "srl-spine-1:e1-4"]
+    - endpoints: ["srl-leaf-2:e1-4", "srl-spine-2:e1-4"]
+    - endpoints: ["srl-leaf-3:e1-1", "srl-spine-1:e1-5"]
+    - endpoints: ["srl-leaf-3:e1-2", "srl-spine-2:e1-5"]
+    - endpoints: ["srl-leaf-3:e1-3", "srl-spine-1:e1-6"]
+    - endpoints: ["srl-leaf-3:e1-4", "srl-spine-2:e1-6"]
+    - endpoints: ["srl-leaf-4:e1-1", "srl-spine-1:e1-7"]
+    - endpoints: ["srl-leaf-4:e1-2", "srl-spine-2:e1-7"]
+    - endpoints: ["srl-leaf-4:e1-3", "srl-spine-1:e1-8"]
+    - endpoints: ["srl-leaf-4:e1-4", "srl-spine-2:e1-8"]
+    - endpoints: ["srl-leaf-5:e1-1", "srl-spine-3:e1-1"]
+    - endpoints: ["srl-leaf-5:e1-2", "srl-spine-4:e1-1"]
+    - endpoints: ["srl-leaf-5:e1-3", "srl-spine-3:e1-2"]
+    - endpoints: ["srl-leaf-5:e1-4", "srl-spine-4:e1-2"]
+    - endpoints: ["srl-leaf-6:e1-1", "srl-spine-3:e1-3"]
+    - endpoints: ["srl-leaf-6:e1-2", "srl-spine-4:e1-3"]
+    - endpoints: ["srl-leaf-6:e1-3", "srl-spine-3:e1-4"]
+    - endpoints: ["srl-leaf-6:e1-4", "srl-spine-4:e1-4"]
+    - endpoints: ["srl-leaf-7:e1-1", "srl-spine-3:e1-5"]
+    - endpoints: ["srl-leaf-7:e1-2", "srl-spine-4:e1-5"]
+    - endpoints: ["srl-leaf-7:e1-3", "srl-spine-3:e1-6"]
+    - endpoints: ["srl-leaf-7:e1-4", "srl-spine-4:e1-6"]
+    - endpoints: ["srl-leaf-8:e1-1", "srl-spine-3:e1-7"]
+    - endpoints: ["srl-leaf-8:e1-2", "srl-spine-4:e1-7"]
+    - endpoints: ["srl-leaf-8:e1-3", "srl-spine-3:e1-8"]
+    - endpoints: ["srl-leaf-8:e1-4", "srl-spine-4:e1-8"]
+
+    # --- client edge: native + SH ---
+    - endpoints: ["client-1-vnet-1-dc1:eth1", "srl-leaf-1:e1-5"]
+    - endpoints: ["client-2-vnet-1-dc1:eth1", "srl-leaf-4:e1-5"]
+    - endpoints: ["client-3-vnet-2-dc2:eth1", "srl-leaf-5:e1-5"]
+    - endpoints: ["client-4-vnet-2-dc2:eth1", "srl-leaf-8:e1-5"]
+    - endpoints: ["client-5-vnet-5-dc1:eth1", "srl-leaf-3:e1-5"]
+    - endpoints: ["client-6-vnet-3-dc1:eth1", "srl-leaf-2:e1-6"]
+    - endpoints: ["client-7-vnet-4-dc2:eth1", "srl-leaf-8:e1-6"]
+    - endpoints: ["client-8-dc1-sh:eth1", "srl-leaf-3:e1-6"]
+    - endpoints: ["client-9-dc2-sh:eth1", "srl-leaf-5:e1-6"]
+
+    # --- multi-homed LACP bonds (e1-10): all-active leaf-3+4, leaf-5+6; single-active leaf-1+2, leaf-7+8 ---
+    - endpoints: ["client-10-dc1-mh:eth1", "srl-leaf-3:e1-10"]
+    - endpoints: ["client-10-dc1-mh:eth2", "srl-leaf-4:e1-10"]
+    - endpoints: ["client-11-dc2-mh:eth1", "srl-leaf-5:e1-10"]
+    - endpoints: ["client-11-dc2-mh:eth2", "srl-leaf-6:e1-10"]
+    - endpoints: ["client-12-dc1-mh:eth1", "srl-leaf-1:e1-10"]
+    - endpoints: ["client-12-dc1-mh:eth2", "srl-leaf-2:e1-10"]
+    - endpoints: ["client-13-dc2-mh:eth1", "srl-leaf-7:e1-10"]
+    - endpoints: ["client-13-dc2-mh:eth2", "srl-leaf-8:e1-10"]

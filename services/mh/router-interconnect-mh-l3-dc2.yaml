@@ -1,0 +1,57 @@
+# MH L3-DCI DC2a: vnet-mh-l3-dc2a / router-mh-dc2a (export RT 431, import RT 430).
+apiVersion: services.eda.nokia.com/v2
+kind: RouterInterconnect
+metadata:
+  name: router-interconnect-mh-l3-dc2a
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/dci: mh-l3-dc2a
+spec:
+  routerRef:
+    name: router-mh-dc2a
+  nodeSelectors:
+    - eda.nokia.com/dci=dc-2
+  primaryBGPInstance:
+    domainId: 65201:431
+  interconnectBGPInstance:
+    controlPlane: IPVPN
+    domainId: 65000:431
+    encapsulation: MPLS
+    evi: 1031
+    exportTarget: target:1:431
+    importTarget: target:1:430
+    mpls:
+      allowedTunnelTypes:
+        - LDP
+    routeDistinguisher:
+      type: Type 0
+      assignedNumber: "9"
+---
+# MH L3-DCI DC2b: vnet-mh-l3-dc2b / router-mh-dc2b (export RT 431, import RT 430).
+apiVersion: services.eda.nokia.com/v2
+kind: RouterInterconnect
+metadata:
+  name: router-interconnect-mh-l3-dc2b
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/dci: mh-l3-dc2b
+spec:
+  routerRef:
+    name: router-mh-dc2b
+  nodeSelectors:
+    - eda.nokia.com/dci=dc-2
+  primaryBGPInstance:
+    domainId: 65201:433
+  interconnectBGPInstance:
+    controlPlane: IPVPN
+    domainId: 65000:433
+    encapsulation: MPLS
+    evi: 1033
+    exportTarget: target:1:431
+    importTarget: target:1:430
+    mpls:
+      allowedTunnelTypes:
+        - LDP
+    routeDistinguisher:
+      type: Type 0
+      assignedNumber: "11"

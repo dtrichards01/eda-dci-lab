@@ -1,0 +1,78 @@
+# Hub interconnect import policy — reference / future vnet-5 (RT 102).
+#
+# WARNING (SRL DCGW): Do NOT attach this policy to router-interconnect-vnet-2
+# interconnectBGPInstance.importPolicy. On SR Linux it derives import-route-target
+# target:106:0 instead of target:1:100 / target:1:102, so WAN spoke routes never
+# leak into router-2. Use importTarget target:1:100 on the hub RIC for vnet-1 instead.
+#
+# Keep this policy for EVPN type-per-statement matching when importPolicy is fixed
+# or for non-DCGW platforms. For hub + vnet-5, need working multi-RT import.
+apiVersion: routingpolicies.eda.nokia.com/v1
+kind: Policy
+metadata:
+  name: import-dci-hub-spoke-stitch
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/dci: l3-stitch
+spec:
+  defaultAction:
+    policyResult: Reject
+  statements:
+    - name: accept-spoke-evpn-type-1
+      action:
+        policyResult: Accept
+      match:
+        families:
+          - EVPN
+        bgp:
+          communitySet: dci-rt-hub-spoke-import
+          evpnRouteTypes:
+            - 1
+    - name: accept-spoke-evpn-type-2
+      action:
+        policyResult: Accept
+      match:
+        families:
+          - EVPN
+        bgp:
+          communitySet: dci-rt-hub-spoke-import
+          evpnRouteTypes:
+            - 2
+    - name: accept-spoke-evpn-type-3
+      action:
+        policyResult: Accept
+      match:
+        families:
+          - EVPN
+        bgp:
+          communitySet: dci-rt-hub-spoke-import
+          evpnRouteTypes:
+            - 3
+    - name: accept-spoke-evpn-type-4
+      action:
+        policyResult: Accept
+      match:
+        families:
+          - EVPN
+        bgp:
+          communitySet: dci-rt-hub-spoke-import
+          evpnRouteTypes:
+            - 4
+    - name: accept-spoke-evpn-type-5
+      action:
+        policyResult: Accept
+      match:
+        families:
+          - EVPN
+        bgp:
+          communitySet: dci-rt-hub-spoke-import
+          evpnRouteTypes:
+            - 5
+    - name: accept-spoke-ipvpn-stitch
+      action:
+        policyResult: Accept
+      match:
+        protocol: BGP_IPVPN
+        bgp:
+          communitySet: dci-rt-hub-spoke-import
+

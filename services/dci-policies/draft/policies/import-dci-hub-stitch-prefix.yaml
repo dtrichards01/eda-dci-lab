@@ -1,0 +1,31 @@
+# DRAFT — Spoke RIC import from hub: prefix + VPNv4 only (no hub EVPN type-2).
+# Use on vnet-1 / vnet-5 RouterInterconnect instead of importTarget 101.
+apiVersion: routingpolicies.eda.nokia.com/v1
+kind: Policy
+metadata:
+  name: import-dci-hub-stitch-prefix
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/dci: l3-stitch
+    eda.nokia.com/dci-draft: wan-dcgw-nh
+spec:
+  defaultAction:
+    policyResult: Reject
+  statements:
+    - name: accept-hub-evpn-type-5
+      action:
+        policyResult: Accept
+      match:
+        families:
+          - EVPN
+        bgp:
+          communitySet: dci-rt-dc2-l3
+          evpnRouteTypes:
+            - 5
+    - name: accept-hub-ipvpn-stitch
+      action:
+        policyResult: Accept
+      match:
+        protocol: BGP_IPVPN
+        bgp:
+          communitySet: dci-rt-dc2-l3

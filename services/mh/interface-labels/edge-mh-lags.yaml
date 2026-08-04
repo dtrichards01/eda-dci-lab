@@ -1,0 +1,154 @@
+# MH L3-only ESI LAG edges (e1-10, Dot1q VLAN 200).
+# Labels: role=edge + one vnet selector per LAG (no mh-es / L2 selectors).
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: mh-dc1a-lag-leaf-3-4
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: edge
+    eda.nokia.com/vnet-mh-l3-dc1a: vlan-bd-mh-200-dc1a
+spec:
+  description: MH all-active DC1 L3 — client-10-dc1-mh (leaf-3 + leaf-4 e1-10)
+  enabled: true
+  encapType: Dot1q
+  ethernet:
+    stormControl:
+      enabled: false
+  lldp: true
+  type: LAG
+  lag:
+    type: LACP
+    minLinks: 1
+    multihoming:
+      mode: AllActive
+      preferredActiveNode: srl-leaf-3
+      revertive: true
+    lacp:
+      mode: Active
+      interval: Fast
+      systemPriority: 32768
+  members:
+    - enabled: true
+      interface: ethernet-1-10
+      lacpPortPriority: 32768
+      node: srl-leaf-3
+    - enabled: true
+      interface: ethernet-1-10
+      lacpPortPriority: 32768
+      node: srl-leaf-4
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: mh-dc2a-lag-leaf-5-6
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: edge
+    eda.nokia.com/vnet-mh-l3-dc2a: vlan-bd-mh-200-dc2a
+spec:
+  description: MH all-active DC2 L3 — client-11-dc2-mh (leaf-5 + leaf-6 e1-10)
+  enabled: true
+  encapType: Dot1q
+  ethernet:
+    stormControl:
+      enabled: false
+  lldp: true
+  type: LAG
+  lag:
+    type: LACP
+    minLinks: 1
+    multihoming:
+      mode: AllActive
+      preferredActiveNode: srl-leaf-5
+      revertive: true
+    lacp:
+      mode: Active
+      interval: Fast
+      systemPriority: 32768
+  members:
+    - enabled: true
+      interface: ethernet-1-10
+      lacpPortPriority: 32768
+      node: srl-leaf-5
+    - enabled: true
+      interface: ethernet-1-10
+      lacpPortPriority: 32768
+      node: srl-leaf-6
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: mh-dc1b-lag-leaf-1-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: edge
+    eda.nokia.com/vnet-mh-l3-dc1b: vlan-bd-mh-200-dc1b
+spec:
+  description: MH single-active DC1 L3 — client-12-dc1-mh (leaf-1 + leaf-2 e1-10)
+  enabled: true
+  encapType: Dot1q
+  ethernet:
+    stormControl:
+      enabled: false
+  lldp: true
+  type: LAG
+  lag:
+    type: LACP
+    minLinks: 1
+    multihoming:
+      mode: SingleActive
+      preferredActiveNode: srl-leaf-1
+      revertive: true
+    lacp:
+      mode: Active
+      interval: Fast
+      systemPriority: 32768
+  members:
+    - enabled: true
+      interface: ethernet-1-10
+      lacpPortPriority: 32768
+      node: srl-leaf-1
+    - enabled: true
+      interface: ethernet-1-10
+      lacpPortPriority: 32768
+      node: srl-leaf-2
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: mh-dc2b-lag-leaf-7-8
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: edge
+    eda.nokia.com/vnet-mh-l3-dc2b: vlan-bd-mh-200-dc2b
+spec:
+  description: MH single-active DC2 L3 — client-13-dc2-mh (leaf-7 + leaf-8 e1-10)
+  enabled: true
+  encapType: Dot1q
+  ethernet:
+    stormControl:
+      enabled: false
+  lldp: true
+  type: LAG
+  lag:
+    type: LACP
+    minLinks: 1
+    multihoming:
+      mode: SingleActive
+      preferredActiveNode: srl-leaf-7
+      revertive: true
+    lacp:
+      mode: Active
+      interval: Fast
+      systemPriority: 32768
+  members:
+    - enabled: true
+      interface: ethernet-1-10
+      lacpPortPriority: 32768
+      node: srl-leaf-7
+    - enabled: true
+      interface: ethernet-1-10
+      lacpPortPriority: 32768
+      node: srl-leaf-8

@@ -1,0 +1,9 @@
+apiVersion: services.eda.nokia.com/v2
+kind: BridgeDomainDeployment
+metadata:
+  name: dcgw-2-bd-4
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  bridgeDomain: bd-4
+  node: dcgw-2
+  type: EVPNVXLAN

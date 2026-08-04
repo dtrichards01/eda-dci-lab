@@ -1,0 +1,42 @@
+# DRAFT — DC2 WAN import: only vnet-1 spoke stitch (RT 100), type-5 + VPNv4.
+apiVersion: routingpolicies.eda.nokia.com/v1
+kind: Policy
+metadata:
+  name: import-dci-services-dc-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/dci: l3-stitch
+    eda.nokia.com/dci-draft: wan-dcgw-nh
+spec:
+  defaultAction:
+    policyResult: Reject
+  statements:
+    - name: reject-dc2-soo-evpn
+      action:
+        policyResult: Reject
+      match:
+        families:
+          - EVPN
+        bgp:
+          communitySet: soo-2211
+    - name: accept-remote-spoke-evpn-type-5
+      action:
+        policyResult: Accept
+        tags:
+          applyTagSet: tag-20
+      match:
+        families:
+          - EVPN
+        bgp:
+          communitySet: dci-rt-dc1-l3
+          evpnRouteTypes:
+            - 5
+    - name: accept-remote-spoke-ipvpn
+      action:
+        policyResult: Accept
+        tags:
+          applyTagSet: tag-20
+      match:
+        protocol: BGP_IPVPN
+        bgp:
+          communitySet: dci-rt-dc1-l3

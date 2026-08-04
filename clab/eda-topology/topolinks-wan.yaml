@@ -1,0 +1,120 @@
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: dcgw-1-ethernet-1-5--sros-pe-1-1-1-c1-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: dcgw-1
+      interface: ethernet-1-5
+      interfaceResource: dcgw-1-ethernet-1-5
+    remote:
+      node: sros-pe-1
+      interface: 1-1-c1-1
+      interfaceResource: sros-pe-1-1-1-c1-1
+    type: interSwitch
+    speed: 100G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: dcgw-2-ethernet-1-5--sros-pe-1-1-1-c2-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: dcgw-2
+      interface: ethernet-1-5
+      interfaceResource: dcgw-2-ethernet-1-5
+    remote:
+      node: sros-pe-1
+      interface: 1-1-c2-1
+      interfaceResource: sros-pe-1-1-1-c2-1
+    type: interSwitch
+    speed: 100G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: dcgw-3-ethernet-1-6--sros-pe-2-1-1-c3-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: dcgw-3
+      interface: ethernet-1-6
+      interfaceResource: dcgw-3-ethernet-1-6
+    remote:
+      node: sros-pe-2
+      interface: 1-1-c3-1
+      interfaceResource: sros-pe-2-1-1-c3-1
+    type: interSwitch
+    speed: 100G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: dcgw-4-ethernet-1-6--sros-pe-2-1-1-c4-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: dcgw-4
+      interface: ethernet-1-6
+      interfaceResource: dcgw-4-ethernet-1-6
+    remote:
+      node: sros-pe-2
+      interface: 1-1-c4-1
+      interfaceResource: sros-pe-2-1-1-c4-1
+    type: interSwitch
+    speed: 100G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: sros-pe-2-1-1-c5-1--sros-pe-1-1-1-c5-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: sros-pe-2
+      interface: 1-1-c5-1
+      interfaceResource: sros-pe-2-1-1-c5-1
+    remote:
+      node: sros-pe-1
+      interface: 1-1-c5-1
+      interfaceResource: sros-pe-1-1-1-c5-1
+    type: interSwitch
+    speed: 100G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: sros-pe-2-1-1-c6-1--sros-pe-1-1-1-c6-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: sros-pe-2
+      interface: 1-1-c6-1
+      interfaceResource: sros-pe-2-1-1-c6-1
+    remote:
+      node: sros-pe-1
+      interface: 1-1-c6-1
+      interfaceResource: sros-pe-1-1-1-c6-1
+    type: interSwitch
+    speed: 100G

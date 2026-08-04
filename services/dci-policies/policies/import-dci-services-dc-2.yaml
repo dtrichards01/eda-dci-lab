@@ -1,0 +1,38 @@
+# WAN import on DC2 DCI BGP peers: accept spoke VPNv4 RT 100 (vnet-1) and RT 102 (vnet-5).
+apiVersion: routingpolicies.eda.nokia.com/v1
+kind: Policy
+metadata:
+  name: import-dci-services-dc-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/dci: vpnv4-wan-l3
+spec:
+  defaultAction:
+    policyResult: Reject
+  statements:
+    - name: reject-dc2-soo-evpn
+      action:
+        policyResult: Reject
+      match:
+        families:
+          - EVPN
+        bgp:
+          communitySet: soo-2211
+    - name: reject-all-remote-evpn
+      action:
+        policyResult: Reject
+      match:
+        families:
+          - EVPN
+    - name: accept-remote-spoke-ipvpn-vnet-1
+      action:
+        policyResult: Accept
+      match:
+        bgp:
+          communitySet: dci-rt-dc1-l3
+    - name: accept-remote-spoke-ipvpn-vnet-5
+      action:
+        policyResult: Accept
+      match:
+        bgp:
+          communitySet: dci-rt-vnet-5-stitch

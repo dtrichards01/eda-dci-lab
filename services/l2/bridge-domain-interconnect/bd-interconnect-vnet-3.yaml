@@ -1,0 +1,21 @@
+# L2 native DC1: export bd-3 (vnet-3, 103.1) from DC1 DCGWs. Cross-DC peer is vnet-4/bd-4 (103.2) — same subnet, pure L2.
+apiVersion: services.eda.nokia.com/v2
+kind: BridgeDomainInterconnect
+metadata:
+  name: bd-interconnect-vnet-3
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  bridgeDomainRef:
+    name: bd-3
+  nodeSelectors:
+    - eda.nokia.com/dci=dc-1
+  interconnectBGPInstance:
+    controlPlane: EVPN
+    encapsulation: MPLS
+    evi: 110
+    exportTarget: target:1:300
+    importTarget: target:1:301
+    mpls:
+      allowedTunnelTypes:
+        - LDP
+      controlWord: true

@@ -1,0 +1,30 @@
+# DRAFT — vnet-1 RIC export: L3 prefix + VPNv4 only (replaces export-dci-stitch-dc1-vnet-1 when testing).
+apiVersion: routingpolicies.eda.nokia.com/v1
+kind: Policy
+metadata:
+  name: export-dci-stitch-dc1-vnet-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/dci: l3-stitch
+    eda.nokia.com/dci-draft: wan-dcgw-nh
+spec:
+  defaultAction:
+    policyResult: Reject
+  statements:
+    - name: export-local-evpn-type-5
+      action:
+        policyResult: Accept
+      match:
+        families:
+          - EVPN
+        bgp:
+          communitySet: dci-rt-dc1-l3
+          evpnRouteTypes:
+            - 5
+    - name: export-local-ipvpn-stitch
+      action:
+        policyResult: Accept
+      match:
+        protocol: BGP_IPVPN
+        bgp:
+          communitySet: dci-rt-dc1-l3

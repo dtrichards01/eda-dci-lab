@@ -1,0 +1,21 @@
+# L2 native DC2: export bd-4 (vnet-4, 103.2) from DC2 DCGWs. Same subnet as vnet-3 — pure L2 DCI, no IRB.
+apiVersion: services.eda.nokia.com/v2
+kind: BridgeDomainInterconnect
+metadata:
+  name: bd-interconnect-vnet-4
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  bridgeDomainRef:
+    name: bd-4
+  nodeSelectors:
+    - eda.nokia.com/dci=dc-2
+  interconnectBGPInstance:
+    controlPlane: EVPN
+    encapsulation: MPLS
+    evi: 111
+    exportTarget: target:1:301
+    importTarget: target:1:300
+    mpls:
+      allowedTunnelTypes:
+        - LDP
+      controlWord: true

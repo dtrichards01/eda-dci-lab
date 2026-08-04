@@ -1,0 +1,51 @@
+# WAN export DC1: VPNv4 vnet-1 (RT 100) only. default Reject — do not export fabric EVPN.
+# CR name matches live export-dc-1-prefixes-and-add-soo on dcgw-1-dcgw-3 peer.
+apiVersion: routingpolicies.eda.nokia.com/v1
+kind: Policy
+metadata:
+  name: export-dc-1-prefixes-and-add-soo
+  namespace: clab-srl-leaf-spine-dcgw
+  annotations:
+    l2: loop-avoidance
+  labels:
+    eda.nokia.com/dci: underlay-isolation-draft
+spec:
+  defaultAction:
+    policyResult: Reject
+  statements:
+    - name: reject-imported-evpn
+      action:
+        policyResult: Reject
+      match:
+        families:
+          - EVPN
+        tags:
+          tagSet: tag-10
+    - name: reject-imported-ipvpn
+      action:
+        policyResult: Reject
+      match:
+        protocol: BGP_IPVPN
+        tags:
+          tagSet: tag-10
+    - name: reject-all-local-evpn
+      action:
+        policyResult: Reject
+      match:
+        families:
+          - EVPN
+        tags:
+          tagSet: tag-10
+    - name: export-local-ipvpn-vnet-1
+      action:
+        policyResult: Accept
+        bgp:
+          communities:
+            addSets:
+              - soo-1122
+      match:
+        protocol: BGP_IPVPN
+        tags:
+          tagSet: tag-10
+        bgp:
+          communitySet: dci-rt-dc1-l3

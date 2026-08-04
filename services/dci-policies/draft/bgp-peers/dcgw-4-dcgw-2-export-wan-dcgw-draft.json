@@ -1,0 +1,12 @@
+[
+  {
+    "op": "replace",
+    "path": "/spec/exportPolicies",
+    "value": ["export-dc-2-routes-wan-dcgw"]
+  },
+  {
+    "op": "add",
+    "path": "/spec/nextHopSelf",
+    "value": true
+  }
+]

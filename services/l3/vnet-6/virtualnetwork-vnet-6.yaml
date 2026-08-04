@@ -1,0 +1,64 @@
+# vnet-6 stretched-homed DC1 — subnet 172.16.155.0/24 (client-8-dc1-sh).
+apiVersion: services.eda.nokia.com/v2
+kind: VirtualNetwork
+metadata:
+  name: vnet-6
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/dci: sh-dc1
+spec:
+  bridgeDomains:
+    - name: bd-6
+      spec:
+        encapOptions:
+          vxlan:
+            tunnelIndexPool: tunnel-index-pool
+            vniPool: vni-pool
+        eviPool: evi-pool
+        macLearning:
+          agingTimeSeconds: 300
+          enabled: true
+        macLimit: 2000
+        type: EVPNVXLAN
+  bridgeInterfaces: []
+  irbInterfaces:
+    - name: irb-6
+      spec:
+        bridgeDomain: bd-6
+        ipAddresses:
+          - ipv4Address:
+              ipPrefix: 172.16.155.254/24
+              primary: true
+        ipMTU: 1500
+        ipv4:
+          arpTimeoutSeconds: 14400
+          learnUnsolicitedARP: Disabled
+        router: router-6
+  routedInterfaces: []
+  routers:
+    - name: router-6
+      spec:
+        bgp:
+          autonomousSystem: 65406
+          ebgpPreference: 170
+          enabled: true
+          ibgpPreference: 170
+          ipv4Unicast:
+            enabled: true
+          minWaitToAdvertiseSeconds: 0
+          rapidWithdrawl: true
+          waitForFIBInstall: false
+        encapOptions:
+          vxlan:
+            tunnelIndexPool: tunnel-index-pool
+            vniPool: vni-pool
+        eviPool: evi-pool
+        routerID: 6.6.6.6
+        type: EVPNVXLAN
+  vlans:
+    - name: vlan-null-vnet-6
+      spec:
+        bridgeDomain: bd-6
+        interfaceSelectors:
+          - eda.nokia.com/vnet-6=vlan-bd-6
+        vlanID: "null"

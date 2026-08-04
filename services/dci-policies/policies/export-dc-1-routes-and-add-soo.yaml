@@ -1,0 +1,55 @@
+# DC1 WAN export: vnet-1 (RT 100) + vnet-5 spoke (RT 102) VPNv4 + SOO.
+apiVersion: routingpolicies.eda.nokia.com/v1
+kind: Policy
+metadata:
+  name: export-dc-1-routes-and-add-soo
+  namespace: clab-srl-leaf-spine-dcgw
+  annotations:
+    l2: loop-avoidance
+  labels:
+    eda.nokia.com/dci: vpnv4-wan-l3
+spec:
+  defaultAction:
+    policyResult: Reject
+  statements:
+    - name: reject-imported-evpn
+      action:
+        policyResult: Reject
+      match:
+        families:
+          - EVPN
+        tags:
+          tagSet: tag-20
+    - name: reject-imported-ipvpn
+      action:
+        policyResult: Reject
+      match:
+        protocol: BGP_IPVPN
+        tags:
+          tagSet: tag-20
+    - name: reject-all-local-evpn
+      action:
+        policyResult: Reject
+      match:
+        families:
+          - EVPN
+    - name: export-local-ipvpn-vnet-1
+      action:
+        policyResult: Accept
+        bgp:
+          communities:
+            addSets:
+              - soo-1122
+      match:
+        bgp:
+          communitySet: dci-rt-dc1-l3
+    - name: export-local-ipvpn-vnet-5
+      action:
+        policyResult: Accept
+        bgp:
+          communities:
+            addSets:
+              - soo-1122
+      match:
+        bgp:
+          communitySet: dci-rt-vnet-5-stitch

@@ -1,0 +1,10 @@
+# Import-side bd-3 on DC2 DCGW (native vnet-3 in DC1).
+apiVersion: services.eda.nokia.com/v2
+kind: BridgeDomainDeployment
+metadata:
+  name: dcgw-3-bd-3
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  bridgeDomain: bd-3
+  node: dcgw-3
+  type: EVPNVXLAN

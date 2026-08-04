@@ -1,0 +1,23 @@
+# Native DC1 edge for vnet-5 spoke client.
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-3-ethernet-1-5
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: edge
+    eda.nokia.com/vnet-5: vlan-bd-5
+spec:
+  description: edge L3 vnet-5 DC1 spoke — client-5-vnet-5-dc1
+  enabled: true
+  encapType: "Null"
+  ethernet:
+    stormControl:
+      enabled: false
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-5
+      lacpPortPriority: 32768
+      node: srl-leaf-3
+  type: Interface

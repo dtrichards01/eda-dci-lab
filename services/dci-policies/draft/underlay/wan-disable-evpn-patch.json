@@ -1,0 +1,7 @@
+[
+  {
+    "op": "replace",
+    "path": "/spec/l2VPNEVPN",
+    "value": { "enabled": false }
+  }
+]

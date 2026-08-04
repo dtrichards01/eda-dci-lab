@@ -1,0 +1,61 @@
+# DRAFT — Secondary DC1→DC2 WAN: vnet-1 only (RT 100), type-5 + VPNv4.
+# Pair with nextHopSelf on WAN BGP peer.
+apiVersion: routingpolicies.eda.nokia.com/v1
+kind: Policy
+metadata:
+  name: export-dc-1-routes-wan-dcgw
+  namespace: clab-srl-leaf-spine-dcgw
+  annotations:
+    l2: loop-avoidance
+    eda.nokia.com/dci-draft: wan-dcgw-nh
+  labels:
+    eda.nokia.com/dci: l3-stitch
+    eda.nokia.com/dci-draft: wan-dcgw-nh
+spec:
+  defaultAction:
+    policyResult: Reject
+  statements:
+    - name: reject-imported-evpn
+      action:
+        policyResult: Reject
+      match:
+        families:
+          - EVPN
+        tags:
+          tagSet: tag-10
+    - name: reject-imported-ipvpn
+      action:
+        policyResult: Reject
+      match:
+        protocol: BGP_IPVPN
+        tags:
+          tagSet: tag-10
+    - name: export-local-evpn-vnet-1-prefix
+      action:
+        policyResult: Accept
+        bgp:
+          communities:
+            addSets:
+              - soo-1122
+      match:
+        families:
+          - EVPN
+        tags:
+          tagSet: tag-10
+        bgp:
+          communitySet: dci-rt-dc1-l3
+          evpnRouteTypes:
+            - 5
+    - name: export-local-ipvpn-vnet-1
+      action:
+        policyResult: Accept
+        bgp:
+          communities:
+            addSets:
+              - soo-1122
+      match:
+        protocol: BGP_IPVPN
+        tags:
+          tagSet: tag-10
+        bgp:
+          communitySet: dci-rt-dc1-l3

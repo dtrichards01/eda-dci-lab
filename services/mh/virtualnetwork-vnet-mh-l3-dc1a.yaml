@@ -1,0 +1,64 @@
+# MH L3-DCI DC1a — client-10, leaf-3 + leaf-4, VLAN 200, 10.200.1.0/24.
+apiVersion: services.eda.nokia.com/v2
+kind: VirtualNetwork
+metadata:
+  name: vnet-mh-l3-dc1a
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/mh: l3-dc1a
+spec:
+  bridgeDomains:
+    - name: bd-mh-200-dc1a
+      spec:
+        encapOptions:
+          vxlan:
+            tunnelIndexPool: tunnel-index-pool
+            vniPool: vni-pool
+        eviPool: evi-pool
+        macLearning:
+          agingTimeSeconds: 300
+          enabled: true
+        macLimit: 2000
+        type: EVPNVXLAN
+  bridgeInterfaces: []
+  irbInterfaces:
+    - name: irb-mh-200-dc1a
+      spec:
+        bridgeDomain: bd-mh-200-dc1a
+        ipAddresses:
+          - ipv4Address:
+              ipPrefix: 10.200.1.254/24
+              primary: true
+        ipMTU: 1500
+        ipv4:
+          arpTimeoutSeconds: 14400
+          learnUnsolicitedARP: Disabled
+        router: router-mh-dc1a
+  routedInterfaces: []
+  routers:
+    - name: router-mh-dc1a
+      spec:
+        bgp:
+          autonomousSystem: 65200
+          ebgpPreference: 170
+          enabled: true
+          ibgpPreference: 170
+          ipv4Unicast:
+            enabled: true
+          minWaitToAdvertiseSeconds: 0
+          rapidWithdrawl: true
+          waitForFIBInstall: false
+        encapOptions:
+          vxlan:
+            tunnelIndexPool: tunnel-index-pool
+            vniPool: vni-pool
+        eviPool: evi-pool
+        routerID: 8.8.8.8
+        type: EVPNVXLAN
+  vlans:
+    - name: vlan-200-mh-dc1a
+      spec:
+        bridgeDomain: bd-mh-200-dc1a
+        interfaceSelectors:
+          - eda.nokia.com/vnet-mh-l3-dc1a=vlan-bd-mh-200-dc1a
+        vlanID: "200"

@@ -1,0 +1,76 @@
+# DCI stitch route-targets (aligned with RouterInterconnect exportTarget).
+# Fabric RTs differ; BGP peer export policies match stitch RTs on secondary links.
+apiVersion: routingpolicies.eda.nokia.com/v1
+kind: CommunitySet
+metadata:
+  name: dci-rt-all-l3-stitch
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  members:
+    - target:1:100
+    - target:1:101
+    - target:1:102
+    - target:1:400
+    - target:1:401
+    - target:1:430
+    - target:1:431
+---
+apiVersion: routingpolicies.eda.nokia.com/v1
+kind: CommunitySet
+metadata:
+  name: dci-rt-dc1-l3
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  members:
+    - target:1:100
+---
+apiVersion: routingpolicies.eda.nokia.com/v1
+kind: CommunitySet
+metadata:
+  name: dci-rt-dc2-l3
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  members:
+    - target:1:101
+---
+# vnet-5 spoke (DC1) — add before hub/spoke phase
+apiVersion: routingpolicies.eda.nokia.com/v1
+kind: CommunitySet
+metadata:
+  name: dci-rt-vnet-5-stitch
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  members:
+    - target:1:102
+---
+# Legacy aliases (L3-only members for BGP export matching)
+apiVersion: routingpolicies.eda.nokia.com/v1
+kind: CommunitySet
+metadata:
+  name: dci-rt-dc1-services
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  members:
+    - target:1:100
+---
+apiVersion: routingpolicies.eda.nokia.com/v1
+kind: CommunitySet
+metadata:
+  name: dci-rt-dc2-services
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  members:
+    - target:1:101
+    - target:1:401
+    - target:1:431
+---
+# L2 stitch RTs (BridgeDomainInterconnect 300/301)
+apiVersion: routingpolicies.eda.nokia.com/v1
+kind: CommunitySet
+metadata:
+  name: dci-rt-l2-stitch
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  members:
+    - target:1:300
+    - target:1:301

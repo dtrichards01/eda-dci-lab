@@ -1,0 +1,47 @@
+# L2 edge ports — vnet-3 DC1 (leaf-2 e1-6), vnet-4 DC2 (leaf-8 e1-6).
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-2-ethernet-1-6
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: edge
+    eda.nokia.com/vnet-3: vlan-bd-3
+spec:
+  description: edge L2 vnet-3 DC1 — client-6-vnet-3-dc1
+  enabled: true
+  encapType: "Null"
+  ethernet:
+    stormControl:
+      enabled: false
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-6
+      lacpPortPriority: 32768
+      node: srl-leaf-2
+  type: Interface
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-leaf-8-ethernet-1-6
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: edge
+    eda.nokia.com/vnet-4: vlan-bd-4
+spec:
+  description: edge L2 vnet-4 DC2 — client-7-vnet-4-dc2
+  enabled: true
+  encapType: "Null"
+  ethernet:
+    stormControl:
+      enabled: false
+  lldp: true
+  members:
+    - enabled: true
+      interface: ethernet-1-6
+      lacpPortPriority: 32768
+      node: srl-leaf-8
+  type: Interface

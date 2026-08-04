@@ -1,0 +1,26 @@
+# L3 native DC1: vnet-1 / router-1 stitch (export RT 100, import hub RT 101).
+apiVersion: services.eda.nokia.com/v2
+kind: RouterInterconnect
+metadata:
+  name: router-interconnect-vnet-1
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  routerRef:
+    name: router-1
+  nodeSelectors:
+    - eda.nokia.com/dci=dc-1
+  primaryBGPInstance:
+    domainId: 65000:200
+  interconnectBGPInstance:
+    controlPlane: IPVPN
+    domainId: 65000:100
+    encapsulation: MPLS
+    evi: 1000
+    exportTarget: target:1:100
+    importTarget: target:1:101
+    mpls:
+      allowedTunnelTypes:
+        - LDP
+    routeDistinguisher:
+      type: Type 0
+      assignedNumber: "2"

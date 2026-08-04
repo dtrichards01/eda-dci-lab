@@ -1,0 +1,36 @@
+# WAN import on DC1 DCI BGP peers (VPNv4-only trial — validated vnet-1 ↔ vnet-2).
+# Reject all remote EVPN; accept hub stitch VPNv4 (RT 101); tag-20 for loop marking.
+apiVersion: routingpolicies.eda.nokia.com/v1
+kind: Policy
+metadata:
+  name: import-dci-services-dc-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/dci: l3-stitch
+spec:
+  defaultAction:
+    policyResult: Reject
+  statements:
+    - name: reject-dc1-soo-evpn
+      action:
+        policyResult: Reject
+      match:
+        families:
+          - EVPN
+        bgp:
+          communitySet: soo-1122
+    - name: reject-all-remote-evpn
+      action:
+        policyResult: Reject
+      match:
+        families:
+          - EVPN
+    - name: accept-remote-hub-ipvpn
+      action:
+        policyResult: Accept
+        tags:
+          applyTagSet: tag-20
+      match:
+        bgp:
+          communitySet: dci-rt-dc2-l3
+

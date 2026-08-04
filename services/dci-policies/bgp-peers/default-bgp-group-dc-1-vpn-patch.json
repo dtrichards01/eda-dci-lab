@@ -1,0 +1,7 @@
+[
+  {
+    "op": "add",
+    "path": "/spec/vpnIPv4Unicast",
+    "value": { "enabled": true }
+  }
+]

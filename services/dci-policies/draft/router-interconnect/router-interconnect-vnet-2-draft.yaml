@@ -1,0 +1,28 @@
+# DRAFT — Hub vnet-2: exportPolicy + import vnet-1 only (no vnet-5 RT 102).
+apiVersion: services.eda.nokia.com/v2
+kind: RouterInterconnect
+metadata:
+  name: router-interconnect-vnet-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/dci-draft: wan-dcgw-nh
+spec:
+  routerRef:
+    name: router-2
+  nodeSelectors:
+    - eda.nokia.com/dci=dc-2
+  primaryBGPInstance:
+    domainId: 65001:201
+  interconnectBGPInstance:
+    controlPlane: IPVPN
+    domainId: 65000:101
+    encapsulation: MPLS
+    evi: 1000
+    exportPolicy: export-dci-stitch-dc2-hub
+    importPolicy: import-dci-hub-vnet-1-stitch
+    mpls:
+      allowedTunnelTypes:
+        - LDP
+    routeDistinguisher:
+      type: Type 0
+      assignedNumber: "2"

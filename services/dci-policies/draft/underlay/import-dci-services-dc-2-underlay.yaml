@@ -1,0 +1,35 @@
+# WAN import DC2: VPNv4 stitch RT 100 only. No remote EVPN.
+apiVersion: routingpolicies.eda.nokia.com/v1
+kind: Policy
+metadata:
+  name: import-dci-services-dc-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/dci: underlay-isolation-draft
+spec:
+  defaultAction:
+    policyResult: Reject
+  statements:
+    - name: reject-dc2-soo-evpn
+      action:
+        policyResult: Reject
+      match:
+        families:
+          - EVPN
+        bgp:
+          communitySet: soo-2211
+    - name: reject-all-remote-evpn
+      action:
+        policyResult: Reject
+      match:
+        families:
+          - EVPN
+    - name: accept-remote-spoke-ipvpn
+      action:
+        policyResult: Accept
+        tags:
+          applyTagSet: tag-20
+      match:
+        protocol: BGP_IPVPN
+        bgp:
+          communitySet: dci-rt-dc1-l3

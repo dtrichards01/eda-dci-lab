@@ -1,0 +1,28 @@
+# DRAFT — vnet-1 spoke: importPolicy prefix-only + exportPolicy (no importTarget/exportTarget).
+apiVersion: services.eda.nokia.com/v2
+kind: RouterInterconnect
+metadata:
+  name: router-interconnect-vnet-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/dci-draft: wan-dcgw-nh
+spec:
+  routerRef:
+    name: router-1
+  nodeSelectors:
+    - eda.nokia.com/dci=dc-1
+  primaryBGPInstance:
+    domainId: 65000:200
+  interconnectBGPInstance:
+    controlPlane: IPVPN
+    domainId: 65000:100
+    encapsulation: MPLS
+    evi: 1000
+    exportPolicy: export-dci-stitch-dc1-vnet-1
+    importPolicy: import-dci-hub-stitch-prefix
+    mpls:
+      allowedTunnelTypes:
+        - LDP
+    routeDistinguisher:
+      type: Type 0
+      assignedNumber: "2"

@@ -1,0 +1,880 @@
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-1-ethernet-1-9--dcgw-1-ethernet-1-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-1
+      interface: ethernet-1-9
+      interfaceResource: srl-spine-1-ethernet-1-9
+    remote:
+      node: dcgw-1
+      interface: ethernet-1-1
+      interfaceResource: dcgw-1-ethernet-1-1
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-1-ethernet-1-10--dcgw-2-ethernet-1-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-1
+      interface: ethernet-1-10
+      interfaceResource: srl-spine-1-ethernet-1-10
+    remote:
+      node: dcgw-2
+      interface: ethernet-1-1
+      interfaceResource: dcgw-2-ethernet-1-1
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-2-ethernet-1-9--dcgw-1-ethernet-1-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-2
+      interface: ethernet-1-9
+      interfaceResource: srl-spine-2-ethernet-1-9
+    remote:
+      node: dcgw-1
+      interface: ethernet-1-2
+      interfaceResource: dcgw-1-ethernet-1-2
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-2-ethernet-1-10--dcgw-2-ethernet-1-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-2
+      interface: ethernet-1-10
+      interfaceResource: srl-spine-2-ethernet-1-10
+    remote:
+      node: dcgw-2
+      interface: ethernet-1-2
+      interfaceResource: dcgw-2-ethernet-1-2
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-3-ethernet-1-9--dcgw-3-ethernet-1-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-3
+      interface: ethernet-1-9
+      interfaceResource: srl-spine-3-ethernet-1-9
+    remote:
+      node: dcgw-3
+      interface: ethernet-1-1
+      interfaceResource: dcgw-3-ethernet-1-1
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-3-ethernet-1-10--dcgw-4-ethernet-1-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-3
+      interface: ethernet-1-10
+      interfaceResource: srl-spine-3-ethernet-1-10
+    remote:
+      node: dcgw-4
+      interface: ethernet-1-1
+      interfaceResource: dcgw-4-ethernet-1-1
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-4-ethernet-1-9--dcgw-3-ethernet-1-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-4
+      interface: ethernet-1-9
+      interfaceResource: srl-spine-4-ethernet-1-9
+    remote:
+      node: dcgw-3
+      interface: ethernet-1-2
+      interfaceResource: dcgw-3-ethernet-1-2
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-4-ethernet-1-10--dcgw-4-ethernet-1-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-4
+      interface: ethernet-1-10
+      interfaceResource: srl-spine-4-ethernet-1-10
+    remote:
+      node: dcgw-4
+      interface: ethernet-1-2
+      interfaceResource: dcgw-4-ethernet-1-2
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: dcgw-1-ethernet-1-3--dcgw-2-ethernet-1-3
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: dcgw-1
+      interface: ethernet-1-3
+      interfaceResource: dcgw-1-ethernet-1-3
+    remote:
+      node: dcgw-2
+      interface: ethernet-1-3
+      interfaceResource: dcgw-2-ethernet-1-3
+    type: interSwitch
+    speed: 100G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: dcgw-1-ethernet-1-4--dcgw-2-ethernet-1-4
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: dcgw-1
+      interface: ethernet-1-4
+      interfaceResource: dcgw-1-ethernet-1-4
+    remote:
+      node: dcgw-2
+      interface: ethernet-1-4
+      interfaceResource: dcgw-2-ethernet-1-4
+    type: interSwitch
+    speed: 100G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: dcgw-3-ethernet-1-3--dcgw-4-ethernet-1-3
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: dcgw-3
+      interface: ethernet-1-3
+      interfaceResource: dcgw-3-ethernet-1-3
+    remote:
+      node: dcgw-4
+      interface: ethernet-1-3
+      interfaceResource: dcgw-4-ethernet-1-3
+    type: interSwitch
+    speed: 100G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: dcgw-3-ethernet-1-4--dcgw-4-ethernet-1-4
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: dcgw-3
+      interface: ethernet-1-4
+      interfaceResource: dcgw-3-ethernet-1-4
+    remote:
+      node: dcgw-4
+      interface: ethernet-1-4
+      interfaceResource: dcgw-4-ethernet-1-4
+    type: interSwitch
+    speed: 100G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-1-ethernet-1-1--srl-leaf-1-ethernet-1-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-1
+      interface: ethernet-1-1
+      interfaceResource: srl-spine-1-ethernet-1-1
+    remote:
+      node: srl-leaf-1
+      interface: ethernet-1-1
+      interfaceResource: srl-leaf-1-ethernet-1-1
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-2-ethernet-1-1--srl-leaf-1-ethernet-1-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-2
+      interface: ethernet-1-1
+      interfaceResource: srl-spine-2-ethernet-1-1
+    remote:
+      node: srl-leaf-1
+      interface: ethernet-1-2
+      interfaceResource: srl-leaf-1-ethernet-1-2
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-1-ethernet-1-2--srl-leaf-1-ethernet-1-3
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-1
+      interface: ethernet-1-2
+      interfaceResource: srl-spine-1-ethernet-1-2
+    remote:
+      node: srl-leaf-1
+      interface: ethernet-1-3
+      interfaceResource: srl-leaf-1-ethernet-1-3
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-2-ethernet-1-2--srl-leaf-1-ethernet-1-4
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-2
+      interface: ethernet-1-2
+      interfaceResource: srl-spine-2-ethernet-1-2
+    remote:
+      node: srl-leaf-1
+      interface: ethernet-1-4
+      interfaceResource: srl-leaf-1-ethernet-1-4
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-1-ethernet-1-3--srl-leaf-2-ethernet-1-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-1
+      interface: ethernet-1-3
+      interfaceResource: srl-spine-1-ethernet-1-3
+    remote:
+      node: srl-leaf-2
+      interface: ethernet-1-1
+      interfaceResource: srl-leaf-2-ethernet-1-1
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-2-ethernet-1-3--srl-leaf-2-ethernet-1-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-2
+      interface: ethernet-1-3
+      interfaceResource: srl-spine-2-ethernet-1-3
+    remote:
+      node: srl-leaf-2
+      interface: ethernet-1-2
+      interfaceResource: srl-leaf-2-ethernet-1-2
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-1-ethernet-1-4--srl-leaf-2-ethernet-1-3
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-1
+      interface: ethernet-1-4
+      interfaceResource: srl-spine-1-ethernet-1-4
+    remote:
+      node: srl-leaf-2
+      interface: ethernet-1-3
+      interfaceResource: srl-leaf-2-ethernet-1-3
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-2-ethernet-1-4--srl-leaf-2-ethernet-1-4
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-2
+      interface: ethernet-1-4
+      interfaceResource: srl-spine-2-ethernet-1-4
+    remote:
+      node: srl-leaf-2
+      interface: ethernet-1-4
+      interfaceResource: srl-leaf-2-ethernet-1-4
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-1-ethernet-1-5--srl-leaf-3-ethernet-1-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-1
+      interface: ethernet-1-5
+      interfaceResource: srl-spine-1-ethernet-1-5
+    remote:
+      node: srl-leaf-3
+      interface: ethernet-1-1
+      interfaceResource: srl-leaf-3-ethernet-1-1
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-2-ethernet-1-5--srl-leaf-3-ethernet-1-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-2
+      interface: ethernet-1-5
+      interfaceResource: srl-spine-2-ethernet-1-5
+    remote:
+      node: srl-leaf-3
+      interface: ethernet-1-2
+      interfaceResource: srl-leaf-3-ethernet-1-2
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-1-ethernet-1-6--srl-leaf-3-ethernet-1-3
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-1
+      interface: ethernet-1-6
+      interfaceResource: srl-spine-1-ethernet-1-6
+    remote:
+      node: srl-leaf-3
+      interface: ethernet-1-3
+      interfaceResource: srl-leaf-3-ethernet-1-3
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-2-ethernet-1-6--srl-leaf-3-ethernet-1-4
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-2
+      interface: ethernet-1-6
+      interfaceResource: srl-spine-2-ethernet-1-6
+    remote:
+      node: srl-leaf-3
+      interface: ethernet-1-4
+      interfaceResource: srl-leaf-3-ethernet-1-4
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-1-ethernet-1-7--srl-leaf-4-ethernet-1-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-1
+      interface: ethernet-1-7
+      interfaceResource: srl-spine-1-ethernet-1-7
+    remote:
+      node: srl-leaf-4
+      interface: ethernet-1-1
+      interfaceResource: srl-leaf-4-ethernet-1-1
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-2-ethernet-1-7--srl-leaf-4-ethernet-1-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-2
+      interface: ethernet-1-7
+      interfaceResource: srl-spine-2-ethernet-1-7
+    remote:
+      node: srl-leaf-4
+      interface: ethernet-1-2
+      interfaceResource: srl-leaf-4-ethernet-1-2
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-1-ethernet-1-8--srl-leaf-4-ethernet-1-3
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-1
+      interface: ethernet-1-8
+      interfaceResource: srl-spine-1-ethernet-1-8
+    remote:
+      node: srl-leaf-4
+      interface: ethernet-1-3
+      interfaceResource: srl-leaf-4-ethernet-1-3
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-2-ethernet-1-8--srl-leaf-4-ethernet-1-4
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-2
+      interface: ethernet-1-8
+      interfaceResource: srl-spine-2-ethernet-1-8
+    remote:
+      node: srl-leaf-4
+      interface: ethernet-1-4
+      interfaceResource: srl-leaf-4-ethernet-1-4
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-3-ethernet-1-1--srl-leaf-5-ethernet-1-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-3
+      interface: ethernet-1-1
+      interfaceResource: srl-spine-3-ethernet-1-1
+    remote:
+      node: srl-leaf-5
+      interface: ethernet-1-1
+      interfaceResource: srl-leaf-5-ethernet-1-1
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-4-ethernet-1-1--srl-leaf-5-ethernet-1-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-4
+      interface: ethernet-1-1
+      interfaceResource: srl-spine-4-ethernet-1-1
+    remote:
+      node: srl-leaf-5
+      interface: ethernet-1-2
+      interfaceResource: srl-leaf-5-ethernet-1-2
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-3-ethernet-1-2--srl-leaf-5-ethernet-1-3
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-3
+      interface: ethernet-1-2
+      interfaceResource: srl-spine-3-ethernet-1-2
+    remote:
+      node: srl-leaf-5
+      interface: ethernet-1-3
+      interfaceResource: srl-leaf-5-ethernet-1-3
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-4-ethernet-1-2--srl-leaf-5-ethernet-1-4
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-4
+      interface: ethernet-1-2
+      interfaceResource: srl-spine-4-ethernet-1-2
+    remote:
+      node: srl-leaf-5
+      interface: ethernet-1-4
+      interfaceResource: srl-leaf-5-ethernet-1-4
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-3-ethernet-1-3--srl-leaf-6-ethernet-1-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-3
+      interface: ethernet-1-3
+      interfaceResource: srl-spine-3-ethernet-1-3
+    remote:
+      node: srl-leaf-6
+      interface: ethernet-1-1
+      interfaceResource: srl-leaf-6-ethernet-1-1
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-4-ethernet-1-3--srl-leaf-6-ethernet-1-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-4
+      interface: ethernet-1-3
+      interfaceResource: srl-spine-4-ethernet-1-3
+    remote:
+      node: srl-leaf-6
+      interface: ethernet-1-2
+      interfaceResource: srl-leaf-6-ethernet-1-2
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-3-ethernet-1-4--srl-leaf-6-ethernet-1-3
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-3
+      interface: ethernet-1-4
+      interfaceResource: srl-spine-3-ethernet-1-4
+    remote:
+      node: srl-leaf-6
+      interface: ethernet-1-3
+      interfaceResource: srl-leaf-6-ethernet-1-3
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-4-ethernet-1-4--srl-leaf-6-ethernet-1-4
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-4
+      interface: ethernet-1-4
+      interfaceResource: srl-spine-4-ethernet-1-4
+    remote:
+      node: srl-leaf-6
+      interface: ethernet-1-4
+      interfaceResource: srl-leaf-6-ethernet-1-4
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-3-ethernet-1-5--srl-leaf-7-ethernet-1-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-3
+      interface: ethernet-1-5
+      interfaceResource: srl-spine-3-ethernet-1-5
+    remote:
+      node: srl-leaf-7
+      interface: ethernet-1-1
+      interfaceResource: srl-leaf-7-ethernet-1-1
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-4-ethernet-1-5--srl-leaf-7-ethernet-1-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-4
+      interface: ethernet-1-5
+      interfaceResource: srl-spine-4-ethernet-1-5
+    remote:
+      node: srl-leaf-7
+      interface: ethernet-1-2
+      interfaceResource: srl-leaf-7-ethernet-1-2
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-3-ethernet-1-6--srl-leaf-7-ethernet-1-3
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-3
+      interface: ethernet-1-6
+      interfaceResource: srl-spine-3-ethernet-1-6
+    remote:
+      node: srl-leaf-7
+      interface: ethernet-1-3
+      interfaceResource: srl-leaf-7-ethernet-1-3
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-4-ethernet-1-6--srl-leaf-7-ethernet-1-4
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-4
+      interface: ethernet-1-6
+      interfaceResource: srl-spine-4-ethernet-1-6
+    remote:
+      node: srl-leaf-7
+      interface: ethernet-1-4
+      interfaceResource: srl-leaf-7-ethernet-1-4
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-3-ethernet-1-7--srl-leaf-8-ethernet-1-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-3
+      interface: ethernet-1-7
+      interfaceResource: srl-spine-3-ethernet-1-7
+    remote:
+      node: srl-leaf-8
+      interface: ethernet-1-1
+      interfaceResource: srl-leaf-8-ethernet-1-1
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-4-ethernet-1-7--srl-leaf-8-ethernet-1-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-4
+      interface: ethernet-1-7
+      interfaceResource: srl-spine-4-ethernet-1-7
+    remote:
+      node: srl-leaf-8
+      interface: ethernet-1-2
+      interfaceResource: srl-leaf-8-ethernet-1-2
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-3-ethernet-1-8--srl-leaf-8-ethernet-1-3
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-3
+      interface: ethernet-1-8
+      interfaceResource: srl-spine-3-ethernet-1-8
+    remote:
+      node: srl-leaf-8
+      interface: ethernet-1-3
+      interfaceResource: srl-leaf-8-ethernet-1-3
+    type: interSwitch
+    speed: 400G
+---
+apiVersion: core.eda.nokia.com/v1
+kind: TopoLink
+metadata:
+  name: srl-spine-4-ethernet-1-8--srl-leaf-8-ethernet-1-4
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: interSwitch
+spec:
+  links:
+  - local:
+      node: srl-spine-4
+      interface: ethernet-1-8
+      interfaceResource: srl-spine-4-ethernet-1-8
+    remote:
+      node: srl-leaf-8
+      interface: ethernet-1-4
+      interfaceResource: srl-leaf-8-ethernet-1-4
+    type: interSwitch
+    speed: 400G

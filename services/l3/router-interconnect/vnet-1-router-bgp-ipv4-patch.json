@@ -1,0 +1,9 @@
+[
+  {
+    "op": "add",
+    "path": "/spec/routers/0/spec/bgp/ipv4Unicast",
+    "value": {
+      "enabled": true
+    }
+  }
+]

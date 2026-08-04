@@ -1,0 +1,19 @@
+# Hub vnet-2 RIC import: match vpn-import-rts (RT 100 + 102) on IPVPN control plane.
+# Production hub import policy — attached on router-interconnect-vnet-2.
+apiVersion: routingpolicies.eda.nokia.com/v1
+kind: Policy
+metadata:
+  name: multi-rt-import
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/dci: l3-stitch
+spec:
+  defaultAction:
+    policyResult: Reject
+  statements:
+    - name: accept-selected-rts
+      action:
+        policyResult: Accept
+      match:
+        bgp:
+          communitySet: vpn-import-rts

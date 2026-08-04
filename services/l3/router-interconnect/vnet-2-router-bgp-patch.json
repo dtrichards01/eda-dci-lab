@@ -1,0 +1,13 @@
+[
+  {
+    "op": "add",
+    "path": "/spec/routers/0/spec/bgp",
+    "value": {
+      "autonomousSystem": 65402,
+      "enabled": true,
+      "ipv4Unicast": {
+        "enabled": true
+      }
+    }
+  }
+]

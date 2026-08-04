@@ -1,0 +1,12 @@
+# DC1 spokes exported on secondary DCI link (vnet-1 RT 100 + vnet-5 RT 102).
+apiVersion: routingpolicies.eda.nokia.com/v1
+kind: CommunitySet
+metadata:
+  name: dci-rt-dc1-spoke-export
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  members:
+    - target:1:100
+    - target:1:102
+    - target:1:400
+    - target:1:430
