@@ -239,7 +239,6 @@ Or: `bash ~/eda-dci-lab/scripts/apply-all.sh`
 | vnet-5 ↔ vnet-2 hub-spoke | **Working** |
 | Hub RIC import | **`multi-rt-import`** + `vpn-import-rts` (`100`, `102`) |
 | Fabric EVPN / system/VTEP on WAN | **Blocked** (AFI + policy) |
-| Spoke vnet-1 ↔ vnet-5 direct (same DC) | **Not isolated** — intra-DC DCGW leak (follow-up) |
 | EVPN control plane DCI trial | **Separate repo** `eda-dci-evpn-lab` — production stays IPVPN on RIC |
 
 **EDA reconcile:** After `kubectl apply`, confirm `running-version` matches CR spec and no `failed-transaction` annotation before treating a change as deployed. EDA UI shows **running** config on the SRL nodes, not just CR intent.
