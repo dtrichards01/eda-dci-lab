@@ -27,6 +27,34 @@ spec:
         protocol: BGP_IPVPN
         tags:
           tagSet: tag-20
+    - name: export-local-l2-type-2-evpn
+      action:
+        policyResult: Accept
+        bgp:
+          communities:
+            addSets:
+              - soo-1122
+      match:
+        families:
+          - EVPN
+        bgp:
+          communitySet: dci-rt-l2-export-dc1
+          evpnRouteTypes:
+            - 2
+    - name: export-local-l2-type-3-evpn
+      action:
+        policyResult: Accept
+        bgp:
+          communities:
+            addSets:
+              - soo-1122
+      match:
+        families:
+          - EVPN
+        bgp:
+          communitySet: dci-rt-l2-export-dc1
+          evpnRouteTypes:
+            - 3
     - name: reject-all-local-evpn
       action:
         policyResult: Reject

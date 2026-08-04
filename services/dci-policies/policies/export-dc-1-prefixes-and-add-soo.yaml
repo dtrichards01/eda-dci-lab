@@ -1,147 +1,83 @@
-# DC2 WAN export: local vnet-2 hub stitch VPNv4 (RT 101) + SOO. VPNv4-only on WAN AFI.
-
+# Primary DC1→DC2 link (dcgw-1-dcgw-3): L2 EVPN stitch + L3 VPNv4 export + SOO.
 apiVersion: routingpolicies.eda.nokia.com/v1
-
 kind: Policy
-
 metadata:
-
-  name: export-dc-2-routes-and-add-soo
-
+  name: export-dc-1-prefixes-and-add-soo
   namespace: clab-srl-leaf-spine-dcgw
-
   annotations:
-
     l2: loop-avoidance
-
   labels:
-
-    eda.nokia.com/dci: l3-stitch
-
+    eda.nokia.com/dci: l2-l3-stitch
 spec:
-
   defaultAction:
-
     policyResult: Reject
-
   statements:
-
     - name: reject-imported-evpn
-
       action:
-
         policyResult: Reject
-
       match:
-
         families:
-
           - EVPN
-
         tags:
-
-          tagSet: tag-10
-
+          tagSet: tag-20
     - name: reject-imported-ipvpn
-
       action:
-
         policyResult: Reject
-
       match:
-
         protocol: BGP_IPVPN
-
         tags:
-
-          tagSet: tag-10
-
+          tagSet: tag-20
     - name: export-local-l2-type-2-evpn
-
       action:
-
         policyResult: Accept
-
         bgp:
-
           communities:
-
             addSets:
-
-              - soo-2211
-
+              - soo-1122
       match:
-
         families:
-
           - EVPN
-
         bgp:
-
-          communitySet: dci-rt-l2-export-dc2
-
+          communitySet: dci-rt-l2-export-dc1
           evpnRouteTypes:
-
             - 2
-
     - name: export-local-l2-type-3-evpn
-
       action:
-
         policyResult: Accept
-
         bgp:
-
           communities:
-
             addSets:
-
-              - soo-2211
-
+              - soo-1122
       match:
-
         families:
-
           - EVPN
-
         bgp:
-
-          communitySet: dci-rt-l2-export-dc2
-
+          communitySet: dci-rt-l2-export-dc1
           evpnRouteTypes:
-
             - 3
-
     - name: reject-all-local-evpn
-
       action:
-
         policyResult: Reject
-
       match:
-
         families:
-
           - EVPN
-
-    - name: export-local-ipvpn-vnet-2
-
+    - name: export-local-ipvpn-vnet-1
       action:
-
         policyResult: Accept
-
         bgp:
-
           communities:
-
             addSets:
-
-              - soo-2211
-
+              - soo-1122
       match:
-
         bgp:
-
-          communitySet: dci-rt-dc2-l3
-
-
+          communitySet: dci-rt-dc1-l3
+    - name: export-local-ipvpn-vnet-5
+      action:
+        policyResult: Accept
+        bgp:
+          communities:
+            addSets:
+              - soo-1122
+      match:
+        bgp:
+          communitySet: dci-rt-vnet-5-stitch

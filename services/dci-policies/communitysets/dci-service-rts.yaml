@@ -74,3 +74,40 @@ spec:
   members:
     - target:1:300
     - target:1:301
+---
+# L2 WAN export/import — one RT per DC (bd-3 exports 300, imports 301; bd-4 exports 301, imports 300)
+apiVersion: routingpolicies.eda.nokia.com/v1
+kind: CommunitySet
+metadata:
+  name: dci-rt-l2-export-dc1
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  members:
+    - target:1:300
+---
+apiVersion: routingpolicies.eda.nokia.com/v1
+kind: CommunitySet
+metadata:
+  name: dci-rt-l2-export-dc2
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  members:
+    - target:1:301
+---
+apiVersion: routingpolicies.eda.nokia.com/v1
+kind: CommunitySet
+metadata:
+  name: dci-rt-l2-import-dc1
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  members:
+    - target:1:301
+---
+apiVersion: routingpolicies.eda.nokia.com/v1
+kind: CommunitySet
+metadata:
+  name: dci-rt-l2-import-dc2
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  members:
+    - target:1:300

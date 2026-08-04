@@ -18,6 +18,30 @@ spec:
           - EVPN
         bgp:
           communitySet: soo-2211
+    - name: accept-remote-l2-type-2-evpn
+      action:
+        policyResult: Accept
+        tags:
+          applyTagSet: tag-20
+      match:
+        families:
+          - EVPN
+        bgp:
+          communitySet: dci-rt-l2-import-dc2
+          evpnRouteTypes:
+            - 2
+    - name: accept-remote-l2-type-3-evpn
+      action:
+        policyResult: Accept
+        tags:
+          applyTagSet: tag-20
+      match:
+        families:
+          - EVPN
+        bgp:
+          communitySet: dci-rt-l2-import-dc2
+          evpnRouteTypes:
+            - 3
     - name: reject-all-remote-evpn
       action:
         policyResult: Reject
