@@ -33,8 +33,9 @@ description: >-
 - Hub: `multi-rt-import` + `vpn-import-rts` may work on **SRL**; **do not copy to SROS** — SROS CommunitySet is All-only (no `Any`); use one set/Accept per RT (`import-ric-vnet-2` in eda-dci-sros-lab)
 - Do not copy SROS EVPN RIC policies here without conversion
 - Policy CR field: **`statements`** (plural)
-- **Loopback Interface:** one member only (`type: Loopback`); Interfaces app rejects multi-member. Anycast `/32` on another leaf → separate Interface CR + separate VN `routedInterfaces`.
-- **Multi-leaf same subnet:** enable IRB `hostRoutePopulate` / related EVPN host-route params when hosts span multiple leaves on one subnet. Loopback-OK / client-FAIL with 0 pkts: still check **MSG/GBP** before blaming IRB (see personal eda-dci skill).
+- **Loopback Interface:** single-member only (`type: Loopback`).
+- **Multi-leaf same subnet:** enable IRB `hostRoutePopulate` / related EVPN host-route params when hosts span multiple leaves.
+- **EQL cheat sheet:** `docs/DCI-CONTROL-PLANE-TROUBLESHOOTING.md` §4; live aliases/catalog in **eda-mcp** UI.
 
 ## Client / vnet matrix (summary)
 

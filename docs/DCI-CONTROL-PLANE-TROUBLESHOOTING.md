@@ -24,7 +24,7 @@ What is enabled on DefaultBGPPeer?
 └─ both / mixed          → avoid dual-mixed Policies; split peers or pick one mode
 ```
 
-**Do not mix EVPN + IPVPN match statements in one Policy** (SROS lesson). Use mode-specific pairs.
+**Do not mix EVPN + IPVPN match statements in one Policy** (SROS lesson). Use mode-specific pairs. Best Practice, keep them separate
 
 ### Policies to attach (SROS)
 
@@ -125,6 +125,19 @@ show router ldp bindings
 4. NH = DCGW system → LDP/tunnel (MPLS).
 5. SROS client FAIL: GBP/MSG before IRB.
 6. Multi-leaf hosts on same subnet: confirm IRB host-route populate (separate from GBP).
-7. Loopback Interface: one member per CR — do not multi-member.
+7. Loopback Interface: one member per CR — does not support multi-member.
+
+### EQL / YANG state paths (verified on mixed SROS+SRL fabric lab, 2026-08-12)
+
+**Roots:** SRL `.namespace.node.srl.*` · SROS `.namespace.node.sros.state.*`. Autocomplete: `?query=<path.>`.
+
+| What | SRL EQL | SROS EQL / CLI fallback |
+|------|---------|-------------------------|
+| IP RIB/FIB | `...network-instance.route-table.ipv4-unicast.route` | Base `...state.router.route-table.unicast.ipv4.route` · VPRN `...state.service.vprn.route-table.unicast.ipv4.route` |
+| EVPN type-5 | `...bgp-rib.afi-safi.evpn.{local-rib,rib-in-out.rib-in-post,rib-out-post}.ip-prefix-route` | No per-route EVPN in EQL → CLI `show router bgp routes evpn`; peer counts via `family-prefix.evpn` |
+| EVPN type-2 | `...bgp-rib.afi-safi.evpn.*.mac-ip-route` | VPLS FDB `...state.service.vpls.fdb.mac` |
+| MAC table | `...bridge-table.mac-table.mac` | same VPLS FDB path |
+| VPNv4 / L3VPN | CLI `show network-instance default protocols bgp routes l3vpn-ipv4-unicast` (SRL IPVPN lab); AFI may be absent on fabric-only leaves | Peer `family-prefix.vpn-ipv4` + CLI `show router bgp routes vpn-ipv4` |
+| LDP / tunnel | VXLAN VTEP `...srl.tunnel.vxlan-tunnel.vtep`; LDP FEC on DCGW when configured | `...state.router.ldp.bindings.active.prefixes` (+ nested `.in-label` / `.out-label`, leaf `label`) · `...tunnel-table.ipv4.tunnel` |
 
 Related: `docs/L3VPN-DCI-GUIDE.md`, `docs/L2-DCI-GUIDE.md`, sibling SROS `docs/SROS-EVPN-DCI-GUIDE.md`.
