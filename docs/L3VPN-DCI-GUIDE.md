@@ -142,6 +142,8 @@ Same WAN path; vnet-5 uses stitch RT **102** on export; hub RIC imports **100 + 
 
 Hub import policy `multi-rt-import` matches community set `vpn-import-rts` (`100`, `102`). Spokes use **targets only** (import hub RT `101`).
 
+**SROS note:** that multi-member All pattern does **not** OR-match on SROS (All = AND; `Any` rejected). SROS hub uses `import-ric-vnet-2` with **one CommunitySet per RT** — see `eda-dci-sros-lab`.
+
 ### Layer B — DefaultBGPPeer (WAN) — **live policies**
 
 | Policy | Attached to | Role |
@@ -191,6 +193,12 @@ Files: `services/dci-policies/communitysets/`
 Patch **vnet-1**, **vnet-2**, **vnet-5** for EVPN type-2 IP+MAC and host route populate:
 
 `services/dci-policies/patches/vnet-irb-evpn-hostroutes-patch.json`
+
+**Multi-leaf same subnet:** when hosts span multiple leaves on the **same** L2/L3 subnet, IRB `hostRoutePopulate` / related EVPN host-route settings are **required** for host-route advertisement between leaves. Single-leaf-per-subnet + type-5 stitch designs may disable host routes by choice — that is a different topology.
+
+**Do not confuse with GBP:** on SROS, loopback OK + client FAIL with 0 packets on the remote host was **MSG/GBP**, not missing IRB host routes. Keep that golden rule; this note is only for multi-leaf same-subnet host reachability.
+
+**Loopback Interface trap (EDA Interfaces app):** `type: Loopback` CRs allow **one member only**. Multi-member is rejected (`more than one members are provided for type [loopback]`). Anycast `/32` on another leaf → separate single-member Interface + second VirtualNetwork `routedInterfaces` entry.
 
 ---
 
