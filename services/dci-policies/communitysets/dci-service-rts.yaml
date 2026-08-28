@@ -9,7 +9,7 @@ spec:
   members:
     - target:1:100
     - target:1:101
-    - target:1:102
+    - target:1:105
     - target:1:400
     - target:1:401
     - target:1:430
@@ -41,7 +41,7 @@ metadata:
   namespace: clab-srl-leaf-spine-dcgw
 spec:
   members:
-    - target:1:102
+    - target:1:105
 ---
 # Legacy aliases (L3-only members for BGP export matching)
 apiVersion: routingpolicies.eda.nokia.com/v1

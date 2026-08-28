@@ -1,4 +1,4 @@
-# DRAFT — Hub vnet-2: exportPolicy + import vnet-1 only (no vnet-5 RT 102).
+# DRAFT — Hub vnet-2: exportPolicy + import vnet-1 only (no vnet-5 RT 105).
 apiVersion: services.eda.nokia.com/v2
 kind: RouterInterconnect
 metadata:

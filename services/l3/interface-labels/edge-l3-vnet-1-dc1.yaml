@@ -1,4 +1,5 @@
-# L3 native DC1 edges for vnet-1 — client-1 (leaf-1), client-2 (leaf-4).
+# L3 native DC1 edges for vnet-1 — operational Talos 2026-08-24:
+# client-1 on leaf-1 e1-5, client-2 on leaf-2 e1-6 (not leaf-4).
 ---
 apiVersion: interfaces.eda.nokia.com/v1
 kind: Interface
@@ -9,7 +10,7 @@ metadata:
     eda.nokia.com/role: edge
     eda.nokia.com/vnet-1: vlan-bd-1
 spec:
-  description: edge L3 vnet-1 DC1 — client-1-vnet-1-dc1
+  description: edge L3 vnet-1 DC1 — client-1
   enabled: true
   encapType: "Null"
   ethernet:
@@ -26,13 +27,13 @@ spec:
 apiVersion: interfaces.eda.nokia.com/v1
 kind: Interface
 metadata:
-  name: srl-leaf-4-ethernet-1-5
+  name: srl-leaf-2-ethernet-1-6
   namespace: clab-srl-leaf-spine-dcgw
   labels:
     eda.nokia.com/role: edge
     eda.nokia.com/vnet-1: vlan-bd-1
 spec:
-  description: edge L3 vnet-1 DC1 — client-2-vnet-1-dc1
+  description: edge L3 vnet-1 DC1 — client-2
   enabled: true
   encapType: "Null"
   ethernet:
@@ -41,7 +42,7 @@ spec:
   lldp: true
   members:
     - enabled: true
-      interface: ethernet-1-5
+      interface: ethernet-1-6
       lacpPortPriority: 32768
-      node: srl-leaf-4
+      node: srl-leaf-2
   type: Interface

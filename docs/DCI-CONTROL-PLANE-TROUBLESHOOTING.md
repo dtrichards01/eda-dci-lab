@@ -2,6 +2,8 @@
 
 Short tech note for **SRL** (`eda-dci-lab`) and **SROS** (`eda-dci-sros-lab`) DCGW labs.
 
+**Before this note:** if TargetNodes are Ready but fabrics/interfaces are Down, restore missing CLAB dataplane veths (`sudo clab deploy -t <live-topo>`, no `--reconfigure`) — do not start at RIC/WAN policy. See lab README / skill **eda-branch**.
+
 | Lab | Namespace | DCGW names | Typical RIC |
 |-----|-----------|------------|-------------|
 | SRL | `clab-srl-leaf-spine-dcgw` | `dcgw-1`…`dcgw-4` | **IPVPN** |

@@ -1,4 +1,4 @@
-# L3 hub DC2: export RT 101, import spoke RTs 100 + 102 via multi-rt-import.
+# L3 hub DC2: export RT 101, import spoke RTs 100 + 105 via multi-rt-import.
 apiVersion: services.eda.nokia.com/v2
 kind: RouterInterconnect
 metadata:

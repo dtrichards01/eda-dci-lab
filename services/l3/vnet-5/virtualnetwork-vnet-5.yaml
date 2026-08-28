@@ -1,4 +1,4 @@
-# vnet-5 spoke on DC1 — hub is vnet-2 on DC2. Subnet 172.16.151.0/24, stitch RT target:1:102.
+# vnet-5 spoke on DC1 — hub is vnet-2 on DC2. Subnet 172.16.151.0/24, stitch RT target:1:105.
 apiVersion: services.eda.nokia.com/v2
 kind: VirtualNetwork
 metadata:

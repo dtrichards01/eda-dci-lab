@@ -1,4 +1,4 @@
-# vnet-5 interconnect export: stitch RT 102 (SRL: 1 EVPN route-type per statement).
+# vnet-5 interconnect export: stitch RT 105 (SRL: 1 EVPN route-type per statement).
 apiVersion: routingpolicies.eda.nokia.com/v1
 kind: Policy
 metadata:

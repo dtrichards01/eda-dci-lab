@@ -40,7 +40,7 @@ OUT = Path(__file__).resolve().parents[1] / "services/dci-policies/policies"
 for name, title, community in [
     ("export-dci-stitch-dc1-vnet-1", "vnet-1 interconnect export RT 100", "dci-rt-dc1-l3"),
     ("export-dci-stitch-dc2-hub", "hub interconnect export RT 101", "dci-rt-dc2-l3"),
-    ("export-dci-stitch-vnet-5", "vnet-5 interconnect export RT 102", "dci-rt-vnet-5-stitch"),
+    ("export-dci-stitch-vnet-5", "vnet-5 interconnect export RT 105", "dci-rt-vnet-5-stitch"),
 ]:
     evpn = "".join(EVPN.format(n=i, community=community) for i in range(1, 6))
     (OUT / f"{name}.yaml").write_text(

@@ -10,7 +10,7 @@ echo "==> Community sets + hub import policy"
 kubectl apply -f "$POL/communitysets/vpn-import-rts.yaml"
 kubectl apply -f "$POL/policies/multi-rt-import.yaml"
 
-echo "==> WAN policies (vnet-5 RT 102 on DC1 export / DC2 import)"
+echo "==> WAN policies (vnet-5 RT 105 on DC1 export / DC2 import)"
 kubectl apply -f "$POL/policies/export-dc-1-routes-and-add-soo.yaml"
 kubectl apply -f "$POL/policies/import-dci-services-dc-2.yaml"
 
@@ -22,7 +22,7 @@ kubectl patch virtualnetwork vnet-5 -n "$NS" --type=json \
 echo "==> Edge interface"
 kubectl apply -f "$ROOT/services/l3/interface-labels/edge-l3-vnet-5-dc1.yaml"
 
-echo "==> RouterInterconnect hub (multi-rt-import) + spoke (RT 102)"
+echo "==> RouterInterconnect hub (multi-rt-import) + spoke (RT 105)"
 kubectl apply -f "$RIC/router-interconnect-vnet-2.yaml"
 kubectl apply -f "$RIC/router-interconnect-vnet-5.yaml"
 

@@ -14,7 +14,7 @@ EVPN = """    - name: accept-spoke-evpn-type-{n}
 """
 
 evpn = "".join(EVPN.format(n=i) for i in range(1, 6))
-text = f"""# Hub interconnect import: spoke stitch RTs 100 + 102.
+text = f"""# Hub interconnect import: spoke stitch RTs 100 + 105.
 apiVersion: routingpolicies.eda.nokia.com/v1
 kind: Policy
 metadata:

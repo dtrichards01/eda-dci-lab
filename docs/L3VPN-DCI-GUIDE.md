@@ -33,7 +33,7 @@ Cross-DC L3 uses **different control planes on different legs**. That is intenti
 | ------------------------------------------------- | ----------------------- | ------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | **Fabric** (leaf ↔ spine ↔ DCGW)                  | `router-1` / `router-2` | VXLAN         | **EVPN**                                 | L3 IRB on fabric: EVPN type-2 (MAC-IP) and type-5 (IP prefix). NH = local leaf/DCGW VTEP. |
 | **RIC stitch** (service NI ↔ WAN NI on same DCGW) | `router-`* ↔ `default`  | MPLS / LDP    | **IPVPN** (`controlPlane: IPVPN` on RIC) | EDA leaks stitch RTs between service router and interconnect BGP instance.                                          |
-| **WAN** (DCGW ↔ DCGW)                             | `default`               | MPLS / LDP    | **VPNv4** + **EVPN** (hybrid)            | L3: stitch prefixes (RT 100/101/102) via VPNv4. L2: EVPN type-2/3 only (RT 300/301). Fabric EVPN blocked by policy. |
+| **WAN** (DCGW ↔ DCGW)                             | `default`               | MPLS / LDP    | **VPNv4** + **EVPN** (hybrid)            | L3: stitch prefixes (RT 100/101/105) via VPNv4. L2: EVPN type-2/3 only (RT 300/301). Fabric EVPN blocked by policy. |
 
 
 ---
@@ -54,7 +54,7 @@ Cross-DC L3 uses **different control planes on different legs**. That is intenti
 | ---------------- | --------- | ------------------------------------------------------------------------------------------------------------------------- |
 | `ipv4Unicast`    | **false** | No plain BGP IPv4 on WAN (underlay uses OSPF in `default`).                                                               |
 | `l2VPNEVPN`      | **true**  | EVPN on WAN — **only** L2 stitch type-2/3 with RT 300/301 allowed by policy (not fabric EVPN).                            |
-| `vpnIPv4Unicast` | **true**  | MPLS VPN-IPv4 for L3 stitch prefixes (RT 100/101/102).                                                                  |
+| `vpnIPv4Unicast` | **true**  | MPLS VPN-IPv4 for L3 stitch prefixes (RT 100/101/105).                                                                  |
 
 EVPN AFI enabled via `services/dci-policies/bgp-peers/wan-enable-evpn-patch.json` (`apply-l2-wan-evpn.sh`). L3 VPNv4 unchanged.
 
@@ -66,8 +66,8 @@ Default action: **Reject**. L3 VPNv4 and L2 EVPN stitch matches are explicit; al
 
 | Policy | Peers | L3 (VPNv4) | L2 (EVPN) |
 | ------ | ----- | ---------- | --------- |
-| `export-dc-1-prefixes-and-add-soo` | `dcgw-1-dcgw-3` | RT 100 + 102 + SOO | type-2/3 RT **300** + SOO |
-| `export-dc-1-routes-and-add-soo` | `dcgw-2-dcgw-4` | RT 100 + 102 + SOO | type-2/3 RT **300** + SOO |
+| `export-dc-1-prefixes-and-add-soo` | `dcgw-1-dcgw-3` | RT 100 + 105 + SOO | type-2/3 RT **300** + SOO |
+| `export-dc-1-routes-and-add-soo` | `dcgw-2-dcgw-4` | RT 100 + 105 + SOO | type-2/3 RT **300** + SOO |
 | `export-dc-2-routes-and-add-soo` | `dcgw-3-dcgw-1`, `dcgw-4-dcgw-2` | RT 101 + SOO | type-2/3 RT **301** + SOO |
 
 Each policy rejects imported routes tagged `tag-20`/`tag-10`, then accepts L2 EVPN **before** `reject-all-local-evpn`.
@@ -77,7 +77,7 @@ Each policy rejects imported routes tagged `tag-20`/`tag-10`, then accepts L2 EV
 | Policy | Peers | L3 (VPNv4) | L2 (EVPN) |
 | ------ | ----- | ---------- | --------- |
 | `import-dci-services-dc-1` | DC1 WAN | RT 101 (hub) | type-2/3 RT **301** |
-| `import-dci-services-dc-2` | DC2 WAN | RT 100 + 102 (spokes) | type-2/3 RT **300** |
+| `import-dci-services-dc-2` | DC2 WAN | RT 100 + 105 (spokes) | type-2/3 RT **300** |
 
 L2 accept statements run **before** `reject-all-remote-evpn`. All other remote EVPN rejected.
 
@@ -120,7 +120,7 @@ client-1 (101.1) → leaf-1 router-1 [EVPN/VXLAN]
 
 ### vnet-5 (spoke) ↔ vnet-2 (hub)
 
-Same WAN path; vnet-5 uses stitch RT **102** on export; hub RIC imports **100 + 102** via `multi-rt-import` and community set `vpn-import-rts`.
+Same WAN path; vnet-5 uses stitch RT **105** on export; hub RIC imports **100 + 105** via `multi-rt-import` and community set `vpn-import-rts`.
 
 ---
 
@@ -137,10 +137,10 @@ Same WAN path; vnet-5 uses stitch RT **102** on export; hub RIC imports **100 + 
 | ---------------------------- | ---------- | ------- | -------------- | ------------------------------- | --------------------------------- |
 | `router-interconnect-vnet-1` | `router-1` | IPVPN   | `target:1:100` | `target:1:101`                  | `router-interconnect-vnet-1.yaml` |
 | `router-interconnect-vnet-2` | `router-2` | IPVPN   | `target:1:101` | `importPolicy: multi-rt-import` | `router-interconnect-vnet-2.yaml` |
-| `router-interconnect-vnet-5` | `router-3` | IPVPN   | `target:1:102` | `target:1:101`                  | `router-interconnect-vnet-5.yaml` |
+| `router-interconnect-vnet-5` | `router-3` | IPVPN   | `target:1:105` | `target:1:101`                  | `router-interconnect-vnet-5.yaml` |
 
 
-Hub import policy `multi-rt-import` matches community set `vpn-import-rts` (`100`, `102`). Spokes use **targets only** (import hub RT `101`).
+Hub import policy `multi-rt-import` matches community set `vpn-import-rts` (`100`, `105`). Spokes use **targets only** (import hub RT `101`).
 
 **SROS note:** that multi-member All pattern does **not** OR-match on SROS (All = AND; `Any` rejected). SROS hub uses `import-ric-vnet-2` with **one CommunitySet per RT** — see `eda-dci-sros-lab`.
 
@@ -148,11 +148,11 @@ Hub import policy `multi-rt-import` matches community set `vpn-import-rts` (`100
 
 | Policy | Attached to | Role |
 | ------ | ----------- | ---- |
-| `export-dc-1-prefixes-and-add-soo` | `dcgw-1-dcgw-3` | L3 VPNv4 RT 100+102 + L2 EVPN type-2/3 RT 300 + SOO |
+| `export-dc-1-prefixes-and-add-soo` | `dcgw-1-dcgw-3` | L3 VPNv4 RT 100+105 + L2 EVPN type-2/3 RT 300 + SOO |
 | `export-dc-1-routes-and-add-soo` | `dcgw-2-dcgw-4` | Same as above |
 | `export-dc-2-routes-and-add-soo` | `dcgw-3-dcgw-1`, `dcgw-4-dcgw-2` | L3 VPNv4 RT 101 + L2 EVPN type-2/3 RT 301 + SOO |
 | `import-dci-services-dc-1` | DC1 WAN peers | Import hub VPNv4 RT 101; L2 EVPN type-2/3 RT 301; reject other EVPN |
-| `import-dci-services-dc-2` | DC2 WAN peers | Import spoke VPNv4 RT 100+102; L2 EVPN type-2/3 RT 300; reject other EVPN |
+| `import-dci-services-dc-2` | DC2 WAN peers | Import spoke VPNv4 RT 100+105; L2 EVPN type-2/3 RT 300; reject other EVPN |
 
 Peer patches: `bgp-peers/dcgw-*-import-vpn-patch.json` (policy names + VPNv4). EVPN AFI: `wan-enable-evpn-patch.json` via `apply-l2-wan-evpn.sh`.
 
@@ -163,14 +163,14 @@ Peer patches: `bgp-peers/dcgw-*-import-vpn-patch.json` (policy names + VPNv4). E
 | ------------------------- | -------------- | ----------------------------------------------------------------------------------- |
 | `dci-rt-dc1-l3`           | `target:1:100` | WAN export/import; vnet-1 RIC                                                       |
 | `dci-rt-dc2-l3`           | `target:1:101` | WAN export/import; hub RIC export                                                   |
-| `dci-rt-vnet-5-stitch`    | `target:1:102` | WAN export/import; vnet-5 RIC                                                       |
+| `dci-rt-vnet-5-stitch`    | `target:1:105` | WAN export/import; vnet-5 RIC                                                       |
 | `dci-rt-l2-export-dc1`    | `target:1:300` | L2 WAN export (DC1)                                                                 |
 | `dci-rt-l2-export-dc2`    | `target:1:301` | L2 WAN export (DC2)                                                                 |
 | `dci-rt-l2-import-dc1`    | `target:1:301` | L2 WAN import (DC1)                                                                 |
 | `dci-rt-l2-import-dc2`    | `target:1:300` | L2 WAN import (DC2)                                                                 |
-| `vpn-import-rts`          | `100`, `102`   | Hub RIC `multi-rt-import`                                                           |
+| `vpn-import-rts`          | `100`, `105`   | Hub RIC `multi-rt-import`                                                           |
 | `soo-1122` / `soo-2211`   | origin SOO     | WAN export add / import EVPN reject                                                 |
-| `dci-rt-hub-spoke-import` | `100`, `102`   | Used only by unused draft policy `import-dci-hub-spoke-stitch` (not in production) |
+| `dci-rt-hub-spoke-import` | `100`, `105`   | Used only by unused draft policy `import-dci-hub-spoke-stitch` (not in production) |
 
 
 Files: `services/dci-policies/communitysets/`
@@ -259,7 +259,7 @@ Or: `bash ~/eda-dci-lab/scripts/apply-all.sh`
 | ---- | ------ |
 | vnet-1 ↔ vnet-2 | **Working** |
 | vnet-5 ↔ vnet-2 hub-spoke | **Working** |
-| Hub RIC import | **`multi-rt-import`** + `vpn-import-rts` (`100`, `102`) |
+| Hub RIC import | **`multi-rt-import`** + `vpn-import-rts` (`100`, `105`) |
 | Fabric EVPN / system/VTEP on WAN | **Blocked** (policy — only L2 stitch type-2/3 RT 300/301 allowed) |
 | L2 vnet-3 ↔ vnet-4 | **Hybrid WAN EVPN** + BDI — see `docs/L2-DCI-GUIDE.md` |
 | EVPN control plane DCI trial | **Separate repo** `eda-dci-evpn-lab` — production stays IPVPN on RIC |

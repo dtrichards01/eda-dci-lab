@@ -1,15 +1,16 @@
-# L2 edge ports — vnet-3 DC1 (leaf-2 e1-6), vnet-4 DC2 (leaf-8 e1-6).
+# L2 edge ports — operational Talos 2026-08-24:
+# vnet-3 DC1 leaf-3 e1-5; vnet-4 DC2 leaf-7 e1-5.
 ---
 apiVersion: interfaces.eda.nokia.com/v1
 kind: Interface
 metadata:
-  name: srl-leaf-2-ethernet-1-6
+  name: srl-leaf-3-ethernet-1-5
   namespace: clab-srl-leaf-spine-dcgw
   labels:
     eda.nokia.com/role: edge
     eda.nokia.com/vnet-3: vlan-bd-3
 spec:
-  description: edge L2 vnet-3 DC1 — client-6-vnet-3-dc1
+  description: edge L2 vnet-3 DC1 — client-3
   enabled: true
   encapType: "Null"
   ethernet:
@@ -18,21 +19,21 @@ spec:
   lldp: true
   members:
     - enabled: true
-      interface: ethernet-1-6
+      interface: ethernet-1-5
       lacpPortPriority: 32768
-      node: srl-leaf-2
+      node: srl-leaf-3
   type: Interface
 ---
 apiVersion: interfaces.eda.nokia.com/v1
 kind: Interface
 metadata:
-  name: srl-leaf-8-ethernet-1-6
+  name: srl-leaf-7-ethernet-1-5
   namespace: clab-srl-leaf-spine-dcgw
   labels:
     eda.nokia.com/role: edge
     eda.nokia.com/vnet-4: vlan-bd-4
 spec:
-  description: edge L2 vnet-4 DC2 — client-7-vnet-4-dc2
+  description: edge L2 vnet-4 DC2 — client-7
   enabled: true
   encapType: "Null"
   ethernet:
@@ -41,7 +42,7 @@ spec:
   lldp: true
   members:
     - enabled: true
-      interface: ethernet-1-6
+      interface: ethernet-1-5
       lacpPortPriority: 32768
-      node: srl-leaf-8
+      node: srl-leaf-7
   type: Interface

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-
 # Apply all edge Interface labels for CLAB client topology (13 clients + 4 MH LAGs).
+# Current Talos 8-client L3 lab already has native labels; do not run this there
+# unless you intend to add SH/MH (would change EDA). Native YAML matches live L3/L2.
 
 set -eu
 

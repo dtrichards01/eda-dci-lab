@@ -18,12 +18,12 @@ Review vs `docs/DCI-ALIGNMENT.md` and aligned cluster state.
 | Client | VNet | IP | Leaf |
 |--------|------|-----|------|
 | client-1 | vnet-1 DC1 | 172.16.101.1 | leaf-1 e1-5 |
-| client-2 | vnet-1 DC1 | 172.16.101.2 | leaf-4 e1-5 |
+| client-2 | vnet-1 DC1 | 172.16.101.2 | leaf-2 e1-6 |
 | client-3 | vnet-2 hub | 172.16.201.1 | leaf-5 e1-5 |
-| client-4 | vnet-2 hub | 172.16.201.2 | leaf-8 e1-5 |
-| client-5 | vnet-5 spoke | 172.16.151.1 | leaf-3 e1-5 |
-| client-6 | vnet-3 L2 | 172.16.103.1 | leaf-2 e1-6 |
-| client-7 | vnet-4 L2 | 172.16.103.2 | leaf-8 e1-6 |
+| client-4 | vnet-2 hub | 172.16.201.2 | leaf-6 e1-6 |
+| client-5 | vnet-5 spoke | 172.16.151.1 | leaf-4 e1-5 |
+| client-6 | vnet-3 L2 | 172.16.103.1 | leaf-3 e1-5 |
+| client-7 | vnet-4 L2 | 172.16.103.2 | leaf-7 e1-5 |
 
 ## Stretched-homed (clients 8–9)
 

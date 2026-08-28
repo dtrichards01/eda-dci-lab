@@ -5,8 +5,6 @@ kind: Policy
 metadata:
   name: export-dc-1-prefixes-and-add-soo
   namespace: clab-srl-leaf-spine-dcgw
-  annotations:
-    l2: loop-avoidance
   labels:
     eda.nokia.com/dci: underlay-isolation-draft
 spec:

@@ -13,12 +13,13 @@ Datacenter interconnect (DCI) service definitions for the Talos EDA cluster and 
 ## Service model
 
 See `docs/DCI-ALIGNMENT.md` for hub/spoke RTs and apply order.  
+See `docs/DCI-CONTROL-PLANE-TROUBLESHOOTING.md` for EVPN vs IPVPN mode checks, DCGW checkpoints, MPLS/VXLAN validation, CLI cheat sheet.  
 See `docs/L3VPN-DCI-GUIDE.md` for L3 policies, AFIs, MPLS/LDP checks, and WAN fabric isolation.  
 See `docs/L2-DCI-GUIDE.md` for L2 BDI, hybrid WAN EVPN (type-2/3), and vnet-3/4 stitch.
 
 | Tier | Virtual networks | Interconnect CR | Stitch RTs |
 |------|------------------|-----------------|------------|
-| L3 (IRB) | `vnet-1`, `vnet-2` (hub), `vnet-5` (spoke) | `RouterInterconnect` | `100`, `101`, `102` |
+| L3 (IRB) | `vnet-1`, `vnet-2` (hub), `vnet-5` (spoke) | `RouterInterconnect` | `100`, `101`, `105` |
 | L2 (bridge only) | `vnet-3`, `vnet-4` | `BridgeDomainInterconnect` | `300`, `301` |
 | L3 SH | `vnet-6`, `vnet-7` | `RouterInterconnect` | `400`, `401` |
 | L3 MH (per ES) | `vnet-mh-l3-dc1a/b`, `vnet-mh-l3-dc2a/b` | `RouterInterconnect` | `430`, `431` |
@@ -35,17 +36,19 @@ See `docs/L2-DCI-GUIDE.md` for L2 BDI, hybrid WAN EVPN (type-2/3), and vnet-3/4 
 | Client scripts | `clab/configs/client-config.sh`, `clab/configs/base-configs/mh-*.sh` |
 | Pre-deploy review | `docs/CLAB-VALIDATION.md`, `docs/EDGE-INTERFACES.md` |
 
+**After host reboot:** (1) `~/Projects/eda-mcp-client/scripts/fix_eda_proxy_ca_trust.sh` if catalogs / Discord fail Zscaler TLS (Discord uses a mutating webhook — do not patch `eda-notifier`). (2) TargetNode Ready is management only. If fabrics/interfaces stay Down, missing CLAB dataplane veths — reconcile `sudo clab deploy -t <live-topo>` (no `--reconfigure`). Do not `ip link set e1-*-0 up`. See `eda-clab-sros-recovery` / skill **eda-branch**.
+
 ### Native client matrix
 
 | Client | Site | IP | Service | Leaf port |
 |--------|------|-----|---------|-----------|
 | `client-1-vnet-1-dc1` | DC1 | 172.16.101.1 | L3 `vnet-1` | leaf-1 e1-5 |
-| `client-2-vnet-1-dc1` | DC1 | 172.16.101.2 | L3 `vnet-1` | leaf-4 e1-5 |
+| `client-2-vnet-1-dc1` | DC1 | 172.16.101.2 | L3 `vnet-1` | leaf-2 e1-6 |
 | `client-3-vnet-2-dc2` | DC2 | 172.16.201.1 | L3 `vnet-2` hub | leaf-5 e1-5 |
-| `client-4-vnet-2-dc2` | DC2 | 172.16.201.2 | L3 `vnet-2` hub | leaf-8 e1-5 |
-| `client-5-vnet-5-dc1` | DC1 | 172.16.151.1 | L3 `vnet-5` spoke | leaf-3 e1-5 |
-| `client-6-vnet-3-dc1` | DC1 | 172.16.103.1 | L2 `vnet-3` | leaf-2 e1-6 |
-| `client-7-vnet-4-dc2` | DC2 | 172.16.103.2 | L2 `vnet-4` | leaf-8 e1-6 |
+| `client-4-vnet-2-dc2` | DC2 | 172.16.201.2 | L3 `vnet-2` hub | leaf-6 e1-6 |
+| `client-5-vnet-5-dc1` | DC1 | 172.16.151.1 | L3 `vnet-5` spoke | leaf-4 e1-5 |
+| `client-6-vnet-3-dc1` | DC1 | 172.16.103.1 | L2 `vnet-3` | leaf-3 e1-5 |
+| `client-7-vnet-4-dc2` | DC2 | 172.16.103.2 | L2 `vnet-4` | leaf-7 e1-5 |
 | `client-8-dc1-sh` | DC1 | 172.16.155.1 | SH `vnet-6` | leaf-3 e1-6 |
 | `client-9-dc2-sh` | DC2 | 172.16.156.1 | SH `vnet-7` | leaf-5 e1-6 |
 
@@ -89,14 +92,14 @@ WAN peers use **hybrid** address families: `vpnIPv4Unicast` (L3) + `l2VPNEVPN` (
 | Policy (WAN peers) | Role |
 |--------------------|------|
 | `import-dci-services-dc-1` | DC1 import — VPNv4 RT 101; EVPN type-2/3 RT 301 |
-| `import-dci-services-dc-2` | DC2 import — VPNv4 RT 100 + 102; EVPN type-2/3 RT 300 |
-| `export-dc-1-prefixes-and-add-soo` | `dcgw-1-dcgw-3` — VPNv4 RT 100+102; EVPN type-2/3 RT 300 |
+| `import-dci-services-dc-2` | DC2 import — VPNv4 RT 100 + 105; EVPN type-2/3 RT 300 |
+| `export-dc-1-prefixes-and-add-soo` | `dcgw-1-dcgw-3` — VPNv4 RT 100+105; EVPN type-2/3 RT 300 |
 | `export-dc-1-routes-and-add-soo` | `dcgw-2-dcgw-4` — same as above |
 | `export-dc-2-routes-and-add-soo` | DC2 export — VPNv4 RT 101; EVPN type-2/3 RT 301 |
 
 | Policy (hub RIC) | Role |
 |------------------|------|
-| `multi-rt-import` | Hub import spoke stitch RTs `100` + `102` |
+| `multi-rt-import` | Hub import spoke stitch RTs `100` + `105` (SRL). **SROS:** use one CommunitySet/Accept per RT — see `eda-dci-sros-lab` `import-ric-vnet-2` |
 
 Apply L2 WAN policies: `bash scripts/apply-l2-wan-evpn.sh` or `bash scripts/apply-l2-dci.sh`.
 
@@ -118,6 +121,7 @@ clab/
 docs/
   L3VPN-DCI-GUIDE.md         # L3 policy map, hybrid WAN, MPLS checks
   L2-DCI-GUIDE.md            # L2 BDI, WAN EVPN type-2/3, vnet-3/4
+  DCI-CONTROL-PLANE-TROUBLESHOOTING.md  # EVPN vs IPVPN, DCGW checks, CLI
   DCI-ALIGNMENT.md
   CLAB-VALIDATION.md
   EDGE-INTERFACES.md
@@ -165,4 +169,5 @@ bash ~/eda-dci-lab/scripts/test-l3-cross-dc-ping.sh
 |--------|------|
 | Canvas | Open dci-technical-nodes.canvas.tsx beside chat |
 | Word | `docs/DCI-Technical-Node-Documentation.docx` |
+| RFP summary | `docs/DCI-RFP-Response-Summary.md` |
 | Regenerate Word | `wsl python3 docs/generate-dci-node-docx.py` |

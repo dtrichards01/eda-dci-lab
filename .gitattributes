@@ -1,0 +1,2 @@
+# Keep shell scripts LF-only so bash in WSL/Linux does not see stray \r
+*.sh text eol=lf

@@ -47,7 +47,7 @@ MH client scripts: `clab/configs/base-configs/mh-dc1a.sh` … `mh-dc2b.sh` — *
 
 
 
-Spokes use **`importTarget` / `exportTarget`** on RIC CRs. Hub vnet-2 uses **`importPolicy: multi-rt-import`** with community set `vpn-import-rts` (RT `100` + `102`). EDA allows **either** `importTarget`/`exportTarget` **or** `importPolicy`/`exportPolicy` on a single RIC — not both.
+Spokes use **`importTarget` / `exportTarget`** on RIC CRs. Hub vnet-2 uses **`importPolicy: multi-rt-import`** with community set `vpn-import-rts` (RT `100` + `105`). EDA allows **either** `importTarget`/`exportTarget` **or** `importPolicy`/`exportPolicy` on a single RIC — not both.
 
 **WAN policies:** Hybrid VPNv4 (L3) + selective EVPN type-2/3 (L2 RT 300/301). See `docs/L3VPN-DCI-GUIDE.md` and `docs/L2-DCI-GUIDE.md`.
 
@@ -65,7 +65,7 @@ Spokes use **`importTarget` / `exportTarget`** on RIC CRs. Hub vnet-2 uses **`im
 
 | vnet-2 | L3 IRB | DC2 (hub) | `172.16.201.0/24` | `target:1:101` | vnet-1 + vnet-5 |
 
-| vnet-5 | L3 IRB spoke | DC1 | `172.16.151.0/24` | `target:1:102` | vnet-2 hub only |
+| vnet-5 | L3 IRB spoke | DC1 | `172.16.151.0/24` | `target:1:105` | vnet-2 hub only |
 
 | vnet-3 | L2 BD | DC1 | `172.16.103.0/24` | `target:1:300` (BDI) | vnet-4 (`103.2`) |
 
@@ -82,7 +82,7 @@ Spokes use **`importTarget` / `exportTarget`** on RIC CRs. Hub vnet-2 uses **`im
 
 
 
-**Hub vnet-2:** `exportTarget target:1:101` + **`importPolicy multi-rt-import`** (spoke RTs `100` + `102` via `vpn-import-rts`).
+**Hub vnet-2:** `exportTarget target:1:101` + **`importPolicy multi-rt-import`** (spoke RTs `100` + `105` via `vpn-import-rts`).
 
 
 
@@ -98,9 +98,9 @@ Spokes use **`importTarget` / `exportTarget`** on RIC CRs. Hub vnet-2 uses **`im
 
 ```
 
-DC1 dcgw RIC vnet-1  export RT 100 ──WAN VPNv4──► DC2 dcgw RIC vnet-2  multi-rt-import (100+102) ─► router-2
+DC1 dcgw RIC vnet-1  export RT 100 ──WAN VPNv4──► DC2 dcgw RIC vnet-2  multi-rt-import (100+105) ─► router-2
 
-DC1 dcgw RIC vnet-5  export RT 102 ──WAN VPNv4──► DC2 dcgw RIC vnet-2  multi-rt-import (100+102) ─► router-2
+DC1 dcgw RIC vnet-5  export RT 105 ──WAN VPNv4──► DC2 dcgw RIC vnet-2  multi-rt-import (100+105) ─► router-2
 
 ```
 

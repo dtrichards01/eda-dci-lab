@@ -23,6 +23,63 @@ For MCP client / chat / EQL tooling, use the **eda-mcp** skill. Live alarm OSS f
 
 **Never copy policies between SRL and SROS without converting syntax** — see [reference.md](reference.md).
 
+### 3-site BL/spine (`k0r4`, NS `clab-3-site-bl-spine`) — 2026-08-26
+
+**Operational (do not redeploy from Windows).** Laptop: **`Documents/eda-3-site-bl-spine`** (spine-layer inter-site; **not NetBox**). CLAB on `nokia@100.124.186.51` (`k0r4`). EDA: Talos `https://100.124.186.55`.
+
+**Live topology:** extra leaf–spine uplinks (two per D5 to each local spine), intra-site `c3`+`c4`, WAN 2×2. Dual-home ESI LAG. Laptop YAML: `clab/clab-3-site-bl-spine-add-uplinks-add-dual-homes-hosts.yaml`. k0r4 deploy file: `/home/nokia/collapsed-bl-wan/clab-3-site-bl-spine-add-uplinks.yaml`. Previous single-home snapshot: `clab/clab-3-site-bl-spine.yaml`.
+
+**CLAB vs EDA:** `clab deploy` only wires cables and Linux host bonds. ESI LAG / Fabric / VNET are **after** `clab-connector integrate`. LACP has no partner until LAG CRs exist.
+
+**Replace CLAB (proven 2026-08-26):** Connector verbs **`remove`** then **`integrate`**. `remove` **deletes the namespace** — Fabric, VNET, and LAG CRs go with it (not left in place).
+
+1. `clab-connector remove`
+2. `clab destroy`
+3. Remove old CLAB directory (`clab-3-site-bl-spine`)
+4. `clab deploy` (extra-uplink / dual-home YAML)
+5. `clab-connector integrate`
+6. Relabel TopoNodes: D5 `borderleaf`, SR-1 `spine` (connector sets `leaf` / `backbone`)
+7. Apply Fabric `clab/fabric-3-site-bl-spine.yaml`
+8. Delete standalone Interface CRs that become LAG members; apply `clab/edge-mh-lags.yaml`
+9. Label remaining single-home `e1-5` + LAG CRs; apply `clab/vnet-1-3-site-bl-spine.yaml`
+10. If needed: add `172.16.0.0/16 via <IRB>` on clients (`|| true` at deploy often no-ops)
+
+Script (run on k0r4 after copying YAML to `/tmp`): `eda-3-site-bl-spine/scripts/eda-apply-after-integrate.sh`. F0 pings: `scripts/eda-f0-baseline.sh`.
+
+| Item | Value |
+|------|--------|
+| Laptop dir | `Documents/eda-3-site-bl-spine` |
+| Live CLAB YAML (k0r4) | `/home/nokia/collapsed-bl-wan/clab-3-site-bl-spine-add-uplinks.yaml` |
+| Laptop live YAML | `eda-3-site-bl-spine/clab/clab-3-site-bl-spine-add-uplinks-add-dual-homes-hosts.yaml` |
+| Previous snapshot | `eda-3-site-bl-spine/clab/clab-3-site-bl-spine.yaml` |
+| ESI LAGs | `eda-3-site-bl-spine/clab/edge-mh-lags.yaml` — c1/c5 **AllActive LACP**; c3 **SingleActive Static** |
+| Stale file | `/home/nokia/collapsed-bl-wan/clab-2-site-bl-wan.yaml` — ignore |
+| Images | SRL `ghcr.io/nokia/srlinux:26.7.1` `ixr-d5`; SROS `nokia_srsim:26.3.R1` `sr-1` |
+| License | `/home/nokia/darren/license/license.key` |
+| Mgmt | `172.55.10.0/24` (leaves `.101`–`.106`, spines `.201`–`.206`, clients `.11`–`.16`) |
+| Borderleafs (D5) | CLAB name `leaf-*`; **Option 4 live:** `eda.nokia.com/role=leaf`. Option 1–3 used `borderleaf` |
+| Spines (SR-1) | CLAB name `spine-*`; **Option 4 live:** `eda.nokia.com/role=wan` as Fabric **borderleafs** (not spine) |
+| Fabric | **Live = Option 4 (2026-08-26 17:08):** `fabric-option4-bl-wan` **eBGP UL+OL**, D5=leaf, SROS=borderleaf/`wan`, ISLs `wanEdge`/`wanCore`. Type-5 NH = D5 VTEP. Fail matrix **passed** (retest after Option 3). Option 3 snapshot: `clab/fabric-3-site-bl-spine-ebgp-ol.yaml` (SROS as spine; Configlets did not keep VTEP). Option 2: `clab/fabrics-option2-per-site.yaml`. Option 1: `clab/fabric-3-site-bl-spine.yaml` |
+| WAN underlay | In-fabric `wanCore` ISLs (SROS–SROS) while Option 4 is live |
+| Overlay | EVPN on `bgpgroup-ebgp-fabric-option4-bl-wan`. **No Configlet.** |
+| ASNs | Option 4: **unique ASN per SROS** (101/102/105/106/109/110) and per D5. BL–BL is true eBGP |
+| Clients | c1 `172.16.11.1` AllActive LACP (`lag-client-1-site-1`: leaf-1 `e1-5` + leaf-2 `e1-6`); c2 `.2` single-home leaf-2 `e1-5`; c3 `172.16.12.1` SingleActive static LAG + host active-backup (`lag-client-3-site-2`); c4 `.2` leaf-4 `e1-5`; c5 `172.16.13.1` AllActive LACP (`lag-client-5-site-3`); c6 `.2` leaf-6 `e1-5`. GW `.254` anycast. |
+| L3 VNET | `vnet-1` — attach to **LAG CRs** + even-leaf `e1-5`. Manifest: `clab/vnet-1-3-site-bl-spine.yaml` |
+
+**Do not** put LACP on client-3: both members stay in one aggregator and traffic hashed to the non-DF leaf is black-holed. Single-active = Static LAG + host active-backup (primary eth1 / preferred DF).
+
+**Option 4 (live, 2026-08-26 17:08):** SROS as Fabric **borderleafs** (`role=wan`), D5s as `leaf`, eBGP UL+OL, **no Configlet**. Unique ASN per SR-1. Type-5 NH = D5 VTEP. F0 + Topo B fail matrix **passed** (retest after Option 3 Configlet trial). On-box: SROS BGP **`inter-as-vpn true`** (SRL `afi-safi evpn evpn inter-as-vpn true`). That is the VXLAN keep-NH path **when the node is a borderleaf ASBR with unique ASN**, not MPLS Option B NHS. YAML: `clab/fabric-option4-bl-wan.yaml`. Apply: `scripts/eda-apply-option4.sh`.
+
+**Option 3 (snapshot):** SROS as Fabric **spines**, eBGP UL+OL, shared ASN 101. EDA template already sets instance **`inter-as-vpn true`**. Configlets `rr-vpn-forwarding`, `def-recv-evpn-encap vxlan`, group `next-hop-unchanged evpn` + `third-party-nexthop` all on-box. Type-5 NH stays the **spine**. F0 cross-site FAIL. Do not retry those knobs. YAML: `clab/fabric-3-site-bl-spine-ebgp-ol.yaml`.
+
+**SROS 26.3.R1 eBGP EVPN NH (Option 3):** `keep-next-hop` **does not exist**. Configlet JSON must use MD-CLI names (`rr-vpn-forwarding`, not classic `enable-rr-vpn-forwarding` — txn 980). Combined instance+group Configlets did **not** keep VTEP while SROS were **spines**. Borderleaf role (Option 4) is the working eBGP overlay.
+
+**SROS spine + shared ASN + keep VTEP via the App:** **not possible on 26.3.R1.** Detecting OS in Fabrics is easy; emitting keep-NH is not a missing intent. Configlets already wrote `inter-as-vpn`, `rr-vpn-forwarding`, `def-recv-evpn-encap vxlan`, group `next-hop-unchanged evpn` + `third-party-nexthop`. NH stayed the spine. SROS has no working equivalent of SRL `afi-safi evpn next-hop-self false` (`keep-next-hop` does not exist; `nextHopSelf: false` is BGP #12). Unique-ASN Fabrics fork is a **different** experiment (Option 4’s allocation), not a substitute for that knob. See failure doc § **Option 3b**.
+
+**vnet-1:** `hostRoutePopulate.evpn.populate: false`; clients need `ip route add 172.16.0.0/16 via <site IRB>`. CR **Degraded** is a **known EDA issue with A/S (SingleActive) LAG** — standby member subinterface oper-down; dataplane/F0 still OK. Fix in **EDA 26.8.1**. Do not chase this as a lab misconfig. Option 4 pass saw `vnet-1` **Up**.
+
+**Failure catalog + Option 1 vs 2 vs 3 vs 4:** `eda-3-site-bl-spine/docs/3-site-bl-spine-fabric-and-failure.md` (includes **RFC alignment**: 7348 / 7432 / 8365 / 9014 / 9469 / 7938). **Option 1, 2, and 4 fail matrix passed**. **Option 3 did not pass** (SROS spine NHS = RFC 8365 §10.2 anti-pattern). Closest RFC-shaped hardware use: Option 2 or 1; Option 4 is GW/ASBR, not Clos spine. Isolate a MH D5 with the LAG member still up → AllActive host **ECMP onto the isolated leaf**. **Shut the edge** (`e1-5`) until the leaf rejoins, then restore the member. Manual until a later workflow. SROS WAN/c3 still unverified.
+
 ## Golden rules
 
 1. **RIC:** use `importTarget`/`exportTarget` **or** `importPolicy`/`exportPolicy` — **not both** on one RouterInterconnect.
@@ -47,15 +104,29 @@ For MCP client / chat / EQL tooling, use the **eda-mcp** skill. Live alarm OSS f
 
 **Tech note:** `docs/DCI-CONTROL-PLANE-TROUBLESHOOTING.md` in **eda-dci-lab** and **eda-dci-sros-lab** (EVPN vs IPVPN, DCGW checkpoints, MPLS/VXLAN, CLI). EQL/YANG paths: **§4 → EQL / YANG state paths** + **WAN prefix over LDP validation** (VPRN RT → resolving NH `nexthop-tunnel-type=ldp` → tunnel-table / LDP `in-label`+`out-label` nested tables, leaf `label`).
 
+### Talos SRL DCI (`k0r4`, NS `clab-srl-leaf-spine-dcgw`) — 2026-08-24
+
+**Operational (do not change EDA).** Hub-spoke RIC is up. Live 8-client CLAB: `~/3-tier-dci/clab-s-spine-spine-leaf-srl-only.yaml`.
+
+| Vnet | Export RT | Import | Ports | Working docker hosts | Subnet / GW |
+|------|-----------|--------|-------|----------------------|-------------|
+| vnet-1 | `target:1:100` | `target:1:101` | leaf-1 e1-5, leaf-2 e1-6 | client-1 `.1`, client-2 `.2` | `172.16.101.0/24` / `.254` |
+| vnet-2 hub | `target:1:101` | `importPolicy: multi-rt-import` | leaf-5 e1-5, leaf-6 e1-6 | **client-5** `.1`, **client-6** `.2` | `172.16.201.0/24` / `.254` |
+| vnet-5 spoke | `target:1:105` | `target:1:101` | leaf-4 e1-5 | no `151.x` container (IRB `.254` from hub) | `172.16.151.0/24` / `.254` |
+
+Hub `vpn-import-rts`: `1:100` + `1:105`, `matchSetOptions: Any`. Ping: vnet-1 ↔ vnet-2 both ways; vnet-2 → `151.254`; vnet-1 → `151.254` fail (spoke isolation). Post-check: `eda-dci-lab/scripts/post-check-l3-hub-spoke.sh`. Do not “fix DCI policies” first — WAN VPNv4 is fine.
+
 ## SRL gNMI netns (clab WSL)
 
 **Symptom:** TargetNode **TCPWait** / connection refused on `:57410`. `EDA.pem` can be valid.
 
-**Cause:** `sr_grpc_server` listens only in **`srbase-mgmt`**. Docker mgmt IP is on **`mgmt0` in srbase**. Same IP on `mgmt0.0` in srbase-mgmt → naive proxy = two SYN-ACKs / RST.
+**Cause:** `sr_grpc_server` listens only in **`srbase-mgmt`**. Docker mgmt IP is on **`mgmt0` in srbase**. Same IP on `mgmt0.0` in srbase-mgmt → naive proxy = two SYN-ACKs / RST. Installing the proxy **before** srbase has the IPv4 and grpc is on `:57410` leaves factory grpc on `:57400` (TCPWait even if a python proxy process exists).
 
-**Automate (all SRL in NS):** `~/Projects/eda-clab-sros-recovery/recover-clab-sros-pe.sh --eda-instance wsl -n clab-3-tier-leaf-spine-dcgw --os srl --failed-only --post-rebuild`
+**Automate (failed SRL in NS):** `~/Projects/eda-clab-sros-recovery/recover-clab-sros-pe.sh --eda-instance wsl -n clab-3-tier-leaf-spine-dcgw --os srl --failed-only --post-rebuild`
 
-Do **not** `clab restart` SRL or replace fabric `config.json`. Proxy is ephemeral. See **eda-branch**.
+Do **not** `clab restart` healthy SRL or replace fabric `config.json`. If grpc stays on `:57400` with IPv4 only in srbase-mgmt: docker-restart **those nodes only**, then re-run the command above. Proxy is ephemeral. See **eda-branch**.
+
+**After TargetNodes Ready:** check fabrics (`pod-1`/`pod-2`) and interfaces. Ready + Down ifaces (WSL 2026-08-27) = missing CLAB dataplane veths (`e1-*` / `clab-o-*` gone from SRL `srbase`; stale host `clab-stitch-…`). **`--post-rebuild` will not fix this.** Reconcile the live topo: `sudo clab deploy -t /home/clab/3-tier-leaf-spine-s_spine/clab-s-spine-spine-leaf-sr-sim-srl.yaml` (`--dry-run` first; **no `--reconfigure`**). Abandoned: `ip link set e1-*-0 up`. SROS ISLs can already be Up.
 
 **MCP / EQL UI:** verified cheat-sheet paths and aliases live in **eda-mcp** (`eql_aliases`, IP-prefix catalog dropdown, multi-TopoNode compare). SRL uses `afi-safi.evpn` singular `-route`; SROS uses `.state.` paths; per-route EVPN RIB is CLI-only on SROS.
 
@@ -119,6 +190,14 @@ Peer CR fields: **`importPolicies` / `exportPolicies`**. No Policy annotations.
 - **`allow-export-bgp-vpn`:** conditional — often for EVPN RIC; usually unset under IPVPN RIC (auto EVPN-IFL↔IPVPN when both instances present). Flag changes may need VPRN bounce.
 - Apply: communitysets → mode policies → point peers. See `wan/README.md`.
 
+
+## Stitch RTs (SRL lab — operational 2026-08-24)
+
+| VNet | RT |
+|------|-----|
+| vnet-1 | `target:1:100` |
+| vnet-2 hub | `target:1:101` + `importPolicy: multi-rt-import` (`vpn-import-rts` = `1:100`+`1:105`, Any) |
+| vnet-5 spoke | `target:1:105` |
 
 ## Stitch RTs (SROS)
 

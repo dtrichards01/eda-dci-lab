@@ -1,18 +1,35 @@
-[
-  {
-    "op": "replace",
-    "path": "/spec/l2VPNEVPN",
-    "value": { "enabled": false }
-  },
-  {
-    "op": "replace",
-    "path": "/spec/ipv4Unicast",
-    "value": { "enabled": false }
-  },
-  {
-    "op": "add",
-    "path": "/spec/vpnIPv4Unicast",
-    "value": { "enabled": true }
-  }
-]
-
+[
+
+  {
+
+    "op": "replace",
+
+    "path": "/spec/l2VPNEVPN",
+
+    "value": { "enabled": false }
+
+  },
+
+  {
+
+    "op": "replace",
+
+    "path": "/spec/ipv4Unicast",
+
+    "value": { "enabled": false }
+
+  },
+
+  {
+
+    "op": "add",
+
+    "path": "/spec/vpnIPv4Unicast",
+
+    "value": { "enabled": true }
+
+  }
+
+]
+
+

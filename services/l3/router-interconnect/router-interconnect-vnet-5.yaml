@@ -1,4 +1,4 @@
-# L3 spoke DC1: vnet-5 / router-3 stitch (export RT 102, import hub RT 101).
+# L3 spoke DC1: vnet-5 / router-3 stitch (export RT 105, import hub RT 101).
 apiVersion: services.eda.nokia.com/v2
 kind: RouterInterconnect
 metadata:
@@ -18,7 +18,7 @@ spec:
     domainId: 65000:102
     encapsulation: MPLS
     evi: 1002
-    exportTarget: target:1:102
+    exportTarget: target:1:105
     importTarget: target:1:101
     mpls:
       allowedTunnelTypes:

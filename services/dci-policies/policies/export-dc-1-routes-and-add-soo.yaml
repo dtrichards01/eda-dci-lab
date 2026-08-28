@@ -1,11 +1,9 @@
-# DC1 WAN export: vnet-1 (RT 100) + vnet-5 spoke (RT 102) VPNv4 + SOO.
+# DC1 WAN export: vnet-1 (RT 100) + vnet-5 spoke (RT 105) VPNv4 + SOO.
 apiVersion: routingpolicies.eda.nokia.com/v1
 kind: Policy
 metadata:
   name: export-dc-1-routes-and-add-soo
   namespace: clab-srl-leaf-spine-dcgw
-  annotations:
-    l2: loop-avoidance
   labels:
     eda.nokia.com/dci: vpnv4-wan-l3
 spec:

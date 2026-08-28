@@ -19,7 +19,7 @@ Companion: `L3VPN-DCI-GUIDE.md` (L3 WAN + fabric isolation), `DCI-ALIGNMENT.md` 
 | WAN (DCGW ↔ DCGW) | `default` | MPLS/LDP | **EVPN** (type-2 + type-3) | **300** / **301** |
 | Remote BDI | `default` on far DCGW | MPLS/LDP | EVPN | imports reciprocal RT |
 
-**L3 on the same WAN peers** still uses **VPNv4** (RT `100` / `101` / `102`) — see hybrid policy section below.
+**L3 on the same WAN peers** still uses **VPNv4** (RT `100` / `101` / `105`) — see hybrid policy section below.
 
 ### End-to-end path (client-6 → client-7)
 
@@ -63,7 +63,7 @@ WAN BGP peers carry **both** address families:
 
 | AFI | Enabled | Carries |
 |-----|---------|---------|
-| `vpnIPv4Unicast` | **true** | L3 stitch prefixes (RT 100, 101, 102) |
+| `vpnIPv4Unicast` | **true** | L3 stitch prefixes (RT 100, 101, 105) |
 | `l2VPNEVPN` | **true** | L2 stitch EVPN type-2 (MAC) and type-3 (IMET) only |
 | `ipv4Unicast` | **false** | — |
 
@@ -107,7 +107,7 @@ Fabric EVPN (all other types and RTs) remains **blocked** by policy default-reje
 | 3 | `accept-remote-l2-type-3-evpn` | Accept EVPN **type-3**, RT **300** |
 | 4 | `reject-all-remote-evpn` | Reject all other EVPN |
 | 5 | `accept-remote-spoke-ipvpn-vnet-1` | Accept VPNv4 RT **100** |
-| 6 | `accept-remote-spoke-ipvpn-vnet-5` | Accept VPNv4 RT **102** |
+| 6 | `accept-remote-spoke-ipvpn-vnet-5` | Accept VPNv4 RT **105** |
 
 ---
 
@@ -121,7 +121,7 @@ Fabric EVPN (all other types and RTs) remains **blocked** by policy default-reje
 | 3 | `export-local-l2-type-2-evpn` | Export EVPN type-2, RT **300**, add SOO `soo-1122` |
 | 4 | `export-local-l2-type-3-evpn` | Export EVPN type-3, RT **300**, add SOO |
 | 5 | `reject-all-local-evpn` | Block fabric EVPN leak |
-| 6–7 | `export-local-ipvpn-vnet-1` / `vnet-5` | Export VPNv4 RT **100** + **102** + SOO |
+| 6–7 | `export-local-ipvpn-vnet-1` / `vnet-5` | Export VPNv4 RT **100** + **105** + SOO |
 
 ### `export-dc-2-routes-and-add-soo` (DC2)
 

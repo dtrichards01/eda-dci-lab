@@ -1,4 +1,4 @@
-# WAN import on DC2 DCI BGP peers: accept spoke VPNv4 RT 100 (vnet-1) and RT 102 (vnet-5).
+# WAN import on DC2 DCI BGP peers: accept spoke VPNv4 RT 100 (vnet-1) and RT 105 (vnet-5).
 apiVersion: routingpolicies.eda.nokia.com/v1
 kind: Policy
 metadata:

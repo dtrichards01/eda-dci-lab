@@ -4,8 +4,6 @@ kind: Policy
 metadata:
   name: export-wan-routes-only-dc-2
   namespace: clab-srl-leaf-spine-dcgw
-  annotations:
-    l2: loop-avoidance
   labels:
     eda.nokia.com/dci: l2-l3-stitch
 spec:

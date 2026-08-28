@@ -1,4 +1,4 @@
-# Hub vnet-2 RIC import: match vpn-import-rts (RT 100 + 102) on IPVPN control plane.
+# Hub vnet-2 RIC import: match vpn-import-rts (RT 100 + 105) on IPVPN control plane.
 # Production hub import policy — attached on router-interconnect-vnet-2.
 apiVersion: routingpolicies.eda.nokia.com/v1
 kind: Policy

@@ -1,10 +1,12 @@
-# Hub RIC importPolicy: accept spoke stitch RTs 100 (vnet-1) and 102 (vnet-5).
+# Hub RIC importPolicy: accept spoke stitch RTs 100 (vnet-1) and 105 (vnet-5).
+# Live cluster: matchSetOptions Any (SRL hub OR-match).
 apiVersion: routingpolicies.eda.nokia.com/v1
 kind: CommunitySet
 metadata:
   name: vpn-import-rts
   namespace: clab-srl-leaf-spine-dcgw
 spec:
+  matchSetOptions: Any
   members:
     - target:1:100
-    - target:1:102
+    - target:1:105

@@ -1,4 +1,6 @@
 # Stretched-homed L3 edges — vnet-6 DC1 (155.x), vnet-7 DC2 (156.x).
+# Not labeled on the current 8-client Talos L3 lab (leaf-6 e1-6 is vnet-2).
+# Apply only for the expanded 13-client CLAB.
 ---
 apiVersion: interfaces.eda.nokia.com/v1
 kind: Interface

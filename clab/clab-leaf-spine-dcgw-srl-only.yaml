@@ -333,14 +333,14 @@ topology:
     - endpoints: ["srl-leaf-8:e1-3", "srl-spine-3:e1-8"]
     - endpoints: ["srl-leaf-8:e1-4", "srl-spine-4:e1-8"]
 
-    # --- client edge: native + SH ---
+    # --- client edge: native L3/L2 (aligned to live Talos labels 2026-08-24) ---
     - endpoints: ["client-1-vnet-1-dc1:eth1", "srl-leaf-1:e1-5"]
-    - endpoints: ["client-2-vnet-1-dc1:eth1", "srl-leaf-4:e1-5"]
+    - endpoints: ["client-2-vnet-1-dc1:eth1", "srl-leaf-2:e1-6"]
     - endpoints: ["client-3-vnet-2-dc2:eth1", "srl-leaf-5:e1-5"]
-    - endpoints: ["client-4-vnet-2-dc2:eth1", "srl-leaf-8:e1-5"]
-    - endpoints: ["client-5-vnet-5-dc1:eth1", "srl-leaf-3:e1-5"]
-    - endpoints: ["client-6-vnet-3-dc1:eth1", "srl-leaf-2:e1-6"]
-    - endpoints: ["client-7-vnet-4-dc2:eth1", "srl-leaf-8:e1-6"]
+    - endpoints: ["client-4-vnet-2-dc2:eth1", "srl-leaf-6:e1-6"]
+    - endpoints: ["client-5-vnet-5-dc1:eth1", "srl-leaf-4:e1-5"]
+    - endpoints: ["client-6-vnet-3-dc1:eth1", "srl-leaf-3:e1-5"]
+    - endpoints: ["client-7-vnet-4-dc2:eth1", "srl-leaf-7:e1-5"]
     - endpoints: ["client-8-dc1-sh:eth1", "srl-leaf-3:e1-6"]
     - endpoints: ["client-9-dc2-sh:eth1", "srl-leaf-5:e1-6"]
 

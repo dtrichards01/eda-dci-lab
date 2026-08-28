@@ -10,10 +10,6 @@ metadata:
 
   namespace: clab-srl-leaf-spine-dcgw
 
-  annotations:
-
-    l2: loop-avoidance
-
   labels:
 
     eda.nokia.com/dci: l3-stitch

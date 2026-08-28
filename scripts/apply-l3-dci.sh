@@ -15,7 +15,7 @@ kubectl patch virtualnetwork vnet-2 -n "$NS" --type=json \
 kubectl patch virtualnetwork vnet-2 -n "$NS" --type=json \
   --patch-file="$DIR/vnet-2-router-bgp-ipv4-patch.json"
 
-echo "==> Hub multi-RT import policy (spoke RTs 100 + 102)"
+echo "==> Hub multi-RT import policy (spoke RTs 100 + 105)"
 kubectl apply -f "$POL/communitysets/vpn-import-rts.yaml"
 kubectl apply -f "$POL/policies/multi-rt-import.yaml"
 

@@ -1,14 +1,14 @@
-# Native DC1 edge for vnet-5 spoke client.
+# Native DC1 edge for vnet-5 spoke — operational Talos 2026-08-24: leaf-4 e1-5.
 apiVersion: interfaces.eda.nokia.com/v1
 kind: Interface
 metadata:
-  name: srl-leaf-3-ethernet-1-5
+  name: srl-leaf-4-ethernet-1-5
   namespace: clab-srl-leaf-spine-dcgw
   labels:
     eda.nokia.com/role: edge
     eda.nokia.com/vnet-5: vlan-bd-5
 spec:
-  description: edge L3 vnet-5 DC1 spoke — client-5-vnet-5-dc1
+  description: edge L3 vnet-5 DC1 spoke — leaf-4 e1-5 (client-4 when addressed 151.x)
   enabled: true
   encapType: "Null"
   ethernet:
@@ -19,5 +19,5 @@ spec:
     - enabled: true
       interface: ethernet-1-5
       lacpPortPriority: 32768
-      node: srl-leaf-3
+      node: srl-leaf-4
   type: Interface
