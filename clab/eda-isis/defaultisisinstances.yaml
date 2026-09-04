@@ -1,0 +1,57 @@
+# WAN IS-IS instances (option 2). DC1 vs DC2 mirrors OSPF ospf-instance-1/2.
+# Area 49.0001 is one L2 domain. Fabric does not emit a PE DefaultISISInstance
+# when backbone-simulation underlay is ISIS — PEs use isis-instance-backbone.
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultISISInstance
+metadata:
+  name: isis-instance-1
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  enabled: true
+  areaIDs:
+    - "49.0001"
+  addressFamilies:
+    - IPv4
+  levelCapability: L2
+  segmentRouting:
+    mpls:
+      enabled: true
+      srgbLabelBlock: srgb-wan
+      nodeSIDIndexPool: sr-node-sid-pool
+---
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultISISInstance
+metadata:
+  name: isis-instance-2
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  enabled: true
+  areaIDs:
+    - "49.0001"
+  addressFamilies:
+    - IPv4
+  levelCapability: L2
+  segmentRouting:
+    mpls:
+      enabled: true
+      srgbLabelBlock: srgb-wan
+      nodeSIDIndexPool: sr-node-sid-pool
+---
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultISISInstance
+metadata:
+  name: isis-instance-backbone
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  enabled: true
+  areaIDs:
+    - "49.0001"
+  addressFamilies:
+    - IPv4
+  levelCapability: L2
+  segmentRouting:
+    mpls:
+      enabled: true
+      srgbLabelBlock: srgb-wan
+      nodeSIDIndexPool: sr-node-sid-pool
+---

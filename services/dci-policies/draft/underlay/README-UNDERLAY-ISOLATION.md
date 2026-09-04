@@ -1,7 +1,10 @@
 # WAN underlay isolation (vnet-1 / vnet-2) — priority fix before RIC tuning.
 #
-# Problem: SRL DCGW default NI shows ALL remote leaf/spine system IPs (11.0.0.x).
+# Canonical explanation (GRT vs ISIS vs SROS): docs/SRL-vs-SROS-DCGW-RIB.md
+#
+# Problem: SRL DCGW default NI (GRT) shows ALL remote leaf/spine system IPs (11.0.0.x) as BGP.
 # SROS DCGW only shows local fabric + remote DCGW system IPs.
+# This is WAN EVPN leak, not OSPF/ISIS. Wrong service NH = remote leaf VTEP.
 #
 # Cause (typical on SRL):
 #   1. import-dci-services-dc-* default Accept → accepts full remote EVPN

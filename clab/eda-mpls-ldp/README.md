@@ -1,6 +1,6 @@
-# MPLS / LDP CRs — `clab-srl-leaf-spine-dcgw`
+# MPLS / LDP CRs — `clab-srl-leaf-spine-dcgw` (WAN option 1)
 
-Exported from live EDA cluster. Enables MPLS LDP on DCGW and PE nodes for DCI WAN transport.
+Option 1 transport. **Live WAN (2026-09-04) is option 2 SR-ISIS** (`clab/eda-sr-mpls/`). Restore LDP with `scripts/switch-wan-ospf.sh` (re-applies these CRs). Do not leave Down LDP ifaces in place during option 2 — they tank Fabric health.
 
 ## Files
 

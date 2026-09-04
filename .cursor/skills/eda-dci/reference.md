@@ -10,7 +10,8 @@
 | RT format | `target:1:100` | `target:100:100` |
 | VPN match | `protocol: BGP_IPVPN` | `BGP_VPN` + **one CommunitySet / Accept per RT**. SROS `matchSetOptions` = **All only** (EDA rejects `Any`). Multi-member All = AND. Policy CR uses **`statements`** (not `statement`). Never `BGP_IPVPN` / `families:[IPv4]` for vpn-ipv4. |
 | Hub RIC import | Often `multi-rt-import` + multi-member `vpn-import-rts` | **`import-ric-vnet-2`** + `vpn-import-rt-100` / `vpn-import-rt-102`; `exportTarget: 101:101`. Do not use multi-member All for OR. |
-| Fabric EVPN on WAN | Must block (`reject-all-local/remote-evpn`) | Not required — platform limits leak |
+| Fabric EVPN on WAN | **Must** block (`reject-all-local-evpn` egress, `reject-all-remote-evpn` ingress). Else GRT fills with remote leaf `/32`s as **BGP** and stitch NH can become a **leaf VTEP**. Canonical: `docs/SRL-vs-SROS-DCGW-RIB.md` | Not required — platform does not leak fabric EVPN to WAN |
+| WAN underlay | **Live option 2** ISIS+SR-ISIS. Option 1 OSPF+LDP in git. Index: `docs/DCI-OPTIONS.md` | Do not copy SRL ISIS CRs |
 | L3 stitch | VPNv4 on WAN | Dual: local **EVPN-IFL**, remote **BGP VPN**. `allow-export-bgp-vpn` often needed for **EVPN** RIC; usually **not** for **IPVPN** RIC (auto EVPN↔IPVPN when both instances present) |
 
 

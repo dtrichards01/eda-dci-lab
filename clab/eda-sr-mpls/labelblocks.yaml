@@ -1,0 +1,12 @@
+# SRGB for WAN SR-MPLS (option 2). SROS requires sr-labels start = static-label-range + 32.
+# 16000 failed on X1b (MGMT_CORE #3001). 18432 is the SROS default SR start.
+apiVersion: mpls.eda.nokia.com/v1alpha1
+kind: LabelBlock
+metadata:
+  name: srgb-wan
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  type: Static
+  startLabel: 18432
+  endLabel: 20431
+---

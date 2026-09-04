@@ -1,0 +1,30 @@
+# Reject WAN IGP prefixes (OSPFv2 / IS-IS) when they would be advertised
+# into pod-1/pod-2 fabric eBGP. Remote DCGW /32s must stay on the DCGW GRT
+# for VPNv4 NH + SR/LDP tunnels, but must not appear on DC spines/leafs.
+#
+# Same SRL behaviour for OSPF and ISIS: both protocols install remote-site
+# system /32s in the DCGW default NI; Fabric underlay eBGP will re-advertise
+# them unless this policy is in the DCGW→spine export chain.
+#
+# Attach: see scripts/switch-wan-*.sh (Fabric underlayProtocol.bgp.exportPolicies
+# is fabric-wide — only enable after confirming Local system /32s still export).
+apiVersion: routingpolicies.eda.nokia.com/v1
+kind: Policy
+metadata:
+  name: reject-igp-to-fabric
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  defaultAction:
+    policyResult: Accept
+  statements:
+    - name: reject-ospfv2
+      match:
+        protocol: OSPFv2
+      action:
+        policyResult: Reject
+    - name: reject-isis
+      match:
+        protocol: ISIS
+      action:
+        policyResult: Reject
+---

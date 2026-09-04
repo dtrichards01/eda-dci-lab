@@ -1,6 +1,6 @@
-# Default OSPF — WAN underlay (`default` NI)
+# Default OSPF — WAN underlay option 1 (`default` NI)
 
-Exported from live EDA cluster. OSPFv2 on DCGW **system** interfaces and on **ethernet WAN links** (via Fabric ISL CRs).
+Exported from live EDA cluster. OSPFv2 on DCGW **system** interfaces and on **ethernet WAN links** (via Fabric ISL CRs). **Option 2 (IS-IS + SR-MPLS)** is `clab/eda-isis/` + `clab/eda-sr-mpls/` — switch with `scripts/switch-wan-isis.sh` / `scripts/switch-wan-ospf.sh`.
 
 ## Files
 

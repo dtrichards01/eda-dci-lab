@@ -23,6 +23,8 @@ For MCP client / chat / EQL tooling, use the **eda-mcp** skill. Live alarm OSS f
 
 **Never copy policies between SRL and SROS without converting syntax** — see [reference.md](reference.md).
 
+**DCI options (git):** `docs/DCI-OPTIONS.md` — which lab, WAN IGP **option 1 OSPF+LDP** vs **option 2 ISIS+SR-ISIS** (live), SRL vs SROS GRT. YAML for both WAN underlays is in this repo. 3-site fabric options 1–4 are `eda-3-site-bl-spine`, not the WAN IGP switch.
+
 ### 3-site BL/spine (`k0r4`, NS `clab-3-site-bl-spine`) — 2026-08-26
 
 **Operational (do not redeploy from Windows).** Laptop: **`Documents/eda-3-site-bl-spine`** (spine-layer inter-site; **not NetBox**). CLAB on `nokia@100.124.186.51` (`k0r4`). EDA: Talos `https://100.124.186.55`.
@@ -87,7 +89,7 @@ Script (run on k0r4 after copying YAML to `/tmp`): `eda-3-site-bl-spine/scripts/
 3. **Loopback Interface:** single-member only (`type: Loopback`).
 4. **Multi-leaf same subnet (anycast IRB):** enable **`evpnRouteAdvertisementType.arpDynamic`/`ndDynamic` + `l3ProxyARPND.proxyARP`/`proxyND`** on the vnet's IRBInterface when hosts on the same subnet span multiple leaves. Without ARP advertisement every client is published **MAC-only (`ip=0.0.0.0`)** and a leaf that also hosts the subnet locally can never resolve a remote host — see **Anycast IRB loopback failure** below. Type-5 stitch labs may still disable host routes by design on single-leaf-per-subnet topologies.
 5. **SROS:** no `reject-all-local-evpn` needed — fabric EVPN does not leak to WAN by default.
-6. **SRL:** fabric EVPN **must** be blocked on WAN import/export policies. SRL hub may still use multi-member `vpn-import-rts` + `multi-rt-import`; **do not copy that pattern to SROS**.
+6. **SRL:** fabric EVPN **must** be blocked on WAN import/export. DCGW `default` ≠ ISIS table; remote leaf `/32`s are BGP. Canonical: `eda-dci-lab/docs/SRL-vs-SROS-DCGW-RIB.md`. Do **not** copy SRL multi-member `vpn-import-rts` to SROS.
 7. Do **not** add WAN fabric type-2 RT workarounds if loopback test already passes.
 8. **No Policy `metadata.annotations`** on SRL or SROS DCI Policy YAMLs (no descriptive/loop-avoidance annotations).
 
@@ -102,7 +104,9 @@ Script (run on k0r4 after copying YAML to `/tmp`): `eda-3-site-bl-spine/scripts/
 4. Read docs/L3VPN-DCI-GUIDE.md or docs/SROS-EVPN-DCI-GUIDE.md in this repo
 ```
 
-**Tech note:** `docs/DCI-CONTROL-PLANE-TROUBLESHOOTING.md` in **eda-dci-lab** and **eda-dci-sros-lab** (EVPN vs IPVPN, DCGW checkpoints, MPLS/VXLAN, CLI). EQL/YANG paths: **§4 → EQL / YANG state paths** + **WAN prefix over LDP validation** (VPRN RT → resolving NH `nexthop-tunnel-type=ldp` → tunnel-table / LDP `in-label`+`out-label` nested tables, leaf `label`).
+**Tech note:** `docs/DCI-CONTROL-PLANE-TROUBLESHOOTING.md` in **eda-dci-lab** and **eda-dci-sros-lab** (EVPN vs IPVPN, DCGW checkpoints, MPLS/VXLAN, CLI). **Live SRL WAN is SR-ISIS:** CLI + YANG→EQL in `docs/SRL-DCI-WAN-IGP-Tech-Note.md` §7 (`tunnel-table ipv4` `type=sr-isis`). Option 1 LDP: NH `nexthop-tunnel-type=ldp`.
+
+**WAN IGP options (SRL Talos, 2026-09-04):** index **`docs/DCI-OPTIONS.md`**. **Live = option 2** IS-IS+SR-MPLS (RIC MPLS / `SR-ISIS`, user CR `isis-instance-backbone`). Confirm on box: `show network-instance default tunnel-table` (WAN `/32`s = **sr-isis**, next-hop **mpls**; LDP FEC empty). Option 1 OSPFv2+LDP restore: `scripts/switch-wan-ospf.sh`. Cutover must JSON-remove leftover `ISL.spec.ospf.ospfv2` and **delete leftover OSPF system0 + Down LDP ifaces** or Fabric health stays off 100. SRL leak of remote system `/32`s onto spines is the **same for ISIS as OSPF** — Policy `reject-igp-to-fabric`. See `docs/SRL-DCI-WAN-IGP-Tech-Note.md`.
 
 ### Talos SRL DCI (`k0r4`, NS `clab-srl-leaf-spine-dcgw`) — 2026-08-24
 

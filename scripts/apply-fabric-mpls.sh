@@ -20,7 +20,7 @@ kubectl apply -f "$MPLS/defaultldpinterfaces.yaml"
 
 bash "$DIR/apply-ospf.sh"
 
-echo "==> Fabric ISLs (DCGW mesh + PE WAN; OSPF on ethernet via ISL spec)"
+echo "==> Fabric ISLs (DCGW mesh + PE WAN; OSPF on ethernet via ISL spec — option 1)"
 kubectl apply -f "$FABRIC/isls.yaml"
 
 echo "==> Status"

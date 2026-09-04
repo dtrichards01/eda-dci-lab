@@ -1,0 +1,80 @@
+# Passive IS-IS on DCGW + X1b PE system0 — local /32 + node SID.
+# Ethernet WAN ISLs are programmed from clab/eda-fabric/isls-isis.yaml.
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultISISInterface
+metadata:
+  name: system-dcgw-1-system0-isis
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  defaultISISInstance: isis-instance-1
+  interface: dcgw-1-system0
+  interfaceKind: SystemInterface
+  level: L2
+  passive: true
+  type: PointToPoint
+---
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultISISInterface
+metadata:
+  name: system-dcgw-2-system0-isis
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  defaultISISInstance: isis-instance-1
+  interface: dcgw-2-system0
+  interfaceKind: SystemInterface
+  level: L2
+  passive: true
+  type: PointToPoint
+---
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultISISInterface
+metadata:
+  name: system-dcgw-3-system0-isis
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  defaultISISInstance: isis-instance-2
+  interface: dcgw-3-system0
+  interfaceKind: SystemInterface
+  level: L2
+  passive: true
+  type: PointToPoint
+---
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultISISInterface
+metadata:
+  name: system-dcgw-4-system0-isis
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  defaultISISInstance: isis-instance-2
+  interface: dcgw-4-system0
+  interfaceKind: SystemInterface
+  level: L2
+  passive: true
+  type: PointToPoint
+---
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultISISInterface
+metadata:
+  name: system-sros-pe-1-system0-isis
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  defaultISISInstance: isis-instance-backbone
+  interface: sros-pe-1-system0
+  interfaceKind: SystemInterface
+  level: L2
+  passive: true
+  type: PointToPoint
+---
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultISISInterface
+metadata:
+  name: system-sros-pe-2-system0-isis
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  defaultISISInstance: isis-instance-backbone
+  interface: sros-pe-2-system0
+  interfaceKind: SystemInterface
+  level: L2
+  passive: true
+  type: PointToPoint
+---

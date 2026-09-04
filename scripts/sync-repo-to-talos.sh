@@ -20,7 +20,7 @@ else
 fi
 
 echo "==> Sync to $HOST:$REMOTE"
-run_ssh "mkdir -p $REMOTE/services $REMOTE/scripts $REMOTE/docs $REMOTE/clab/configs/base-configs $REMOTE/clab/eda-topology $REMOTE/clab/eda-fabric $REMOTE/clab/eda-mpls-ldp $REMOTE/clab/eda-ospf $REMOTE/clab/eda-wan-bgp $REMOTE/clab/eda-vnets"
+run_ssh "mkdir -p $REMOTE/services $REMOTE/scripts $REMOTE/docs $REMOTE/clab/configs/base-configs $REMOTE/clab/eda-topology $REMOTE/clab/eda-fabric $REMOTE/clab/eda-mpls-ldp $REMOTE/clab/eda-ospf $REMOTE/clab/eda-isis $REMOTE/clab/eda-sr-mpls $REMOTE/clab/eda-wan-bgp $REMOTE/clab/eda-vnets"
 
 run_scp "$SRC/scripts/" "$HOST:$REMOTE/scripts/"
 run_scp "$SRC/services/" "$HOST:$REMOTE/services/"
@@ -32,6 +32,8 @@ run_scp "$SRC/clab/eda-topology/" "$HOST:$REMOTE/clab/eda-topology/"
 run_scp "$SRC/clab/eda-fabric/" "$HOST:$REMOTE/clab/eda-fabric/"
 run_scp "$SRC/clab/eda-mpls-ldp/" "$HOST:$REMOTE/clab/eda-mpls-ldp/"
 run_scp "$SRC/clab/eda-ospf/" "$HOST:$REMOTE/clab/eda-ospf/"
+run_scp "$SRC/clab/eda-isis/" "$HOST:$REMOTE/clab/eda-isis/"
+run_scp "$SRC/clab/eda-sr-mpls/" "$HOST:$REMOTE/clab/eda-sr-mpls/"
 run_scp "$SRC/clab/eda-wan-bgp/" "$HOST:$REMOTE/clab/eda-wan-bgp/"
 run_scp "$SRC/clab/eda-vnets/" "$HOST:$REMOTE/clab/eda-vnets/"
 

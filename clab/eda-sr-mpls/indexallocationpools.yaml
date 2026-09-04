@@ -1,0 +1,12 @@
+# Node SID index pool. Label = SRGB start + index (e.g. 16000 + 1 = 16001).
+# Size 64 covers 4× DCGW + 2× X1b PE with headroom.
+apiVersion: core.eda.nokia.com/v1
+kind: IndexAllocationPool
+metadata:
+  name: sr-node-sid-pool
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  segments:
+    - start: 1
+      size: 64
+---

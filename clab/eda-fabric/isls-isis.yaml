@@ -1,3 +1,5 @@
+# WAN ISLs — option 2 (IS-IS + SR-MPLS). OSPF disabled so apply replaces option 1.
+# X1b PE side uses user CR isis-instance-backbone (Fabric does not emit a PE instance).
 apiVersion: fabrics.eda.nokia.com/v1
 kind: ISL
 metadata:
@@ -6,15 +8,14 @@ metadata:
 spec:
   localDefaultRouter: router-dcgw-1
   localInterface: dcgw-1-ethernet-1-3
-  isis:
-    enabled: false
   ospf:
+    enabled: false
+  isis:
     enabled: true
-    ospfv2:
-      localIPv4Area: backbone-0
-      localIPv4Instance: ospf-instance-1
-      remoteIPv4Area: backbone-0
-      remoteIPv4Instance: ospf-instance-1
+    addressFamilies:
+      - IPv4
+    localInstance: isis-instance-1
+    remoteInstance: isis-instance-1
   poolIPv4: ipv4-pool
   remoteDefaultRouter: router-dcgw-2
   remoteInterface: dcgw-2-ethernet-1-3
@@ -27,15 +28,14 @@ metadata:
 spec:
   localDefaultRouter: router-sros-pe-1
   localInterface: sros-pe-1-ethernet-1-1-1
-  isis:
-    enabled: false
   ospf:
+    enabled: false
+  isis:
     enabled: true
-    ospfv2:
-      localIPv4Area: backbone-simulation-ospfv2-ipv4-0.0.0.0
-      localIPv4Instance: backbone-simulation-ospfv2-ipv4
-      remoteIPv4Area: backbone-0
-      remoteIPv4Instance: ospf-instance-1
+    addressFamilies:
+      - IPv4
+    localInstance: isis-instance-backbone
+    remoteInstance: isis-instance-1
   poolIPv4: ipv4-pool
   remoteDefaultRouter: router-dcgw-1
   remoteInterface: dcgw-1-ethernet-1-5
@@ -48,15 +48,14 @@ metadata:
 spec:
   localDefaultRouter: router-sros-pe-1
   localInterface: sros-pe-1-ethernet-1-a-2-1
-  isis:
-    enabled: false
   ospf:
+    enabled: false
+  isis:
     enabled: true
-    ospfv2:
-      localIPv4Area: backbone-simulation-ospfv2-ipv4-0.0.0.0
-      localIPv4Instance: backbone-simulation-ospfv2-ipv4
-      remoteIPv4Area: backbone-0
-      remoteIPv4Instance: ospf-instance-1
+    addressFamilies:
+      - IPv4
+    localInstance: isis-instance-backbone
+    remoteInstance: isis-instance-1
   poolIPv4: ipv4-pool
   remoteDefaultRouter: router-dcgw-2
   remoteInterface: dcgw-2-ethernet-1-5
@@ -69,15 +68,14 @@ metadata:
 spec:
   localDefaultRouter: router-dcgw-3
   localInterface: dcgw-3-ethernet-1-3
-  isis:
-    enabled: false
   ospf:
+    enabled: false
+  isis:
     enabled: true
-    ospfv2:
-      localIPv4Area: backbone-0
-      localIPv4Instance: ospf-instance-2
-      remoteIPv4Area: backbone-0
-      remoteIPv4Instance: ospf-instance-2
+    addressFamilies:
+      - IPv4
+    localInstance: isis-instance-2
+    remoteInstance: isis-instance-2
   poolIPv4: ipv4-pool
   remoteDefaultRouter: router-dcgw-4
   remoteInterface: dcgw-4-ethernet-1-3
@@ -90,15 +88,14 @@ metadata:
 spec:
   localDefaultRouter: router-sros-pe-2
   localInterface: sros-pe-2-ethernet-1-a-3-1
-  isis:
-    enabled: false
   ospf:
+    enabled: false
+  isis:
     enabled: true
-    ospfv2:
-      localIPv4Area: backbone-simulation-ospfv2-ipv4-0.0.0.0
-      localIPv4Instance: backbone-simulation-ospfv2-ipv4
-      remoteIPv4Area: backbone-0
-      remoteIPv4Instance: ospf-instance-2
+    addressFamilies:
+      - IPv4
+    localInstance: isis-instance-backbone
+    remoteInstance: isis-instance-2
   poolIPv4: ipv4-pool
   remoteDefaultRouter: router-dcgw-3
   remoteInterface: dcgw-3-ethernet-1-6
@@ -111,15 +108,14 @@ metadata:
 spec:
   localDefaultRouter: router-sros-pe-2
   localInterface: sros-pe-2-ethernet-1-a-4-1
-  isis:
-    enabled: false
   ospf:
+    enabled: false
+  isis:
     enabled: true
-    ospfv2:
-      localIPv4Area: backbone-simulation-ospfv2-ipv4-0.0.0.0
-      localIPv4Instance: backbone-simulation-ospfv2-ipv4
-      remoteIPv4Area: backbone-0
-      remoteIPv4Instance: ospf-instance-2
+    addressFamilies:
+      - IPv4
+    localInstance: isis-instance-backbone
+    remoteInstance: isis-instance-2
   poolIPv4: ipv4-pool
   remoteDefaultRouter: router-dcgw-4
   remoteInterface: dcgw-4-ethernet-1-6

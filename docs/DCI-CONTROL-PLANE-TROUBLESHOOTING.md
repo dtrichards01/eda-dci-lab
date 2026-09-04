@@ -11,6 +11,8 @@ Short tech note for **SRL** (`eda-dci-lab`) and **SROS** (`eda-dci-sros-lab`) DC
 
 Sibling copy: `eda-dci-sros-lab/docs/DCI-CONTROL-PLANE-TROUBLESHOOTING.md` (keep in sync).
 
+**SRL vs SROS DCGW RIB / wrong leaf VTEP NH:** `docs/SRL-vs-SROS-DCGW-RIB.md` (not an ISIS vs OSPF difference). **WAN IGP option 1 vs 2:** `docs/DCI-OPTIONS.md`.
+
 ---
 
 ## 1. Decision tree — which control plane?
@@ -86,9 +88,9 @@ Match protocol: **`BGP_IPVPN`**. Full map: `docs/L3VPN-DCI-GUIDE.md` §2.
 | Domain | Transport | Confirm |
 |--------|-----------|---------|
 | **Fabric** | **VXLAN** | VTEP NH, EVPN routes, VXLAN tunnels |
-| **WAN** | **MPLS / LDP** | Stitch via VPNv4/EVPN; NH = DCGW system `/32`; LDP FEC / tunnel-table |
+| **WAN** | **MPLS / SR-ISIS** (live) or **LDP** (option 1) | Stitch via VPNv4/EVPN; NH = DCGW system `/32`; TTM `sr-isis` (or LDP FEC) |
 
-**Pass:** VPNv4 (or WAN EVPN stitch) with NH = remote DCGW; LDP used in forwarding to that `/32`.  
+**Pass:** VPNv4 (or WAN EVPN stitch) with NH = remote DCGW; **SR-ISIS** (live) or LDP used in forwarding to that `/32`.  
 **Fail:** remote leaf VTEP/system IPs appear on WAN (SRL fabric leak).
 
 ---
@@ -98,14 +100,19 @@ Match protocol: **`BGP_IPVPN`**. Full map: `docs/L3VPN-DCI-GUIDE.md` §2.
 ### SRL (`sr_cli`) — primary for this repo
 
 ```bash
-docker exec dcgw-1 sr_cli 'show network-instance default protocols bgp neighbor'
-docker exec dcgw-1 sr_cli 'show network-instance default protocols bgp routes l3vpn-ipv4-unicast summary'
-docker exec dcgw-1 sr_cli 'show network-instance default protocols ldp ipv4 fec'
-docker exec dcgw-1 sr_cli 'show network-instance default tunnel-table'
-docker exec dcgw-1 sr_cli 'show network-instance router-1 route-table ipv4-unicast'
-docker exec dcgw-1 sr_cli 'show network-instance default protocols bgp neighbor <ip> advertised-routes evpn summary'
-docker exec dcgw-1 sr_cli 'show network-instance default protocols bgp neighbor <ip> received-routes evpn summary'
+docker exec dcgw-1 sr_cli -e 'show network-instance default protocols bgp neighbor'
+docker exec dcgw-1 sr_cli -e 'show network-instance default protocols bgp routes l3vpn-ipv4-unicast summary'
+docker exec dcgw-1 sr_cli -e 'show network-instance default tunnel-table'
+docker exec dcgw-1 sr_cli -e 'info from state network-instance default tunnel-table ipv4'
+docker exec dcgw-1 sr_cli -e 'info from state network-instance default protocols isis instance isis-instance-1 segment-routing mpls sid-database'
+docker exec dcgw-1 sr_cli -e 'show network-instance default protocols isis adjacency'
+docker exec dcgw-1 sr_cli -e 'show network-instance default protocols ldp ipv4 fec'
+docker exec dcgw-1 sr_cli -e 'show network-instance router-1 route-table ipv4-unicast'
+docker exec dcgw-1 sr_cli -e 'show network-instance default protocols bgp neighbor <ip> advertised-routes evpn summary'
+docker exec dcgw-1 sr_cli -e 'show network-instance default protocols bgp neighbor <ip> received-routes evpn summary'
 ```
+
+Live WAN (2026-09-04) is **SR-ISIS**, not LDP. Full table + YANG→EQL hints: `docs/SRL-DCI-WAN-IGP-Tech-Note.md` §7.
 
 ### SROS (classic)
 
@@ -124,7 +131,7 @@ show router ldp bindings
 1. RIC `controlPlane` + peer AFI agree.
 2. Correct Policy pair attached.
 3. Service route-table + WAN RIB.
-4. NH = DCGW system → LDP/tunnel (MPLS).
+4. NH = DCGW system → **SR-ISIS** tunnel (live) or LDP (option 1) (MPLS).
 5. SROS client FAIL: GBP/MSG before IRB.
 6. Multi-leaf hosts on same subnet: confirm IRB host-route populate (separate from GBP).
 7. Loopback Interface: one member per CR — does not support multi-member.
@@ -140,6 +147,6 @@ show router ldp bindings
 | EVPN type-2 | `...bgp-rib.afi-safi.evpn.*.mac-ip-route` | VPLS FDB `...state.service.vpls.fdb.mac` |
 | MAC table | `...bridge-table.mac-table.mac` | same VPLS FDB path |
 | VPNv4 / L3VPN | CLI `show network-instance default protocols bgp routes l3vpn-ipv4-unicast` (SRL IPVPN lab); AFI may be absent on fabric-only leaves | Peer `family-prefix.vpn-ipv4` + CLI `show router bgp routes vpn-ipv4` |
-| LDP / tunnel | VXLAN VTEP `...srl.tunnel.vxlan-tunnel.vtep`; LDP FEC on DCGW when configured | `...state.router.ldp.bindings.active.prefixes` (+ nested `.in-label` / `.out-label`, leaf `label`) · `...tunnel-table.ipv4.tunnel` |
+| LDP / SR-ISIS / tunnel | VXLAN VTEP `...srl.tunnel.vxlan-tunnel.vtep`; WAN TTM `...network-instance.tunnel-table.ipv4.tunnel` (`type`=`sr-isis` live; `ldp` when option 1); ISIS SID `...protocols.isis.instance.segment-routing.mpls.sid-database.prefix-sid` | `...state.router.ldp.bindings.active.prefixes` (+ nested `.in-label` / `.out-label`, leaf `label`) · `...tunnel-table.ipv4.tunnel` |
 
 Related: `docs/L3VPN-DCI-GUIDE.md`, `docs/L2-DCI-GUIDE.md`, sibling SROS `docs/SROS-EVPN-DCI-GUIDE.md`.

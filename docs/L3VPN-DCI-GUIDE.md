@@ -4,9 +4,11 @@
 **Validated:** vnet-1 ↔ vnet-2 hub, vnet-5 ↔ vnet-2 hub-spoke (bidirectional `eth1` ping)  
 **Last updated:** 2026-08-04
 
-Companion docs: `DCI-ALIGNMENT.md` (service model), `CLAB-VALIDATION.md` (topology).
+Companion docs: `DCI-ALIGNMENT.md` (service model), `CLAB-VALIDATION.md` (topology), `SRL-DCI-WAN-IGP-Tech-Note.md` (WAN OSPF+LDP vs **live ISIS+SR-MPLS / SR-ISIS**).
 
 This document is the **authoritative policy map**: which routing policies and community sets are applied on which objects, why, and how fabric control-plane noise (leaf system IPs, VTEPs, EVPN routes) is kept off the WAN.
+
+**SRL vs SROS GRT / IGP / wrong NH (do not mix):** `docs/SRL-vs-SROS-DCGW-RIB.md`. DCGW `default` is not the ISIS table. Remote leaf/spine `/32`s are BGP, not IGP. The SROS lab never showed them because SROS does not leak fabric EVPN onto WAN. **WAN IGP option 1 vs 2 (git YAML + switch scripts):** `docs/DCI-OPTIONS.md`.
 
 ---
 
@@ -32,8 +34,8 @@ Cross-DC L3 uses **different control planes on different legs**. That is intenti
 | Leg                                               | Network instance        | Encapsulation | BGP AFI / control                        | Why                                                                                                                 |
 | ------------------------------------------------- | ----------------------- | ------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | **Fabric** (leaf ↔ spine ↔ DCGW)                  | `router-1` / `router-2` | VXLAN         | **EVPN**                                 | L3 IRB on fabric: EVPN type-2 (MAC-IP) and type-5 (IP prefix). NH = local leaf/DCGW VTEP. |
-| **RIC stitch** (service NI ↔ WAN NI on same DCGW) | `router-`* ↔ `default`  | MPLS / LDP    | **IPVPN** (`controlPlane: IPVPN` on RIC) | EDA leaks stitch RTs between service router and interconnect BGP instance.                                          |
-| **WAN** (DCGW ↔ DCGW)                             | `default`               | MPLS / LDP    | **VPNv4** + **EVPN** (hybrid)            | L3: stitch prefixes (RT 100/101/105) via VPNv4. L2: EVPN type-2/3 only (RT 300/301). Fabric EVPN blocked by policy. |
+| **RIC stitch** (service NI ↔ WAN NI on same DCGW) | `router-`* ↔ `default`  | MPLS (SR-ISIS live / LDP option 1) | **IPVPN** (`controlPlane: IPVPN` on RIC) | EDA leaks stitch RTs between service router and interconnect BGP instance.                                          |
+| **WAN** (DCGW ↔ DCGW)                             | `default`               | MPLS (SR-ISIS live / LDP option 1) | **VPNv4** + **EVPN** (hybrid)            | L3: stitch prefixes (RT 100/101/105) via VPNv4. L2: EVPN type-2/3 only (RT 300/301). Fabric EVPN blocked by policy. |
 
 
 ---
@@ -52,7 +54,7 @@ Cross-DC L3 uses **different control planes on different legs**. That is intenti
 
 | AFI              | Enabled   | Effect                                                                                                                    |
 | ---------------- | --------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `ipv4Unicast`    | **false** | No plain BGP IPv4 on WAN (underlay uses OSPF in `default`).                                                               |
+| `ipv4Unicast`    | **false** | No plain BGP IPv4 on WAN (underlay is ISIS live / OSPF option 1 in `default`). |
 | `l2VPNEVPN`      | **true**  | EVPN on WAN — **only** L2 stitch type-2/3 with RT 300/301 allowed by policy (not fabric EVPN).                            |
 | `vpnIPv4Unicast` | **true**  | MPLS VPN-IPv4 for L3 stitch prefixes (RT 100/101/105).                                                                  |
 
@@ -111,7 +113,7 @@ Tag sets: `services/dci-policies/tagsets/` (on cluster; apply via policy CRs ref
 ```
 client-1 (101.1) → leaf-1 router-1 [EVPN/VXLAN]
   → dcgw-1 router-1 ──RIC IPVPN RT 100──► dcgw-1 default
-  → WAN VPNv4/MPLS/LDP ──► dcgw-3 default
+  → WAN VPNv4/MPLS/SR-ISIS ──► dcgw-3 default
   → RIC multi-rt-import ──► dcgw-3 router-2
   → leaf-5/8 router-2 [EVPN/VXLAN] → client-3/4 (201.x)
 ```
@@ -204,25 +206,28 @@ Patch **vnet-1**, **vnet-2**, **vnet-5** for EVPN type-2 IP+MAC and host route p
 
 
 
-## 5. WAN MPLS / LDP validation
+## 5. WAN MPLS validation (live: SR-ISIS)
 
-Stitch prefixes are **BGP VPNv4** across WAN. MPLS binds to **BGP next-hop** (remote DCGW system IP `/32`), not the stitch `/24` directly.
+Stitch prefixes are **BGP VPNv4** across WAN. MPLS binds to **BGP next-hop** (remote DCGW system IP `/32`), not the stitch `/24` directly. **Live underlay (2026-09-04) is IS-IS + SR-MPLS** (`allowedTunnelTypes: SR-ISIS`). Option 1 restore is OSPFv2 + LDP — see `docs/SRL-DCI-WAN-IGP-Tech-Note.md`.
 
-
-| DCGW   | System IP   | Remote WAN peer |
-| ------ | ----------- | --------------- |
-| dcgw-1 | `11.0.0.7`  | `11.0.0.15`     |
-| dcgw-3 | `11.0.0.15` | `11.0.0.7`      |
+| DCGW   | System IP   | Remote WAN peer | Live tunnel to peer |
+| ------ | ----------- | --------------- | ------------------- |
+| dcgw-1 | `11.0.0.7`  | `11.0.0.15`     | TTM **sr-isis** SID 18437 |
+| dcgw-3 | `11.0.0.15` | `11.0.0.7`      | TTM **sr-isis** SID 18433 |
 
 
 ```bash
-docker exec dcgw-1 sr_cli 'show network-instance default protocols bgp routes l3vpn-ipv4-unicast summary'
-docker exec dcgw-1 sr_cli 'show network-instance default protocols ldp ipv4 fec'
-docker exec dcgw-1 sr_cli 'show network-instance default tunnel-table'
-docker exec dcgw-1 sr_cli 'ping network-instance default 11.0.0.15 -c 3'
+docker exec dcgw-1 sr_cli -e 'show network-instance default protocols bgp routes l3vpn-ipv4-unicast summary'
+docker exec dcgw-1 sr_cli -e 'show network-instance default tunnel-table'
+docker exec dcgw-1 sr_cli -e 'info from state network-instance default tunnel-table ipv4'
+docker exec dcgw-1 sr_cli -e 'info from state network-instance default protocols isis instance isis-instance-1 segment-routing mpls sid-database'
+docker exec dcgw-1 sr_cli -e 'show network-instance default protocols ldp ipv4 fec'
+docker exec dcgw-1 sr_cli -e 'ping network-instance default 11.0.0.15 -c 3'
 ```
 
-**Pass:** Remote stitch prefix in VPNv4 RIB, NH = remote DCGW system IP; LDP FEC `Used in Forwarding: true` for that `/32`.
+**Pass (option 2):** Remote stitch prefix in VPNv4 RIB, NH = remote DCGW system IP; that `/32` is **Tunnel Type sr-isis**, next-hop type **mpls**, owner `segrt_mgr`; LDP FEC empty.
+
+**Pass (option 1):** same VPNv4 NH; LDP FEC `Used in Forwarding: true` for that `/32`.
 
 ### End-to-end ping (`eth1`)
 

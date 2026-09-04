@@ -12,9 +12,13 @@ Datacenter interconnect (DCI) service definitions for the Talos EDA cluster and 
 
 ## Service model
 
+**Start here for which option is live:** [`docs/DCI-OPTIONS.md`](docs/DCI-OPTIONS.md) (lab vs SROS vs 3-site; WAN IGP **option 1 OSPF+LDP** vs **option 2 ISIS+SR-ISIS**). YAML for both WAN options is in git under `clab/eda-ospf/`, `clab/eda-mpls-ldp/`, `clab/eda-isis/`, `clab/eda-sr-mpls/`, `clab/eda-fabric/isls.yaml` / `isls-isis.yaml`. Switch: `scripts/switch-wan-isis.sh` / `switch-wan-ospf.sh`.
+
+See `docs/SRL-vs-SROS-DCGW-RIB.md` for SRL vs SROS DCGW GRT (BGP EVPN leak vs IGP) and why service NH must be the remote DCGW, not a leaf VTEP.  
 See `docs/DCI-ALIGNMENT.md` for hub/spoke RTs and apply order.  
 See `docs/DCI-CONTROL-PLANE-TROUBLESHOOTING.md` for EVPN vs IPVPN mode checks, DCGW checkpoints, MPLS/VXLAN validation, CLI cheat sheet.  
 See `docs/L3VPN-DCI-GUIDE.md` for L3 policies, AFIs, MPLS/LDP checks, and WAN fabric isolation.  
+See `docs/SRL-DCI-WAN-IGP-Tech-Note.md` for WAN IGP **option 1 (OSPFv2 + LDP)** vs **option 2 (IS-IS + SR-MPLS)**. **Live on Talos 2026-09-04 = option 2** (RIC `SR-ISIS` / MPLS). Switch: `scripts/switch-wan-isis.sh` / `switch-wan-ospf.sh`.  
 See `docs/L2-DCI-GUIDE.md` for L2 BDI, hybrid WAN EVPN (type-2/3), and vnet-3/4 stitch.
 
 | Tier | Virtual networks | Interconnect CR | Stitch RTs |
@@ -112,13 +116,16 @@ clab/
   clab-leaf-spine-dcgw-srl-only.yaml
   eda-fabric/                  # 3 fabrics + WAN ISL CRs
   eda-mpls-ldp/                # LDP routers, interfaces, label block
-  eda-ospf/                    # DefaultOSPF instance, area, system interfaces
+  eda-ospf/                    # Option 1: DefaultOSPF instance, area, system interfaces
+  eda-isis/                    # Option 2: DefaultISIS instance + system interfaces (SR-MPLS)
+  eda-sr-mpls/                 # Option 2: SRGB + node SID index pool
   eda-wan-bgp/                 # DefaultBGPGroup + DefaultBGPPeer (dcgw 1-4)
   eda-vnets/                   # VirtualNetwork vnet-1 .. vnet-5
   eda-topology/                # TopoLink + Interface ISLs
   configs/client-config.sh
   configs/base-configs/mh-dc1a.sh … mh-dc2b.sh
 docs/
+  SRL-DCI-WAN-IGP-Tech-Note.md # OSPF+LDP vs ISIS+SR-MPLS WAN options
   L3VPN-DCI-GUIDE.md         # L3 policy map, hybrid WAN, MPLS checks
   L2-DCI-GUIDE.md            # L2 BDI, WAN EVPN type-2/3, vnet-3/4
   DCI-CONTROL-PLANE-TROUBLESHOOTING.md  # EVPN vs IPVPN, DCGW checks, CLI
@@ -134,6 +141,8 @@ services/
   mh/                          # per-ES L3 vnets + RIC + LAG labels
   dci-policies/
 scripts/
+  switch-wan-ospf.sh / switch-wan-isis.sh  # WAN IGP option 1 ↔ 2
+  validate-wan-igp.sh          # adj, leak check, L3 ping
   sync-repo-to-talos.sh        # Windows → Talos file sync
   sync-and-apply-talos.sh      # sync + apply-all
   apply-l2-dci.sh            # BDI + edges + apply-l2-wan-evpn
