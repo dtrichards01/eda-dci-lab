@@ -1,5 +1,7 @@
 # EDA DCI reference
 
+SRL vs SROS policy tables. **Env URLs / 26.8.1 instances:** [eda/26.8.1-changes.md](../eda/26.8.1-changes.md) (#2 Talos `.55` for SRL DCI + k0r4 3-site; #3 WSL `:9443` for SROS EVPN). **EVPN on 7220 IXR-H5 TH** (Kind #1 `clab-h5-2x2`): [eda/h5-th-evpn.md](../eda/h5-th-evpn.md) — first L2 VXLAN on Tomahawk H5 (2026-09-03). **RoCEv2/DCQCN QoS:** [eda/qos-rocev2.md](../eda/qos-rocev2.md). This file has no 26.4 UI URLs. **Use-case catalog (share):** `eda-dci-lab/docs/DCI-OPTIONS.md` §2.
+
 ## SRL (eda-dci-lab) vs SROS (eda-dci-sros-lab)
 
 | Topic | SRL `eda-dci-lab` | SROS `eda-dci-sros-lab` |
@@ -10,8 +12,8 @@
 | RT format | `target:1:100` | `target:100:100` |
 | VPN match | `protocol: BGP_IPVPN` | `BGP_VPN` + **one CommunitySet / Accept per RT**. SROS `matchSetOptions` = **All only** (EDA rejects `Any`). Multi-member All = AND. Policy CR uses **`statements`** (not `statement`). Never `BGP_IPVPN` / `families:[IPv4]` for vpn-ipv4. |
 | Hub RIC import | Often `multi-rt-import` + multi-member `vpn-import-rts` | **`import-ric-vnet-2`** + `vpn-import-rt-100` / `vpn-import-rt-102`; `exportTarget: 101:101`. Do not use multi-member All for OR. |
-| Fabric EVPN on WAN | **Must** block (`reject-all-local-evpn` egress, `reject-all-remote-evpn` ingress). Else GRT fills with remote leaf `/32`s as **BGP** and stitch NH can become a **leaf VTEP**. Canonical: `docs/SRL-vs-SROS-DCGW-RIB.md` | Not required — platform does not leak fabric EVPN to WAN |
-| WAN underlay | **Live option 2** ISIS+SR-ISIS. Option 1 OSPF+LDP in git. Index: `docs/DCI-OPTIONS.md` | Do not copy SRL ISIS CRs |
+| Fabric EVPN on WAN | **Must** block (`reject-all-local-evpn` **egress**, `reject-all-remote-evpn` **ingress`). Else GRT fills with remote leaf `/32`s as **BGP** and stitch NH can become a **leaf VTEP**. Not an ISIS/OSPF issue. Canonical: `eda-dci-lab/docs/SRL-vs-SROS-DCGW-RIB.md` | Not required — platform does not leak fabric EVPN to WAN. GRT has local fabric + remote DCGW only |
+| WAN underlay (Talos SRL, 2026-09-04) | **Live IS-IS + SR-ISIS** (RIC MPLS). Option 1 OSPF+LDP restore. Index: `eda-dci-lab/docs/DCI-OPTIONS.md`. CLI/YANG: `docs/SRL-DCI-WAN-IGP-Tech-Note.md` §7 | Lab-specific; do not copy SRL ISIS CRs |
 | L3 stitch | VPNv4 on WAN | Dual: local **EVPN-IFL**, remote **BGP VPN**. `allow-export-bgp-vpn` often needed for **EVPN** RIC; usually **not** for **IPVPN** RIC (auto EVPN↔IPVPN when both instances present) |
 
 
@@ -27,6 +29,31 @@
 
 SOO: `soo-1122` (DC1), `soo-2211` (DC2). Tags: `tag-10`, `tag-20`.
 
+## Anycast VTEP (MAC-VRF MH) vs BridgeDomainInterconnect — 26.8.1
+
+**Anycast VTEP is not a BDI knob.** `BridgeDomainInterconnect` / `RouterInterconnect` stay v2 with no `vtep` / `anycast` fields. The 26.8.1 feature is EVPN Anycast Multi-homing on **access ESI LAGs**, L2 (mac-vrf) only; L3 is future.
+
+| Item | 26.8.1 fact |
+|------|-------------|
+| CRD | `Interface.spec.lag.multihoming.vtep.mode` = `Unicast` (default) \| `Anycast`; `anycastIPv4Pool` required for Anycast |
+| Consumers | `BridgeInterface` / `VLAN` (MAC-VRF). Not BDI, not RIC, not IRB |
+| New CR | `DefaultLoopbackInterface` (`routing.eda.nokia.com/v1`) — derived `avtep-{local}-{others…}` on `loopback-255` (`lo255`) |
+| OS | **SRL 26.7.1+ only**. SROS: no. 7220 H5/Dx; 7250 IXR ingress-only. **H5 L2 EVPN VXLAN validated 2026-09-03** on Kind #1 `h5-2x2` (TH-32D) — [h5-th-evpn.md](../eda/h5-th-evpn.md) |
+| MH rules | `AllActive`; `dfElection` `HighestPreference` or unset. One anycast IPv4 per **node-set** (shared across ESes on that exact set). Changing ES members reallocates the IP (brief outage) |
+| Prep | User must create Interface CRs named **`loopback-255`** on participating leaves first (CE loop-detection blocks auto-create from Interfaces/Fabrics/Services) |
+| Underlay | Fabrics eBGP export of local `/32` loopbacks (OSPF/IS-IS passive later). DCGWs must reach the anycast IP |
+
+**BDI interaction:** lab BDI is a **second EVPN instance on DCGWs** (still **MPLS/LDP**, different RT/EVI). It does not allocate anycast VTEPs. Fabric VTEPs stay per-leaf system IPs unless the **access LAG** is `vtep.mode: Anycast`. Same BridgeDomain can mix anycast MH leaves + unicast DCGW stitch **only if DCGWs are not in that ES** and the anycast `/32` is in the fabric underlay. Do not put DCGW nodes in an Anycast ES.
+
+**Lab check 2026-09-01:**
+
+| Lab | BDI | Anycast VTEP |
+|-----|-----|----------------|
+| #3 WSL SROS `clab-3-tier-leaf-spine-dcgw` | `bridge-domain-interconnect-vnet-3` + `bridge-domian-interconnect-vnet-4` (**typo in name**) **Up**, MPLS, RT `300:300`/`301:301`. `bd-3` = leaf-2 only; `bd-4` = leaf-6 only | **N/A** — 0 LAG MH, 0 `DefaultLoopbackInterface`, SROS unsupported |
+| #2 SRL git `eda-dci-lab` | `bd-interconnect-vnet-3/4` MPLS LDP, RT `target:1:300`/`1:301` | Same model: BDI does not turn on anycast; enable on leaf ESI LAG if you want it |
+
+Do not copy `vtep` onto BDI YAML. 3-site MH LAGs (`eda-3-site-bl-spine`) are the candidate to *use* the knob; those are stretched EVPN, not DCGW BDI.
+
 ## WAN peer → policy (SROS mode-specific)
 
 | Mode | Peer example | Import | Export |
@@ -36,7 +63,58 @@ SOO: `soo-1122` (DC1), `soo-2211` (DC2). Tags: `tag-10`, `tag-20`.
 | IPVPN | `dcgw-2-dcgw-4` | `import-dci-ipvpn-dc-1` | `export-dci-ipvpn-dc-1` |
 | IPVPN | `dcgw-4-dcgw-2` | `import-dci-ipvpn-dc-2` | `export-dci-ipvpn-dc-2` |
 
-**Do not use `*-dual` (obsolete).** Peer fields: `importPolicies` / `exportPolicies`. No Policy annotations. `allow-export-bgp-vpn` conditional on EVPN RIC.
+**Do not use `*-dual` (obsolete).** Peer fields: **`importPolicies` / `exportPolicies`** (session-wide). No Policy annotations. `allow-export-bgp-vpn` conditional on EVPN RIC.
+
+## SROS Policy `configuredName` vs RouterInterconnect (26.4.x–26.8.1)
+
+Customer report (EDA 26.4.x / SROS 25.10): `BGPGroup` pushes the referenced Policy **`configuredName`** into nodeconfig; `RouterInterconnect` `importPolicy`/`exportPolicy` pushes the Policy **CR `metadata.name`**. If those differ, SROS gets a `policy-statement` under `configuredName` and a VPRN/VPN import/export under the CR name → missing and/or duplicate entries.
+
+| Our #3 WSL lab (checked 2026-09-07) | Value |
+|-------------------------------------|--------|
+| EDA | **26.8.1** (not 26.4.x) |
+| DCGW | SROS **26.3.r1** SR-1 (not 25.10) |
+| Hub RIC | `importPolicy: import-ric-vnet-2` (live, Up). Spokes: targets only |
+| WAN | `DefaultBGPPeer` `importPolicies`/`exportPolicies` (CR names) |
+| Any Policy `configuredName` | **unset** on all CRs in `clab-3-tier-leaf-spine-dcgw` |
+
+**Live test 2026-09-07 (EDA 26.8.1 / SROS 26.3.r1):** set `configuredName: IMPORT_RIC_VNET_2` on hub Policy `import-ric-vnet-2` (RIC `importPolicy` left as CR name). ConfigEngine txn **5103 FAILED**:
+
+`MGMT_CORE #240: policy-statement[name=import-ric-vnet-2] - Entry has references - vprn router-2 bgp-evpn mpls vrf-import/policy`
+
+Policy app tried to rename/delete the CR-named statement; RIC still holds `vrf-import policy ["import-ric-vnet-2"]`. Same split as 26.4.x; here SROS **rejects the commit** instead of leaving duplicates. Alarm `ReconcileFailure-…Policy-import-ric-vnet-2`; node kept the last working config. **Reverted** `configuredName` after the test. Do not set `configuredName` ≠ CR name on RIC-attached Policies.
+
+## 26.8.1 per-AFI/SAFI BGP policies (limited support — Protocols)
+
+Same Policy CRs, attached **per address family** instead of (or as well as) session-wide. Inheritance, most-specific wins:
+
+**neighbor → group → instance** (`DefaultBGPPeer` overrides `DefaultBGPGroup` overrides `DefaultRouter.spec.bgp`).
+
+| Level | Session-wide | Per AFI (examples) |
+|-------|----------------|-------------------|
+| Neighbor | `DefaultBGPPeer.spec.importPolicies` | `spec.l2VPNEVPN.importPolicies`, `spec.vpnIPv4Unicast.importPolicies`, `spec.ipv4Unicast.importPolicies` |
+| Group | `DefaultBGPGroup.spec.importPolicies` | same AFI objects on the group |
+| Instance | `DefaultRouter.spec.importPolicies` (leaking / default VRF) | `spec.bgp.l2VPNEVPN.importPolicies`, `spec.bgp.vpnIPv4Unicast.importPolicies`, … |
+
+AFIs on default-VRF BGP: `ipv4Unicast`, `ipv6Unicast`, `l2VPNEVPN`, `vpnIPv4Unicast`, `vpnIPv6Unicast`, plus `rtc` on peer/group. Overlay `BGPPeer` / `Router.spec.bgp` only have IPv4/IPv6 unicast (no EVPN/VPN AFI on the VNET BGP object).
+
+**Lab today:** WAN peers still use **session-wide** `importPolicies: [import-dci-evpn-dc-1]` with `l2VPNEVPN.enabled: true` and **no** per-AFI policy lists. Group `default-bgp-group-dc-1` only enables EVPN. This is the knob that would let **one** WAN session run EVPN + vpnIPv4 with **two** Policy CRs instead of mixing statements (the old `*-dual` trap). Limited-support — do not attach on SROS 26.3.R1 without an explicit ask.
+
+**Not a Fabric CR split.** Fabric only has session-wide `overlayProtocol.bgp.importPolicies` / `underlayProtocol.bgp.importPolicies` (empty → Fabric auto-generates **one** policy per protocol: underlay vs overlay). No `l2VPNEVPN` / `vpnIPv4Unicast` policy fields on `Fabric`. Per-AFI attach is Protocols: `DefaultBGPPeer` / `DefaultBGPGroup` / `DefaultRouter.spec.bgp.<afi>`. WAN DCI peers are extra DefaultBGPPeers, not Fabric overlay.
+
+**Fabric override (supported):** set those lists on the Fabric CR to your own Policy names — Nokia: *“If routing policies are defined independently of the Fabric through the importPolicies or exportPolicies properties, they will be used instead.”* Live `pod-1`/`pod-2` leave them empty (auto). Do **not** patch Fabric-owned DefaultBGPPeer/ISL/Policy children; they are not user CRs in this NS (kube only shows the four WAN `dcgw-*-bgp-peer`s). Unused lab Policies `import-policy-pod-pod` / `expor-policy-pod-to-pod` are the attach-your-own pattern, not currently referenced. Route leaking is a separate singular `importPolicy`/`exportPolicy`, overridable per role.
+
+**eBGP UL+OL (still UL policies only).** Fabrics `bgp.py` (26.8 app): overlay `EBGP` adds `l2VPNEVPN` to the **same** ISL session / `bgpgroup-ebgp-{fabric}`. Group `importPolicies`/`exportPolicies` are taken only from `underlayProtocol.bgp` (or auto `ebgp-isl-*-policy-{fabric}`). Overlay lists are wired only for **iBGP** RR groups. AFI objects on that group are `enabled` only — Fabric never writes `l2VPNEVPN.importPolicies`. Auto-gen eBGP Policy is **one** CR with mixed BGP + EVPN-type statements. Option 4 YAML (`overlayProtocol.protocol: EBGP`, no overlay `bgp` block) is this model.
+
+## 26.8.1 Policy: BGP next-hop match + RTM preference (limited support)
+
+Live CRD `Policy` v1 (WSL 2026-09-01):
+
+| Need | Field | Notes |
+|------|--------|--------|
+| Match BGP NEXT_HOP | `match.bgp.nextHop.ipAddress` **or** `.prefixSet` | Mutually exclusive. Not the same as `action.bgp.nextHop` (rewrite). |
+| Set RTM / admin distance | `action.setRoutePreference` (1–255) | **Not** `action.bgp.setLocalPreference`. Nokia: **lower is better**. BGP default ~170. |
+
+Example (unused CRs, not on WAN peers): `eda-dci-sros-lab/services/dci-policies/examples/26.8.1-bgp-nh-rtm-pref/`. DC2 NHs: dc-gw-3 `11.0.0.14`, dc-gw-4 `11.0.0.8`. Chain with `NextPolicy` in front of `import-dci-evpn-dc-1`. Do not attach without an explicit ask — SROS 26.3.R1 may no-op or Deviation.
 
 
 ## DCI connectivity debugging
@@ -53,6 +131,8 @@ SOO: `soo-1122` (DC1), `soo-2211` (DC2). Tags: `tag-10`, `tag-20`.
 | EVPN type-5 RIB | `sr_cli "show network-instance default protocols bgp routes evpn route-type 5 prefix <p> detail"` |
 
 SROS DCGWs: no `docker exec` CLI — `sshpass -p 'NokiaSros1!' ssh -tt admin@172.55.10.20{0,1,2,3}` (dc-gw-1..4 mgmt `172.55.10.200-203`), feed commands on stdin after `environment more false`. Config dump: `admin show configuration /configure service vprn "router-1"`. Service IDs differ per node — check `show service service-using` first (on dc-gw-1/2 `router-1` is **10003**, `router-3` is 10002).
+
+SROS 3-site spines (`clab-3-site-bl-spine`): same — `docker exec <cid> sh` is Linux, not MD-CLI. `ssh admin@172.55.10.201` (spine-1) … `.206`. k0r4 has no `sshpass`; use ASKPASS. `ssh host 'show …'` fails (`exec request failed`); pipe into `-tt`. EVPN: `auto-disc`=T1, `mac`=T2, `incl-mcast`=T3, `eth-seg`=T4.
 
 ### SRL gNMI `:57410` stuck Connecting (clab WSL, 2026-08-22)
 
@@ -190,15 +270,19 @@ EDA Fabric eBGP underlay: unique ASN per **leaf**, **one** ASN for all **spines*
 
 This lab has spine–spine links (intra-site `c3`/`c4` after 2026-08-26 extra-uplink deploy, and inter-site ISLs).
 
-**CLAB replace + ESI LAG (2026-08-26):** `clab-connector remove` deletes NS `clab-3-site-bl-spine` (Fabric/VNET/LAG CRs go with it). Then destroy → rm CLAB dir → deploy extra-uplink YAML → `integrate` → relabel `borderleaf`/`spine` → **Option 2:** three site Fabrics (`fabrics-option2-per-site.yaml`) → WAN ISLs `isl=wan-interSwitch` → RR–RR iBGP EVPN. Do **not** add a 4th Fabric. c1/c5 AllActive LACP; c3 SingleActive Static + host active-backup (do not LACP c3). `vnet-1` **Degraded** from A/S LAG is a known EDA issue (fix **26.8.1**); F0 still OK. **Topology B catalog 2026-08-26:** F2 (`e1-1`+`e1-2`) all OK (not isolate). F2iso (all 4 uplinks, edge still up): host ECMP onto isolated leaf. **Shut edge `e1-5` until the D5 rejoins**, then restore the member (F2iso-edge all OK). Manual until a later isolate/rejoin workflow. F9/F10 access LAG OK.
+**CLAB replace + ESI LAG (2026-08-26):** `clab-connector remove` deletes NS `clab-3-site-bl-spine` (Fabric/VNET/LAG CRs go with it). Then destroy → rm CLAB dir → deploy extra-uplink YAML → `integrate` → relabel `borderleaf`/`spine` → **Option 2:** three site Fabrics (`fabrics-option2-per-site.yaml`) → WAN ISLs `isl=wan-interSwitch` → RR–RR iBGP EVPN. Do **not** add a 4th Fabric. c1/c5 AllActive LACP; c3 SingleActive Static + host active-backup (do not LACP c3). `vnet-1` **Degraded** from A/S LAG is a known EDA issue (fix **26.8.1**); F0 still OK. **Fail catalog 2026-08-26:** F2 (`e1-1`+`e1-2`) all OK (not isolate). F2iso (all 4 uplinks, edge still up): host ECMP onto isolated leaf. **Shut edge `e1-5` until the D5 rejoins**, then restore the member (F2iso-edge all OK). Manual until a later isolate/rejoin workflow. F9/F10 access LAG OK.
 
-**Option 1 (snapshot):** one Fabric, eBGP UL + iBGP OL. Fail matrix passed. **Option 2 (snapshot):** three Fabrics, local RR, WAN eBGP + RR–RR iBGP EVPN. Fail matrix passed. **Option 3 (snapshot):** one Fabric eBGP UL+OL, SROS as **spine**. Instance `inter-as-vpn true` from template; Configlets `rr-vpn-forwarding` + `def-recv-evpn-encap vxlan` + group `next-hop-unchanged evpn` applied; Type-5 NH still spine. Fail matrix **did not pass**. **SROS spine keep-NH in the App (shared ASN):** falsified — Configlet = what Fabrics would render; Type-5 NH stayed spine. RFC table (7348/7432/8365/9014/9469/7938) in `eda-3-site-bl-spine/docs/3-site-bl-spine-fabric-and-failure.md` § RFC alignment. **Option 4 live (2026-08-26 17:08):** one Fabric eBGP UL+OL, D5=`leaf`, SROS=`wan` **borderleafs**, unique ASN per SROS. Type-5 NH = D5 VTEP. Fail matrix **passed** (retest). No RIC. YAML under `eda-3-site-bl-spine/clab/`.
+**Option 1 (snapshot):** one Fabric, eBGP UL + iBGP OL. Fail matrix passed. **Option 2 (snapshot):** three Fabrics, local RR, WAN eBGP + RR–RR iBGP EVPN. Fail matrix passed. **Option 3 (snapshot):** one Fabric eBGP UL+OL, SROS as **spine**. Instance `inter-as-vpn true` from template; Configlets `rr-vpn-forwarding` + `def-recv-evpn-encap vxlan` + group `next-hop-unchanged evpn` applied; Type-5 NH still spine. Fail matrix **did not pass**. **SROS spine keep-NH in the App (shared ASN):** falsified — Configlet = what Fabrics would render; Type-5 NH stayed spine. RFC table (7348/7432/8365/9014/9469/7938) in `eda-3-site-bl-spine/docs/3-site-bl-spine-fabric-and-failure.md` § RFC alignment. **Option 4 live (2026-08-28):** one Fabric eBGP UL+OL, D5=`leaf`, SROS=`wan` **borderleafs**, unique ASN per SROS. Type-5 NH = D5 VTEP. **L3** fail matrix **passed** (2026-08-26). **L2 `vnet-l2`:** unicast A/A works (T1); local T4 empty because eBGP ASBR does not re-advertise ES-import RT (same boxes reflected T4 as Option 2 iBGP RRs). Relabeling EDA `spine` while overlay stays eBGP does not fix T4. No RIC. YAML under `eda-3-site-bl-spine/clab/`.
 
 **Client routes:** Docker linux nodes already have `default via 172.55.10.1` (mgmt). `ip route add default via <IRB> || true` never installs. Use `ip route add 172.16.0.0/16 via <IRB>` instead.
 
 **Type-5 host `/32`:** set `hostRoutePopulate.evpn.populate: false`. `true` makes the pair leaf re-originate the `/32` with NH=self.
 
 Workarounds if iBGP is not wanted: unique or per-site spine ASN (custom alloc / BGP CRs), or **one fabric per site + DCI**.
+
+## WSL Zscaler TLS (same cluster as these labs)
+
+After laptop reboot, AppStore catalogs / Discord `x509` is **eda-mcp**, not a DCI policy issue. Run `~/Projects/eda-mcp-client/scripts/fix_eda_proxy_ca_trust.sh`. Do **not** patch `eda-notifier` (derived App). See **eda-mcp**.
 
 ## Platform restore
 

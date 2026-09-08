@@ -12,7 +12,7 @@ Datacenter interconnect (DCI) service definitions for the Talos EDA cluster and 
 
 ## Service model
 
-**Start here for which option is live:** [`docs/DCI-OPTIONS.md`](docs/DCI-OPTIONS.md) (lab vs SROS vs 3-site; WAN IGP **option 1 OSPF+LDP** vs **option 2 ISIS+SR-ISIS**). YAML for both WAN options is in git under `clab/eda-ospf/`, `clab/eda-mpls-ldp/`, `clab/eda-isis/`, `clab/eda-sr-mpls/`, `clab/eda-fabric/isls.yaml` / `isls-isis.yaml`. Switch: `scripts/switch-wan-isis.sh` / `switch-wan-ospf.sh`.
+**Start here for which option / use case is live:** [`docs/DCI-OPTIONS.md`](docs/DCI-OPTIONS.md) (lab vs SROS vs 3-site; WAN IGP **option 1 OSPF+LDP** vs **option 2 ISIS+SR-ISIS**; **validated use-case table**). YAML for both WAN options is in git under `clab/eda-ospf/`, `clab/eda-mpls-ldp/`, `clab/eda-isis/`, `clab/eda-sr-mpls/`, `clab/eda-fabric/isls.yaml` / `isls-isis.yaml`. Switch: `scripts/switch-wan-isis.sh` / `switch-wan-ospf.sh`.
 
 See `docs/SRL-vs-SROS-DCGW-RIB.md` for SRL vs SROS DCGW GRT (BGP EVPN leak vs IGP) and why service NH must be the remote DCGW, not a leaf VTEP.  
 See `docs/DCI-ALIGNMENT.md` for hub/spoke RTs and apply order.  
