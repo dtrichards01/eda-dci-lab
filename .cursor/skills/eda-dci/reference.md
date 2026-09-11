@@ -15,6 +15,8 @@ SRL vs SROS policy tables. **Env URLs / 26.8.1 instances:** [eda/26.8.1-changes.
 | Fabric EVPN on WAN | **Must** block (`reject-all-local-evpn` **egress**, `reject-all-remote-evpn` **ingress`). Else GRT fills with remote leaf `/32`s as **BGP** and stitch NH can become a **leaf VTEP**. Not an ISIS/OSPF issue. Canonical: `eda-dci-lab/docs/SRL-vs-SROS-DCGW-RIB.md` | Not required — platform does not leak fabric EVPN to WAN. GRT has local fabric + remote DCGW only |
 | WAN underlay (Talos SRL, 2026-09-04) | **Live IS-IS + SR-ISIS** (RIC MPLS). Option 1 OSPF+LDP restore. Index: `eda-dci-lab/docs/DCI-OPTIONS.md`. CLI/YANG: `docs/SRL-DCI-WAN-IGP-Tech-Note.md` §7 | Lab-specific; do not copy SRL ISIS CRs |
 | L3 stitch | VPNv4 on WAN | Dual: local **EVPN-IFL**, remote **BGP VPN**. `allow-export-bgp-vpn` often needed for **EVPN** RIC; usually **not** for **IPVPN** RIC (auto EVPN↔IPVPN when both instances present) |
+| **Anycast VTEP** | **Yes** — SRL 26.7.1+ MAC-VRF + AllActive LAG across switches. Proven Talos 2026-09-10 | **No** — SROS 26.3.R1 has no `anycast-multi-homing` in configure tree. Live WSL 2026-09-11: 0 LAG, 0 DLI, BDI Up (MPLS). Not the same as anycast IRB |
+| **`advertise-ifl-host-ad-routes`** | **L2: not needed.** **L3 IRB + IFL on the same MH ES: needed.** EDA 26.8.1 does not emit it. SRL Configlet `06-configlet-ifl-host-ad.yaml` live Talos 2026-09-11 | **Do not copy** the SRL Configlet (SRL YANG path). WSL 2026-09-11: 0 LAG / no ES on DCGW. Not validated on SROS 26.3.R1 |
 
 
 ## Stitch RT map (SROS lab)
@@ -31,17 +33,48 @@ SOO: `soo-1122` (DC1), `soo-2211` (DC2). Tags: `tag-10`, `tag-20`.
 
 ## Anycast VTEP (MAC-VRF MH) vs BridgeDomainInterconnect — 26.8.1
 
-**Anycast VTEP is not a BDI knob.** `BridgeDomainInterconnect` / `RouterInterconnect` stay v2 with no `vtep` / `anycast` fields. The 26.8.1 feature is EVPN Anycast Multi-homing on **access ESI LAGs**, L2 (mac-vrf) only; L3 is future.
+**Where this is explained (canonical first):**
+
+| Place | What |
+|-------|------|
+| **This section** (`~/.cursor/skills/eda-dci/reference.md`) | Trigger, apps, SRL vs SROS, lab checks |
+| `eda-dci/SKILL.md` | One-paragraph pointer |
+| `eda/26.8.1-changes.md` | Product bullet |
+| `eda-dci-lab/docs/DCI-OPTIONS.md` §2 | Shareable use-case row |
+| `eda-dci-lab/docs/EDGE-INTERFACES.md` | Lab YAML + VLAN vs BridgeInterface |
+| `eda-dci-lab/services/mh/anycast-macvrf-test/` | Talos proof YAML + README (`00`–`06`; `06` is the IFL-AD Configlet) |
+
+**SRL vs SROS: not the same.** Anycast VTEP is an **SRL 26.7.1+** MAC-VRF feature (`ethernet-segment anycast-multi-homing`). **SROS 26.3.R1 does not have that YANG/CLI.** The EDA Interface CRD still advertises `vtep.mode` (cluster-wide), but it is not realized on SROS DCGWs. Anycast **IRB** (`ipAddresses[].anycast: true`) is a different feature and exists on both. Live WSL SROS DCI still uses **SRL leaves** — those *could* take anycast VTEP if an AllActive LAG across switches existed; the live lab has **0 LAG** and no spare `e1-10`. Do **not** steal fabric/WAN/client ports to test.
+
+**Trigger (2026-09-10 Talos):** Anycast VTEP is built only when there is an **AllActive LAG whose members sit on different switches** (an ESI that spans PEs) **and** a MAC-VRF consumes that LAG with `vtep.mode: Anycast`. It is **not** built because a dual-homed host exists, not for a single-node LAG, and not for SingleActive. The CE/host is optional for *programming* (`lo255` + `anycast-multi-homing` appeared with no LACP partner); the host is required only for LAG **Up**.
+
+**Which app (26.8):** Intent is **Interfaces**, not the VNET YAML. `Interface.spec.lag.multihoming.vtep` (`mode: Anycast` + `anycastIPv4Pool`) is the only CRD that *defines* anycast VTEP. **Services / VirtualNetwork** realizes it when a MAC-VRF (`BridgeDomain` `EVPNVXLAN`) attaches that LAG — either via **VLAN** (`interfaceSelectors` / labels; preferred) **or** **BridgeInterface** (`spec.interface:` = the LAG CR). Same outcome either way. A single-node ethernet Interface on a VNET does **not** build anycast. **Routing** emits derived `DefaultLoopbackInterface` (`lo255` `/32`); those CRs did not persist in the lab — IP still lands on `lo255` with source CR = VirtualNetwork. IRB `anycast: true` is a **gateway** address, not VTEP.
+
+**Anycast VTEP is not a BDI knob.** `BridgeDomainInterconnect` / `RouterInterconnect` stay v2 with no `vtep` / `anycast` fields. Product scope is **L2 MAC-VRF** on SRL (Nokia: L3 anycast VTEP is future). Putting **L3 IRB on that same MH ES** is a different knob (`advertise-ifl-host-ad-routes`). SROS: no anycast VTEP.
 
 | Item | 26.8.1 fact |
 |------|-------------|
 | CRD | `Interface.spec.lag.multihoming.vtep.mode` = `Unicast` (default) \| `Anycast`; `anycastIPv4Pool` required for Anycast |
-| Consumers | `BridgeInterface` / `VLAN` (MAC-VRF). Not BDI, not RIC, not IRB |
+| Apps | **Interfaces** defines VTEP mode on the MH LAG. **Services** (VLAN or BridgeInterface → MAC-VRF) consumes it. **Routing** `DefaultLoopbackInterface` is derived. |
+| Consumers | `VLAN` (label selector) or `BridgeInterface` (direct Interface ref) on a MAC-VRF. Not BDI, not RIC, not IRB, not a lone ethernet Interface |
 | New CR | `DefaultLoopbackInterface` (`routing.eda.nokia.com/v1`) — derived `avtep-{local}-{others…}` on `loopback-255` (`lo255`) |
-| OS | **SRL 26.7.1+ only**. SROS: no. 7220 H5/Dx; 7250 IXR ingress-only. **H5 L2 EVPN VXLAN validated 2026-09-03** on Kind #1 `h5-2x2` (TH-32D) — [h5-th-evpn.md](../eda/h5-th-evpn.md) |
-| MH rules | `AllActive`; `dfElection` `HighestPreference` or unset. One anycast IPv4 per **node-set** (shared across ESes on that exact set). Changing ES members reallocates the IP (brief outage) |
-| Prep | User must create Interface CRs named **`loopback-255`** on participating leaves first (CE loop-detection blocks auto-create from Interfaces/Fabrics/Services) |
+| OS | **SRL 26.7.1+ only**. SROS 26.3.R1: no `anycast-multi` in configure tree (WSL 2026-09-11). 7220 H5/Dx; 7250 IXR ingress-only. **H5 L2 EVPN VXLAN validated 2026-09-03** on Kind #1 `h5-2x2` (TH-32D) — [h5-th-evpn.md](../eda/h5-th-evpn.md) |
+| MH rules | **`AllActive` LAG across ≥2 switches.** SRL: `Anycast-multi-homing is only supported when multi-homing-mode is all-active`. SingleActive + `vtep.mode: Anycast` is accepted by the CRD then **fails on the node** (Talos txn 1301/1302). `dfElection` HighestPreference or unset. One anycast IPv4 per **node-set**. |
+| Host vs LAG | The **LAG across switches** is the ES. A dual-homed host without that LAG CR does **not** create anycast. Host is only for LACP / LAG **Up**. |
+| Prep | One Loopback Interface CR **per node** (app rejects multi-member: `more than one members are provided for type [loopback]`). Name `loopback-255` on the first leaf; extra leaves need a second CR (e.g. `loopback-255-srl-leaf-4`) with `members.interface: lo255`. VN still creates `lo255` with the anycast `/32`. |
 | Underlay | Fabrics eBGP export of local `/32` loopbacks (OSPF/IS-IS passive later). DCGWs must reach the anycast IP |
+| `advertise-ifl-host-ad-routes` | See **IFL host AD** below. Not a VNET / Interface CRD field. VN `ipAliasNexthops` is a different L3 virtual-ES. |
+
+### IFL host AD (`advertise-ifl-host-ad-routes`)
+
+Nokia ES container for **IP AD per-EVI/ES in the IP-VRF** so remotes can **IP-alias** `bgp-evpn-ifl-host` routes to that ESI (`draft-ietf-bess-evpn-ip-aliasing`). Stops **L3 trombone**. Not L2 BUM loop avoidance (`anycast-multi-homing` + local-bias). Not IRB `interface-less-routing` (`rfc9135SymmetricMode`) — that advertises IFL host MAC/IP; this ES knob aliases those hosts to the MH ESI.
+
+| Case | Needed? | Who sets it |
+|------|---------|-------------|
+| L2-only MAC-VRF on the MH ES | **No** | EDA omits it (correct) |
+| L3 IRB + IFL (`rfc9135SymmetricMode`) on the **same** MH ES | **Yes** | EDA **26.8.1 does not emit it** (no CRD field) |
+| **SRL** workaround | Configlet | `eda-dci-lab/services/mh/anycast-macvrf-test/06-configlet-ifl-host-ad.yaml` (`mh-l2-avtep-ifl-host-ad`) → `srl-leaf-3` + `srl-leaf-4`. Presence container only. **Do not** set `internal-tags` (unresolved tag-set takes the ES down). Path: `.system.network-instance.protocols.evpn.ethernet-segments.bgp-instance{.id==1}.ethernet-segment{.name=="mh-l2-avtep-lag-leaf-3-4"}` |
+| **SROS** 26.3.R1 DCGW | **Do not copy** that Configlet | Different OS / YANG. WSL 2026-09-11: **0 LAG**, `show service system bgp-evpn ethernet-segment` = No Entries. No SROS IFL-AD Configlet in git. |
 
 **BDI interaction:** lab BDI is a **second EVPN instance on DCGWs** (still **MPLS/LDP**, different RT/EVI). It does not allocate anycast VTEPs. Fabric VTEPs stay per-leaf system IPs unless the **access LAG** is `vtep.mode: Anycast`. Same BridgeDomain can mix anycast MH leaves + unicast DCGW stitch **only if DCGWs are not in that ES** and the anycast `/32` is in the fabric underlay. Do not put DCGW nodes in an Anycast ES.
 
@@ -52,7 +85,13 @@ SOO: `soo-1122` (DC1), `soo-2211` (DC2). Tags: `tag-10`, `tag-20`.
 | #3 WSL SROS `clab-3-tier-leaf-spine-dcgw` | `bridge-domain-interconnect-vnet-3` + `bridge-domian-interconnect-vnet-4` (**typo in name**) **Up**, MPLS, RT `300:300`/`301:301`. `bd-3` = leaf-2 only; `bd-4` = leaf-6 only | **N/A** — 0 LAG MH, 0 `DefaultLoopbackInterface`, SROS unsupported |
 | #2 SRL git `eda-dci-lab` | `bd-interconnect-vnet-3/4` MPLS LDP, RT `target:1:300`/`1:301` | Same model: BDI does not turn on anycast; enable on leaf ESI LAG if you want it |
 
-Do not copy `vtep` onto BDI YAML. 3-site MH LAGs (`eda-3-site-bl-spine`) are the candidate to *use* the knob; those are stretched EVPN, not DCGW BDI.
+**Lab check 2026-09-10 (#2 Talos `clab-srl-leaf-spine-dcgw`):** YAML `eda-dci-lab/services/mh/anycast-macvrf-test/`. AllActive LAG `mh-l2-avtep-lag-leaf-3-4` on unused `e1-10` + L2 `vnet-mh-l2-avtep`. On-box `anycast-multi-homing.ip-address: 10.9.9.1` on leaf-3 and leaf-4 **before** adding a host. Then `clab deploy` (no `--reconfigure`) added `client-10-avtep` LACP bond → LAG **Up**, VN **Up**, LACP 2 ports / partner `FE:2F:AA:00:00:01`. `DefaultLoopbackInterface` CRs did **not** persist (app ran them during txn; IP lives on `lo255`). Did not wipe vnet-1…5.
+
+**Lab check 2026-09-11 (#2 Talos, L3 IRB + IFL-AD Configlet):** Applied `05-vnet-l3-irb.yaml` then `06-configlet-ifl-host-ad.yaml` on the same LAG (did not touch vnet-1…5). VN `vnet-mh-l2-avtep` **Up**, IRB `irb-mh-avtep` `172.16.210.254/24` + `interface-less-routing`. EDA still did **not** emit ES IFL-AD. Configlet `mh-l2-avtep-ifl-host-ad` wrote `advertise-ifl-host-ad-routes` on leaf-3 and leaf-4 (on-box source CR = that Configlet) beside `anycast-multi-homing 10.9.9.1`.
+
+**Lab check 2026-09-11 (#3 WSL SROS DCI `clab-3-tier-leaf-spine-dcgw`):** Read-only. Did **not** apply a test LAG (no unused leaf `e1-10`; DCGW ports are fabric/WAN). `vnet-1`…`5` + MS vnets **Up**. BDI `bridge-domain-interconnect-vnet-3` + `bridge-domian-interconnect-vnet-4` **Up**, MPLS EVPN, **no** `vtep`/`anycast` in spec. **0** LAG/MH Interface CRs. **0** `DefaultLoopbackInterface`. Leaves `leaf-1`…`8` = SRL **26.7.1**; DCGWs `dc-gw-1`…`4` = SROS **26.3.r1**. Interface CRD still has `lag.multihoming.vtep` Unicast/Anycast. `ssh admin@172.55.10.200`: `show service system bgp-evpn ethernet-segment` = **No Entries**; `tree flat /configure | match anycast-multi` = **empty** (no SROS anycast-multi-homing). **Do not copy** `06-configlet-ifl-host-ad.yaml` here. Did not wipe vnet-1…5 / BDI.
+
+Do not copy `vtep` onto BDI YAML. 3-site MH LAGs (`eda-3-site-bl-spine`) are also an anycast-VTEP candidate on the **D5 (SRL)** AllActive LAGs. Live Option 4 is **L2 `vnet-l2`** — IFL-AD **not needed**. If L3 IRB is added on those AllActive LAGs, use an **SRL** Configlet on the D5s (not the SROS spine JSON). Those are stretched EVPN, not DCGW BDI.
 
 ## WAN peer → policy (SROS mode-specific)
 

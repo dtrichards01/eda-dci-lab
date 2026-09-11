@@ -1,0 +1,78 @@
+# L3 IRB on the same AllActive anycast MH LAG as vnet-mh-l2-avtep.
+# Isolated — no RIC / WAN. Does not touch vnet-1…5.
+# Host client-10-avtep already has 172.16.210.10/24 on the bond.
+# EDA 26.8.1 does NOT emit ethernet-segment advertise-ifl-host-ad-routes
+# (needed for L3 IFL host aliasing; not needed for L2). Apply
+# 06-configlet-ifl-host-ad.yaml after this VN. SRL only — do not copy to SROS.
+apiVersion: services.eda.nokia.com/v2
+kind: VirtualNetwork
+metadata:
+  name: vnet-mh-l2-avtep
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  bridgeDomains:
+    - name: bd-mh-l2-avtep
+      spec:
+        encapOptions:
+          vxlan:
+            tunnelIndexPool: tunnel-index-pool
+            vniPool: vni-pool
+        eviPool: evi-pool
+        macLearning:
+          agingTimeSeconds: 300
+          enabled: true
+        macLimit: 2000
+        type: EVPNVXLAN
+  bridgeInterfaces: []
+  irbInterfaces:
+    - name: irb-mh-avtep
+      spec:
+        bridgeDomain: bd-mh-l2-avtep
+        evpnRouteAdvertisementType:
+          arpDynamic: true
+          arpStatic: true
+          ndDynamic: true
+          ndStatic: true
+          rfc9135SymmetricMode: true
+        hostRoutePopulate:
+          dynamic:
+            populate: true
+          evpn:
+            datapathProgramming: true
+            populate: true
+          static:
+            populate: true
+        ipAddresses:
+          - ipv4Address:
+              anycast: true
+              ipPrefix: 172.16.210.254/24
+              primary: true
+        ipMTU: 1500
+        ipv4:
+          arpTimeoutSeconds: 14400
+          learnUnsolicitedARP: Disabled
+        l3ProxyARPND:
+          proxyARP: true
+          proxyND: true
+        router: router-mh-avtep
+        virtualIPDiscovery: []
+  routedInterfaces: []
+  routers:
+    - name: router-mh-avtep
+      spec:
+        bgp:
+          enabled: false
+        encapOptions:
+          vxlan:
+            tunnelIndexPool: tunnel-index-pool
+            vniPool: vni-pool
+        eviPool: evi-pool
+        routerID: 10.9.9.10
+        type: EVPNVXLAN
+  vlans:
+    - name: vlan-bd-mh-l2-avtep
+      spec:
+        bridgeDomain: bd-mh-l2-avtep
+        interfaceSelectors:
+          - eda.nokia.com/vnet-mh-l2-avtep=vlan-bd-mh-l2-avtep
+        vlanID: "null"

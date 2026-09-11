@@ -1,0 +1,9 @@
+# Anycast VTEP IPv4 pool (MAC-VRF MH). Unused vs ip-pool 10.1.0.0/16 and system 11.0.0.0/8.
+apiVersion: core.eda.nokia.com/v1
+kind: IPAllocationPool
+metadata:
+  name: avtep-ipv4-pool
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  segments:
+    - subnet: 10.9.9.0/24

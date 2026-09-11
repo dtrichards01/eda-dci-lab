@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Status** | Canonical landing page for *which* DCI lab / overlay / WAN underlay / **use case** is live |
-| **Last updated** | 2026-09-08 |
+| **Last updated** | 2026-09-11 |
 | **Share** | This file + sibling GitHub repos below. Cursor skill: `~/.cursor/skills/eda-dci/SKILL.md` |
 | **EDA** | All instances **26.8.1** |
 
@@ -28,7 +28,7 @@ Never copy Policy YAML between SRL and SROS without converting match syntax. Tab
 
 ## 2. Use cases (validated — share this table)
 
-Status as of **2026-09-08**. “Live” means that design is what the lab is running now, not that every row is pinging at this instant.
+Status as of **2026-09-11**. “Live” means that design is what the lab is running now, not that every row is pinging at this instant.
 
 ### Talos SRL (`eda-dci-lab`, #2)
 
@@ -37,7 +37,8 @@ Status as of **2026-09-08**. “Live” means that design is what the lab is run
 | L3 hub-spoke IPVPN | vnet-1 `1:100`, hub vnet-2 `1:101` + `multi-rt-import`, spoke vnet-5 `1:105` | **Operational** (2026-08-24) | Ping vnet-1 ↔ hub; hub → spoke GW; spoke isolation vnet-1 → `151.254` fail by design |
 | L2 BDI | vnet-3/4, RT `1:300`/`1:301` | In git | EVPN-MPLS on DCGW |
 | L3 single-home | vnet-6/7 RT `400`/`401` | In git | |
-| L3 MH (ESI LAG) | `vnet-mh-l3-dc1a/b`, `dc2a/b` | In git | AllActive / SingleActive on leaf `e1-10` |
+| L3 MH (ESI LAG) | `vnet-mh-l3-dc1a/b`, `dc2a/b` | In git | AllActive / SingleActive on leaf `e1-10` — **L3 IRB, no anycast VTEP**. If applied with IFL IRB, those AllActive ES would also need an **SRL IFL-AD Configlet** (same gap as `06-configlet-ifl-host-ad.yaml`; do not copy to SROS) |
+| L2 anycast VTEP | `vnet-mh-l2-avtep` + `mh-l2-avtep-lag-leaf-3-4` | **Live test 2026-09-10** | **AllActive LAG across switches** (leaf-3+4 `e1-10`). Not the host. YAML `services/mh/anycast-macvrf-test/`. SingleActive rejected on-box. L3 IRB added 2026-09-11; ES IFL-AD is **Configlet** `06-configlet-ifl-host-ad.yaml` (EDA does not emit it) |
 | WAN IGP **option 2** | ISIS L2 + **SR-ISIS** | **Live 2026-09-04** | RIC `allowedTunnelTypes: [SR-ISIS]` |
 | WAN IGP option 1 | OSPFv2 + LDP | Restore script | `scripts/switch-wan-ospf.sh` |
 | Hybrid WAN EVPN+IPVPN | same WAN peers both AFIs | Demo only | Not production; do not mix statements in **one** Policy |
@@ -52,7 +53,7 @@ Pass L3: VPNv4 NH = remote **DCGW** `/32`, then SR-ISIS (or LDP) tunnel. SRL **m
 | L2 BDI | vnet-3/4 `300:300`/`301:301` | **Up** | MPLS; `bridge-domian-interconnect-vnet-4` name typo is live |
 | WAN EVPN policies | `import/export-dci-evpn-dc-{1,2}` | Live pattern | Do **not** use obsolete `import-dci-services-dc-*` |
 | WAN IPVPN policies | `import/export-dci-ipvpn-dc-{1,2}` | In git | Separate peers; never mix with EVPN in one Policy |
-| Anycast IRB loopback | `arpDynamic` + `l3ProxyARPND` | Verified 2026-08-13 | Write via **EDA API**, not kubectl |
+| Anycast VTEP (MAC-VRF) | — | **N/A on SROS DCGW** | **2026-09-11 live:** vnet-1…5 + BDI **Up**, **0 LAG**, **0 DLI**. SROS 26.3.R1 `tree flat /configure \| match anycast-multi` empty. SRL leaves *could* take it if an AllActive LAG existed (none live; no spare `e1-10`). Not anycast IRB. **Do not copy** SRL IFL-AD Configlet `06-configlet-ifl-host-ad.yaml`. Canonical: `eda-dci` `reference.md` |
 | Policy `configuredName` ≠ CR name | RIC-attached Policies | **Do not** | 26.8.1 txn 5103 `MGMT_CORE #240` |
 
 EDA **26.8.1**. DCGW **SROS 26.3.R1** SR-1. SRL fabric **26.7.x** (README used to say 25.10 / 26.3.1 — stale). Limited-support 26.8.1 examples (NH match + RTM pref): `services/dci-policies/examples/26.8.1-bgp-nh-rtm-pref/` — **not** on live WAN peers.
@@ -62,7 +63,7 @@ EDA **26.8.1**. DCGW **SROS 26.3.R1** SR-1. SRL fabric **26.7.x** (README used t
 | Fabric option | Overlay | L3 fail matrix | L2 MH | Live? |
 |---------------|---------|----------------|-------|-------|
 | **1** | one Fabric iBGP overlay | **Passed** | — | Snapshot YAML |
-| **2** | per-site Fabric + iBGP RR–RR | **Passed** | **Passed** (T1+T4, AllActive) | Snapshot |
+| **2** | per-site Fabric + iBGP RR–RR | **Passed** | **Passed** (T1+T4, AllActive) | Snapshot. AllActive LAG across two D5s is the **anycast VTEP candidate** (L2 MAC-VRF, SRL only; not enabled live). Live Option 4 is L2 — IFL-AD not needed; L3 IRB on those LAGs would need an **SRL** Configlet on the D5s, not SROS JSON |
 | **3** | eBGP UL+OL, SROS as **spine** | **Failed** | — | NHS = RFC 8365 §10.2 anti-pattern. Do not retry Configlet knobs |
 | **4** | eBGP UL+OL, D5=`leaf`, SROS=`wan` BL | **L3 passed** | **L2 A/A unicast works** (T1). **Local T4 missing** (eBGP ASBR does not re-advertise ES-import RT) | **Live** `vnet-l2` |
 

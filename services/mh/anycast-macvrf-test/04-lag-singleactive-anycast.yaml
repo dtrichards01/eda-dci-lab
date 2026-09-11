@@ -1,0 +1,84 @@
+# SingleActive + anycast — expect reject or no anycast-multi-homing (feature is AllActive).
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: loopback-255-srl-leaf-1
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  description: lo255 parent leaf-1 for SA anycast test
+  enabled: true
+  type: Loopback
+  members:
+    - enabled: true
+      interface: lo255
+      node: srl-leaf-1
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: mh-l2-avtep-lag-leaf-1-2-sa
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: edge
+    eda.nokia.com/vnet-mh-l2-avtep-sa: vlan-bd-mh-l2-avtep-sa
+spec:
+  description: MH SingleActive L2 anycast VTEP test — leaf-1+2 e1-10
+  enabled: true
+  encapType: "Null"
+  ethernet:
+    stormControl:
+      enabled: false
+  lldp: true
+  type: LAG
+  lag:
+    type: LACP
+    minLinks: 1
+    multihoming:
+      mode: SingleActive
+      preferredActiveNode: srl-leaf-1
+      revertive: true
+      vtep:
+        mode: Anycast
+        anycastIPv4Pool: avtep-ipv4-pool
+    lacp:
+      mode: Active
+      interval: Fast
+      systemPriority: 32768
+  members:
+    - enabled: true
+      interface: ethernet-1-10
+      lacpPortPriority: 32768
+      node: srl-leaf-1
+    - enabled: true
+      interface: ethernet-1-10
+      lacpPortPriority: 32768
+      node: srl-leaf-2
+---
+apiVersion: services.eda.nokia.com/v2
+kind: VirtualNetwork
+metadata:
+  name: vnet-mh-l2-avtep-sa
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  bridgeDomains:
+    - name: bd-mh-l2-avtep-sa
+      spec:
+        encapOptions:
+          vxlan:
+            tunnelIndexPool: tunnel-index-pool
+            vniPool: vni-pool
+        eviPool: evi-pool
+        macLearning:
+          agingTimeSeconds: 300
+          enabled: true
+        macLimit: 2000
+        type: EVPNVXLAN
+  bridgeInterfaces: []
+  routedInterfaces: []
+  vlans:
+    - name: vlan-bd-mh-l2-avtep-sa
+      spec:
+        bridgeDomain: bd-mh-l2-avtep-sa
+        interfaceSelectors:
+          - eda.nokia.com/vnet-mh-l2-avtep-sa=vlan-bd-mh-l2-avtep-sa
+        vlanID: "null"

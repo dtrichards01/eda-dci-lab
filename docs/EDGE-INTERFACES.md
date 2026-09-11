@@ -64,7 +64,26 @@ MH LAG labels (two per LAG): `eda.nokia.com/role=edge` + one per-ES vnet selecto
 | vnet-mh-l3-dc2a | `eda.nokia.com/vnet-mh-l3-dc2a=vlan-bd-mh-200-dc2a` | 5, 6 | 200 | 10.200.2.0/24 |
 | vnet-mh-l3-dc2b | `eda.nokia.com/vnet-mh-l3-dc2b=vlan-bd-mh-200-dc2b` | 7, 8 | 200 | 10.200.2.0/24 |
 
-Cross-DC MH L3 — `router-interconnect-mh-l3-*` (RT 430 ↔ 431).
+Cross-DC MH L3 — `router-interconnect-mh-l3-*` (RT 430 ↔ 431). Those L3 MH LAGs do **not** enable anycast VTEP (L2 MAC-VRF only).
+
+## Anycast VTEP + L3 IFL-AD (AllActive LAG across switches)
+
+**Trigger:** an **AllActive LAG with members on different switches** + MAC-VRF `vtep.mode: Anycast`. Not a dual-homed host, not SingleActive, not BDI.
+
+**Apps:** **Interfaces** owns the knob (`Interface.spec.lag.multihoming.vtep`). **Services / VirtualNetwork** programs it when the MAC-VRF attaches that LAG — **VLAN** (`interfaceSelectors`, as in `vnet-mh-l2-avtep`) or **BridgeInterface** (`spec.interface:` the LAG). Same anycast either way. A direct ethernet Interface on the VNET does not. **Routing** `DefaultLoopbackInterface` is derived (`lo255`).
+
+**SRL vs SROS:** anycast VTEP is **SRL-only**. SROS DCI (#3 WSL, 2026-09-11) has no MH LAG and no `anycast-multi-homing` on the DCGW. **Do not copy** `06-configlet-ifl-host-ad.yaml` to SROS (SRL YANG path). Canonical: `~/.cursor/skills/eda-dci/reference.md`.
+
+| Item | Live 2026-09-10 (#2) |
+|------|--------|
+| LAG | `mh-l2-avtep-lag-leaf-3-4` leaf-3 + leaf-4 `e1-10` |
+| VNET | `vnet-mh-l2-avtep` (untagged MAC-VRF) |
+| Anycast IP | `10.9.9.1/32` on `lo255` both leaves |
+| Host | `client-10-avtep` LACP bond — needed for LAG **Up** only; anycast config existed while LAG was Down |
+| YAML | `services/mh/anycast-macvrf-test/` |
+| `advertise-ifl-host-ad-routes` | **L2: not needed.** **L3 IRB: needed**, EDA does not emit it. Configlet `06-configlet-ifl-host-ad.yaml` set it on leaf-3/4 (2026-09-11). IRB still has `interface-less-routing`. |
+
+Do not set `vtep.mode: Anycast` on SingleActive (SRL: all-active only). SROS does not support this.
 
 ## Removed (obsolete stretched legs)
 

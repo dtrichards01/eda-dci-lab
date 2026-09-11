@@ -28,7 +28,7 @@ Last checked against Talos `clab-srl-leaf-spine-dcgw` (native-per-DC + hub/spoke
 
 
 
-MH client scripts: `clab/configs/base-configs/mh-dc1a.sh` … `mh-dc2b.sh` — **L3 only**, VLAN `200`; subnets `10.200.1.0/24` (DC1) / `10.200.2.0/24` (DC2). Four per-ES VirtualNetworks (`vnet-mh-l3-dc1a/b`, `vnet-mh-l3-dc2a/b`).
+MH client scripts: `clab/configs/base-configs/mh-dc1a.sh` … `mh-dc2b.sh` — **L3 only**, VLAN `200`; subnets `10.200.1.0/24` (DC1) / `10.200.2.0/24` (DC2). Four per-ES VirtualNetworks (`vnet-mh-l3-dc1a/b`, `vnet-mh-l3-dc2a/b`). Those L3 MH LAGs do **not** enable anycast VTEP. Anycast VTEP + optional L3 IRB on the same ES is `services/mh/anycast-macvrf-test/` (**SRL only**; not SROS). L2: no IFL-AD. L3 IRB: Configlet `06-configlet-ifl-host-ad.yaml` (EDA does not emit `advertise-ifl-host-ad-routes`). Do **not** copy that Configlet to SROS. Canonical: `~/.cursor/skills/eda-dci/reference.md`.
 
 
 

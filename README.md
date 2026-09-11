@@ -27,6 +27,7 @@ See `docs/L2-DCI-GUIDE.md` for L2 BDI, hybrid WAN EVPN (type-2/3), and vnet-3/4 
 | L2 (bridge only) | `vnet-3`, `vnet-4` | `BridgeDomainInterconnect` | `300`, `301` |
 | L3 SH | `vnet-6`, `vnet-7` | `RouterInterconnect` | `400`, `401` |
 | L3 MH (per ES) | `vnet-mh-l3-dc1a/b`, `vnet-mh-l3-dc2a/b` | `RouterInterconnect` | `430`, `431` |
+| L2 anycast VTEP | `vnet-mh-l2-avtep` | — (fabric VXLAN, not BDI) | AllActive LAG leaf-3+4; L3 IRB + IFL-AD Configlet `06` |
 
 - **L3:** EVPN-VXLAN on leaves → IPVPN-MPLS on DCGW (`controlPlane: IPVPN`).
 - **L2:** EVPN-VXLAN on leaves → EVPN-MPLS on DCGW (`controlPlane: EVPN`).
@@ -67,7 +68,7 @@ Cross-DC L3: `101.x` ↔ hub `201.x` ↔ spoke `151.x`. L2: `103.1` ↔ `103.2` 
 | `client-12-dc1-mh` | single-active | leaf-1 + leaf-2 | `mh-dc1b.sh` → `vnet-mh-l3-dc1b` |
 | `client-13-dc2-mh` | single-active | leaf-7 + leaf-8 | `mh-dc2b.sh` → `vnet-mh-l3-dc2b` |
 
-MH uses **L3 only** — VLAN 200, subnets `10.200.1.0/24` (DC1) and `10.200.2.0/24` (DC2). One VirtualNetwork per Ethernet-segment (not per DC). See `docs/EDGE-INTERFACES.md`.
+MH uses **L3 only** for the git `vnet-mh-l3-*` design (VLAN 200). **Anycast VTEP** is a separate MAC-VRF on an **AllActive LAG across switches** (`services/mh/anycast-macvrf-test/`) — **SRL only**, not a dual-homed host, not SingleActive, **not SROS**. Live test also has L3 IRB on that LAG; **`advertise-ifl-host-ad-routes` is not needed for L2**, **is needed for L3 IRB**, and EDA 26.8.1 does not emit it — Configlet `06-configlet-ifl-host-ad.yaml`. **Do not copy** that Configlet to SROS. Canonical: `~/.cursor/skills/eda-dci/reference.md`. See `docs/EDGE-INTERFACES.md`.
 
 After CLAB deploy, if MH LAGs are Down run `bash scripts/mh-bond-setup-11-13.sh` on k0r4 (bond was not created by client exec).
 

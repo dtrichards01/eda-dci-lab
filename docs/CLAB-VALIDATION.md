@@ -49,6 +49,8 @@ One VirtualNetwork per Ethernet-segment (not per DC). LAG label = `role=edge` + 
 
 **Bond on k0r4:** If MH LAGs Down after deploy, clients 11–13 often need manual bond — `bash ~/eda-dci-lab/scripts/mh-bond-setup-11-13.sh`.
 
+**L2 anycast VTEP** is a different test (`services/mh/anycast-macvrf-test/`): AllActive **LAG across switches**, not these git `vnet-mh-l3-*` vnets and not the host itself. **SRL only** — not SROS DCGW. Live Talos also has L3 IRB on that LAG; **IFL-AD Configlet** `06-configlet-ifl-host-ad.yaml` is for that L3 case only (not L2). Do **not** copy it to SROS.
+
 ## Deploy checklist (Talos)
 
 ```bash

@@ -1,0 +1,25 @@
+# L3 IFL host aliasing on the anycast MH ES.
+# Not needed for L2-only. EDA 26.8.1 does not emit this (no CRD field).
+# Presence container only — do not set internal-tags (unresolved tag-set takes the ES down).
+# Default bgp-evpn-instance 1. Isolated test; does not touch vnet-1…5.
+apiVersion: config.eda.nokia.com/v1
+kind: Configlet
+metadata:
+  name: mh-l2-avtep-ifl-host-ad
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/os: srl
+    eda.nokia.com/purpose: advertise-ifl-host-ad-routes
+spec:
+  operatingSystem: srl
+  priority: 50
+  endpoints:
+    - srl-leaf-3
+    - srl-leaf-4
+  configs:
+    - path: .system.network-instance.protocols.evpn.ethernet-segments.bgp-instance{.id==1}.ethernet-segment{.name=="mh-l2-avtep-lag-leaf-3-4"}
+      operation: Update
+      config: |
+        {
+          "advertise-ifl-host-ad-routes": {}
+        }

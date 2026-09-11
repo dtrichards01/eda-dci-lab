@@ -1,0 +1,28 @@
+# One Loopback CR per node. Name loopback-255 is the CE lookup for avtep on that node-set.
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: loopback-255
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  description: Anycast VTEP parent lo255 on srl-leaf-3
+  enabled: true
+  type: Loopback
+  members:
+    - enabled: true
+      interface: lo255
+      node: srl-leaf-3
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: loopback-255-srl-leaf-4
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  description: Anycast VTEP parent lo255 on srl-leaf-4
+  enabled: true
+  type: Loopback
+  members:
+    - enabled: true
+      interface: lo255
+      node: srl-leaf-4

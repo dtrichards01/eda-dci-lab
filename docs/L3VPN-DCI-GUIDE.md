@@ -4,7 +4,7 @@
 **Validated:** vnet-1 ↔ vnet-2 hub, vnet-5 ↔ vnet-2 hub-spoke (bidirectional `eth1` ping)  
 **Last updated:** 2026-08-04
 
-Companion docs: `DCI-ALIGNMENT.md` (service model), `CLAB-VALIDATION.md` (topology), `SRL-DCI-WAN-IGP-Tech-Note.md` (WAN OSPF+LDP vs **live ISIS+SR-MPLS / SR-ISIS**).
+Companion docs: `DCI-ALIGNMENT.md` (service model), `CLAB-VALIDATION.md` (topology), `SRL-DCI-WAN-IGP-Tech-Note.md` (WAN OSPF+LDP vs **live ISIS+SR-MPLS / SR-ISIS**), `EDGE-INTERFACES.md` (MH / anycast VTEP / L3 IFL-AD Configlet — **SRL only**, do not copy to SROS).
 
 This document is the **authoritative policy map**: which routing policies and community sets are applied on which objects, why, and how fabric control-plane noise (leaf system IPs, VTEPs, EVPN routes) is kept off the WAN.
 

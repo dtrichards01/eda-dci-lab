@@ -1,0 +1,29 @@
+# L2 MAC-VRF consumer for anycast VTEP (not IRB, not BDI).
+apiVersion: services.eda.nokia.com/v2
+kind: VirtualNetwork
+metadata:
+  name: vnet-mh-l2-avtep
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  bridgeDomains:
+    - name: bd-mh-l2-avtep
+      spec:
+        encapOptions:
+          vxlan:
+            tunnelIndexPool: tunnel-index-pool
+            vniPool: vni-pool
+        eviPool: evi-pool
+        macLearning:
+          agingTimeSeconds: 300
+          enabled: true
+        macLimit: 2000
+        type: EVPNVXLAN
+  bridgeInterfaces: []
+  routedInterfaces: []
+  vlans:
+    - name: vlan-bd-mh-l2-avtep
+      spec:
+        bridgeDomain: bd-mh-l2-avtep
+        interfaceSelectors:
+          - eda.nokia.com/vnet-mh-l2-avtep=vlan-bd-mh-l2-avtep
+        vlanID: "null"

@@ -243,7 +243,7 @@ Peer CR fields: **`importPolicies` / `exportPolicies`**. No Policy annotations.
 | vnet-3 L2 | `300:300` / import `301:301` |
 | vnet-4 L2 | `301:301` / import `300:300` |
 
-**Anycast VTEP ≠ BDI.** 26.8.1 anycast MH is on leaf ESI LAG (`spec.lag.multihoming.vtep`), L2/SRL only. BDI has no vtep field; lab interconnect is still MPLS. Details: [reference.md](reference.md)#anycast-vtep-mac-vrf-mh-vs-bridgedomaininterconnect--2681.
+**Anycast VTEP ≠ BDI and ≠ a dual-homed host.** Canonical write-up: [reference.md](reference.md)#anycast-vtep-mac-vrf-mh-vs-bridgedomaininterconnect--2681 (also `eda-dci-lab/docs/EDGE-INTERFACES.md` + `DCI-OPTIONS.md` §2). **Interfaces** defines `vtep` on the LAG; **Services** realizes it via **VLAN** or **BridgeInterface**. **SRL only** (Talos 2026-09-10). **Not the same on SROS** (WSL 2026-09-11: 0 LAG, no `anycast-multi` in SROS configure tree). Anycast IRB is unrelated. **L3 IRB on the MH ES:** `advertise-ifl-host-ad-routes` is needed; EDA does not set it — Configlet `06-configlet-ifl-host-ad.yaml` (not L2).
 
 ## Agent checklist
 
@@ -252,6 +252,8 @@ Peer CR fields: **`importPolicies` / `exportPolicies`**. No Policy annotations.
 - [ ] Update README policy map when adding statements
 - [ ] Run loopback test before deep WAN debugging
 - [ ] Read `docs/EDGE-INTERFACES.md` for client ↔ vnet mapping (SRL lab)
+- [ ] Anycast VTEP = AllActive **LAG across switches** + MAC-VRF on **SRL**; not BDI, not a host, **not SROS DCGW**
+- [ ] L3 IRB on that MH ES: SRL Configlet `advertise-ifl-host-ad-routes` (`06-configlet-ifl-host-ad.yaml`); **L2 does not need it**; **do not copy** that Configlet to SROS
 - [ ] **Update skill files** when you learn something new (see eda skill: Skill maintenance)
 
 ## More detail

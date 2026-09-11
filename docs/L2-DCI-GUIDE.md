@@ -4,6 +4,8 @@
 **Services:** `vnet-3` (DC1, `103.1`) ↔ `vnet-4` (DC2, `103.2`) — same subnet, pure L2  
 **Last updated:** 2026-08-04
 
+**L2 anycast VTEP** is not BDI. It is an **AllActive LAG whose members are on different switches** + MAC-VRF `vtep.mode: Anycast` (Talos 2026-09-10, **SRL only**). SROS DCI does not program it (WSL 2026-09-11). **L2 does not need** `advertise-ifl-host-ad-routes`. **L3 IRB on that same MH ES does** — EDA does not emit it; SRL Configlet `06-configlet-ifl-host-ad.yaml` (do **not** copy to SROS). Canonical: `~/.cursor/skills/eda-dci/reference.md`. Lab: `docs/EDGE-INTERFACES.md` and `services/mh/anycast-macvrf-test/`.
+
 Companion: `L3VPN-DCI-GUIDE.md` (L3 WAN + fabric isolation), `DCI-ALIGNMENT.md` (service model).
 
 **Production:** L2 DCI in this repo is **lab / demo only** — see `L3VPN-DCI-GUIDE.md` § Lab / demo vs production. Do not deploy hybrid WAN EVPN for L2 in production without vendor validation and a dedicated security review.

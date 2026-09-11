@@ -1,0 +1,42 @@
+# AllActive ESI LAG on unused e1-10 (leaf-3 + leaf-4). MAC-VRF anycast VTEP.
+# No MH host required for EDA to emit anycast; LACP partner only for LAG Up.
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: mh-l2-avtep-lag-leaf-3-4
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    eda.nokia.com/role: edge
+    eda.nokia.com/vnet-mh-l2-avtep: vlan-bd-mh-l2-avtep
+spec:
+  description: MH AllActive L2 anycast VTEP test — leaf-3+4 e1-10
+  enabled: true
+  encapType: "Null"
+  ethernet:
+    stormControl:
+      enabled: false
+  lldp: true
+  type: LAG
+  lag:
+    type: LACP
+    minLinks: 1
+    multihoming:
+      mode: AllActive
+      preferredActiveNode: srl-leaf-3
+      revertive: true
+      vtep:
+        mode: Anycast
+        anycastIPv4Pool: avtep-ipv4-pool
+    lacp:
+      mode: Active
+      interval: Fast
+      systemPriority: 32768
+  members:
+    - enabled: true
+      interface: ethernet-1-10
+      lacpPortPriority: 32768
+      node: srl-leaf-3
+    - enabled: true
+      interface: ethernet-1-10
+      lacpPortPriority: 32768
+      node: srl-leaf-4
