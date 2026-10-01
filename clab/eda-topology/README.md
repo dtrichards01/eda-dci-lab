@@ -65,4 +65,4 @@ Do **not** create standalone `srl-leaf-N-ethernet-1-10` Interface CRs. MH **LAG*
 
 ## Related (different lab)
 
-The **ai-topo-multi-plane** breakout lab uses `C:\Users\darrenri\Documents\clab-ai-topo-multi-plane-eda\` (namespace `clab-ai-topo-multi-plane`). Do not mix bundles.
+The **ai-topo-multi-plane** breakout lab uses `C:\Users\darrenri\Documents\clab-ai-topo-multi-plane-eda\` (namespace `clab-ai-topo-multi-plane`). Do not mix bundles. Backend overlay RouteLeaking vs EVPN, with pros/cons: `docs/AI-Backend-Overlay-RouteLeak-vs-EVPN.md` in that repo.
