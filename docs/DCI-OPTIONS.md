@@ -106,7 +106,7 @@ Both PRD DCGW models run side by side in the same CLAB. Detail: `clab/split-ns/R
 | **Standalone**, different namespace, on the spine layer | dcgw-3/4 | `clab-srl-dcgw-wan` | No Fabric. User `DefaultRouter` AS 64906, eBGP underlay to spine-3/4 /31s, iBGP EVPN AS 65402 as RR clients of the pod-2 spines |
 
 WAN: dcgw-1/2 ↔ sros-pe-1 and dcgw-3/4 ↔ sros-pe-2, IS-IS L2 + SR-ISIS, WAN VPN BGP dcgw-1↔3 / dcgw-2↔4 on system IPs.
-Services spanning both namespaces (vnet-2, vnet-4) are defined in each with pinned EVI/VNI/RT.
+Services live only in the pod namespace. The dc-2 RIC (vnet-2) and BDI (vnet-4) live in `clab-srl-dcgw-wan` with dcgw-3/4 and reference `router-2` / `bd-4` via `routerRef.namespace` / `bridgeDomainRef.namespace`.
 Validation 2026-10-31: `scripts/validate-dci-split.sh` **9/9** (L3 hub-spoke both ways, spoke isolation, L2 BDI, leaf-7↔8).
 
 ---

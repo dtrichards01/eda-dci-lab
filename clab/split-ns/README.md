@@ -32,13 +32,17 @@ Shared IS-IS domain, so pools must not overlap across namespaces:
 | `ipv4-pool` (ISL /31) | `12.0.0.0/16` | `12.1.0.0/16` |
 | `sr-node-sid-pool` | index 1-64 | index 101-164 |
 
-Services that span both namespaces (vnet-2 hub L3, vnet-4 L2) are defined in **both** with pinned EVI/VNI/RT,
-so the leaf side (pod NS) and the DCGW side (WAN NS) agree. Pins match the single-namespace values.
+Services exist **only in the pod namespace**. The pod-2 DCI interconnects live in the WAN namespace with dcgw-3/4
+and reference the service across namespaces (`nodeSelectors` only match nodes in the interconnect's own namespace):
 
-| Object | EVI | VNI | RT |
-|--------|-----|-----|----|
-| router-2 (vnet-2) | 103 | 203 | `target:1:103` |
-| bd-4 (vnet-4) | 105 | 205 | `target:1:105` |
+```yaml
+# wan/05-services.yaml
+RouterInterconnect router-interconnect-vnet-2:   routerRef:       {name: router-2, namespace: clab-srl-leaf-spine-dcgw}
+BridgeDomainInterconnect bd-interconnect-vnet-4: bridgeDomainRef: {name: bd-4,     namespace: clab-srl-leaf-spine-dcgw}
+```
+
+The RIC/BDI build router-2 / bd-4 on dcgw-3/4 themselves. Do not add copies of vnet-2 / vnet-4 in the WAN namespace
+(an earlier build did; they had no interfaces and showed Unknown). EVI/VNI/RT stay pinned to the single-namespace values.
 
 Values only known after the Fabrics come up (`${POD2_SPINE_AS}`, `${SPINE3_SYS}`, `${SPINE4_SYS}`,
 `${DCGW1_SYS}`, `${DCGW2_SYS}`, PE port names) are written by the `vars` phase to `~/eda-rebuild/split-ns.vars`

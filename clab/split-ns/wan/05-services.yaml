@@ -1,44 +1,12 @@
-# DCGW-side halves of the pod-2 services. EVI/VNI/RT must equal the pod namespace definitions.
-apiVersion: services.eda.nokia.com/v2
-kind: VirtualNetwork
-metadata:
-  name: vnet-2
-  namespace: clab-srl-dcgw-wan
-spec:
-  routers:
-  - name: router-2
-    spec:
-      type: EVPNVXLAN
-      evi: 103
-      exportTarget: target:1:103
-      importTarget: target:1:103
-      encapOptions: {vxlan: {vni: 203, tunnelIndexPool: tunnel-index-pool}}
-      routerID: 2.3.4.5
-      bgp: {enabled: true, autonomousSystem: 65402, ebgpPreference: 170, ibgpPreference: 170, ipv4Unicast: {enabled: true}, minWaitToAdvertiseSeconds: 0, rapidWithdrawl: true, waitForFIBInstall: false}
----
-apiVersion: services.eda.nokia.com/v2
-kind: VirtualNetwork
-metadata:
-  name: vnet-4
-  namespace: clab-srl-dcgw-wan
-spec:
-  bridgeDomains:
-  - name: bd-4
-    spec:
-      type: EVPNVXLAN
-      evi: 105
-      exportTarget: target:1:105
-      importTarget: target:1:105
-      encapOptions: {vxlan: {vni: 205, tunnelIndexPool: tunnel-index-pool}}
-      macLearning: {enabled: true, agingTimeSeconds: 300}
----
+# DCI interconnects for the pod-2 services. The services live only in the pod namespace; the interconnects
+# live here with the standalone DCGWs and reference router-2 / bd-4 across namespaces.
 apiVersion: services.eda.nokia.com/v2
 kind: RouterInterconnect
 metadata:
   name: router-interconnect-vnet-2
   namespace: clab-srl-dcgw-wan
 spec:
-  routerRef: {name: router-2}
+  routerRef: {name: router-2, namespace: clab-srl-leaf-spine-dcgw}
   nodeSelectors: ["eda.nokia.com/dci=dc-2"]
   primaryBGPInstance: {domainId: "65001:201"}
   interconnectBGPInstance:
@@ -57,7 +25,7 @@ metadata:
   name: bd-interconnect-vnet-4
   namespace: clab-srl-dcgw-wan
 spec:
-  bridgeDomainRef: {name: bd-4}
+  bridgeDomainRef: {name: bd-4, namespace: clab-srl-leaf-spine-dcgw}
   nodeSelectors: ["eda.nokia.com/dci=dc-2"]
   interconnectBGPInstance:
     controlPlane: EVPN

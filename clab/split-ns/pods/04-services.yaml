@@ -1,5 +1,5 @@
-# Leaf-side services. EVI/VNI/RT pinned to the single-namespace values so the WAN namespace
-# (dcgw-3/4) can define matching router-2 / bd-4.
+# All services. EVI/VNI/RT pinned to the single-namespace values. router-2 / bd-4 reach dcgw-3/4
+# through the cross-namespace interconnects in wan/05-services.yaml.
 apiVersion: services.eda.nokia.com/v2
 kind: VirtualNetwork
 metadata:

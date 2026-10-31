@@ -137,7 +137,7 @@ Script (run on k0r4 after copying YAML to `/tmp`): `eda-3-site-bl-spine/scripts/
 
 ### Talos SRL DCI split namespaces (PRD DCGW options) — 2026-10-31
 
-**Live.** Same CLAB, two NS. `clab-srl-leaf-spine-dcgw`: leaf-1..8, spine-1..4, dcgw-1/2 (**integrated** = `borderLeafs` of Fabric `pod-1`). `clab-srl-dcgw-wan`: dcgw-3/4 (**standalone**, no Fabric, user DefaultRouter AS **64906**, eBGP to spine-3/4 /31s `192.168.220.0/29`, iBGP EVPN AS 65402 as RR clients of pod-2 spines) + sros-pe-1/2 (Fabric `backbone-simulation`). WAN IS-IS L2 + SR-ISIS; dcgw-1/2↔PE-1 `192.168.210.0/30`. vnet-2 / vnet-4 defined in **both** NS with pinned EVI/VNI/RT. Validation `scripts/validate-dci-split.sh` **9/9**. Design + runbook: `clab/split-ns/README.md`, orchestrator `scripts/split-ns-rebuild.sh <phase>`, `docs/DCI-OPTIONS.md` §3b.
+**Live.** Same CLAB, two NS. `clab-srl-leaf-spine-dcgw`: leaf-1..8, spine-1..4, dcgw-1/2 (**integrated** = `borderLeafs` of Fabric `pod-1`). `clab-srl-dcgw-wan`: dcgw-3/4 (**standalone**, no Fabric, user DefaultRouter AS **64906**, eBGP to spine-3/4 /31s `192.168.220.0/29`, iBGP EVPN AS 65402 as RR clients of pod-2 spines) + sros-pe-1/2 (Fabric `backbone-simulation`). WAN IS-IS L2 + SR-ISIS; dcgw-1/2↔PE-1 `192.168.210.0/30`. Services only in the pod NS; dc-2 RIC/BDI live in the WAN NS and use `routerRef.namespace` / `bridgeDomainRef.namespace` (cross-NS refs exist in services v2). Validation `scripts/validate-dci-split.sh` **9/9**. Design + runbook: `clab/split-ns/README.md`, orchestrator `scripts/split-ns-rebuild.sh <phase>`, `docs/DCI-OPTIONS.md` §3b.
 
 Gotchas from the rebuild:
 - `clab-connector remove` failed (txn 134403): **tenancy app** (`tenancy.dtrichards01.github.io` Tenant CRs in the pod NS → derived `tenant-a/b` NS with BridgeInterfaces). Save Tenants + tenant VNETs, delete the VNETs, then remove; restore after. Tenants also need hand-made Interfaces `srl-leaf-1-ethernet-1-21`, `srl-leaf-3/4-ethernet-1-20`.
@@ -145,7 +145,7 @@ Gotchas from the rebuild:
 - `asn-pool` gives 100+ to Fabric nodes (leaf-4 got **106**). Standalone DCGW AS must be outside the pool.
 - `edactl get systeminterfaces`: header has `LAST CHANGE` (two words), IPv4 is field **4** in data rows.
 - SROS PE-1 ports `ethernet-1-a-1-1` / `-a-2-1` (connector naming).
-- RIC/BDI put router-2 / bd-4 on dcgw-3/4 even though the WAN-NS VNETs have no interfaces (VNET shows Unknown; expected).
+- **Do not duplicate VNETs in the DCGW namespace.** RIC/BDI build the router/BD instance on the gateways themselves; reference the service cross-namespace. `nodeSelectors` only match nodes in the interconnect's own NS, so the interconnect sits with the DCGWs.
 - **Transient DCI loss with all sessions Established** (16:13–16:2x): dcgw-3↔PE-2 IS-IS adjacency re-formed, WAN BGP HOLDTIME 3 min later; k0r4 load avg 25–41. Self-recovered. Check IS-IS last-transition + host load before changing config.
 - SRL CLI: `show network-instance <vrf> ipv4 route` works; `route-table` prints usage only.
 
