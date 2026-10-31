@@ -1,0 +1,49 @@
+apiVersion: core.eda.nokia.com/v1
+kind: IPAllocationPool
+metadata:
+  name: systemipv4-pool
+  namespace: clab-srl-dcgw-wan
+spec:
+  segments:
+  - subnet: 11.0.2.16/28
+---
+apiVersion: core.eda.nokia.com/v1
+kind: SubnetAllocationPool
+metadata:
+  name: ipv4-pool
+  namespace: clab-srl-dcgw-wan
+spec:
+  segments:
+  - subnet: 12.1.0.0/16
+    subnetLength: 31
+---
+apiVersion: core.eda.nokia.com/v1
+kind: SubnetAllocationPool
+metadata:
+  name: wan-interface-ipv4-pool
+  namespace: clab-srl-dcgw-wan
+spec:
+  publishAllocations: true
+  segments:
+  - subnet: 192.168.200.0/24
+    subnetLength: 31
+---
+apiVersion: core.eda.nokia.com/v1
+kind: IndexAllocationPool
+metadata:
+  name: sr-node-sid-pool
+  namespace: clab-srl-dcgw-wan
+spec:
+  segments:
+  - start: 101
+    size: 64
+---
+apiVersion: mpls.eda.nokia.com/v1alpha1
+kind: LabelBlock
+metadata:
+  name: srgb-wan
+  namespace: clab-srl-dcgw-wan
+spec:
+  startLabel: 18432
+  endLabel: 20431
+  type: Static

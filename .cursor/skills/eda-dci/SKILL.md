@@ -17,7 +17,7 @@ For MCP client / chat / EQL tooling, use the **eda-mcp** skill. Live alarm OSS f
 
 | Repo | RIC | Namespace | RT format |
 |------|-----|-----------|-----------|
-| **eda-dci-lab** | IPVPN | `clab-srl-leaf-spine-dcgw` | `target:1:NNN` |
+| **eda-dci-lab** | IPVPN | `clab-srl-leaf-spine-dcgw` + `clab-srl-dcgw-wan` (split 2026-10-31) | `target:1:NNN` |
 | **eda-dci-sros-lab** | EVPN | `clab-3-tier-leaf-spine-dcgw` | `target:100:100` |
 | **eda-dci-evpn-lab** | EVPN trial | varies | experimental |
 
@@ -134,6 +134,20 @@ Script (run on k0r4 after copying YAML to `/tmp`): `eda-3-site-bl-spine/scripts/
 **Tech note:** `docs/DCI-CONTROL-PLANE-TROUBLESHOOTING.md` in **eda-dci-lab** and **eda-dci-sros-lab** (EVPN vs IPVPN, DCGW checkpoints, MPLS/VXLAN, CLI). EQL/YANG paths: **§4 → EQL / YANG state paths**. **Live SRL WAN (2026-09-04) is SR-ISIS not LDP:** CLI `show network-instance default tunnel-table` + `info from state … tunnel-table ipv4` (`type sr-isis`, `owner segrt_mgr`); VPNv4 NH = remote DCGW `/32` then join TTM. YANG→EQL table in `eda-dci-lab/docs/SRL-DCI-WAN-IGP-Tech-Note.md` §7. Option 1 LDP validation remains: VPRN RT → resolving NH `nexthop-tunnel-type=ldp` → tunnel-table / LDP labels.
 
 **WAN IGP options (SRL Talos, 2026-09-04):** index **`eda-dci-lab/docs/DCI-OPTIONS.md`**. Two recorded underlays for `clab-srl-leaf-spine-dcgw` + X1b PEs. **Live now = Option 2** IS-IS L2+SR-MPLS, RIC encap MPLS / `allowedTunnelTypes: SR-ISIS`. **Confirm:** `docker exec dcgw-1 sr_cli -e 'show network-instance default tunnel-table'` — WAN `/32`s are **sr-isis** / next-hop **mpls** (no LDP); YANG `info from state … tunnel-table ipv4` (`type sr-isis`, `owner segrt_mgr`). CLI + EQL hints: `docs/SRL-DCI-WAN-IGP-Tech-Note.md` §7. User CR `isis-instance-backbone` (Fabric does not emit a PE ISIS instance). **Option 1** OSPFv2+LDP restore: `scripts/switch-wan-ospf.sh`. Cutover: `scripts/switch-wan-isis.sh`. JSON-remove leftover `ISL.spec.ospf.ospfv2`; delete leftover OSPF system0 + Down LDP ifaces or Fabric health stays off 100. Do **not** create user PE↔PE ISLs. Do **not** apply whole `fabrics.yaml`. Tech note: `eda-dci-lab/docs/SRL-DCI-WAN-IGP-Tech-Note.md`.
+
+### Talos SRL DCI split namespaces (PRD DCGW options) — 2026-10-31
+
+**Live.** Same CLAB, two NS. `clab-srl-leaf-spine-dcgw`: leaf-1..8, spine-1..4, dcgw-1/2 (**integrated** = `borderLeafs` of Fabric `pod-1`). `clab-srl-dcgw-wan`: dcgw-3/4 (**standalone**, no Fabric, user DefaultRouter AS **64906**, eBGP to spine-3/4 /31s `192.168.220.0/29`, iBGP EVPN AS 65402 as RR clients of pod-2 spines) + sros-pe-1/2 (Fabric `backbone-simulation`). WAN IS-IS L2 + SR-ISIS; dcgw-1/2↔PE-1 `192.168.210.0/30`. vnet-2 / vnet-4 defined in **both** NS with pinned EVI/VNI/RT. Validation `scripts/validate-dci-split.sh` **9/9**. Design + runbook: `clab/split-ns/README.md`, orchestrator `scripts/split-ns-rebuild.sh <phase>`, `docs/DCI-OPTIONS.md` §3b.
+
+Gotchas from the rebuild:
+- `clab-connector remove` failed (txn 134403): **tenancy app** (`tenancy.dtrichards01.github.io` Tenant CRs in the pod NS → derived `tenant-a/b` NS with BridgeInterfaces). Save Tenants + tenant VNETs, delete the VNETs, then remove; restore after. Tenants also need hand-made Interfaces `srl-leaf-1-ethernet-1-21`, `srl-leaf-3/4-ethernet-1-20`.
+- SRL nodes onboarded into a **different** NS name stay `NotOnBoarded` (old cert fails secure check, discovery `:50052` closed). `spec.onBoarded` patch is reverted. Fix: re-add `system grpc-server discovery` (port 50052, `default-tls-profile true`, gnmi+gnsi, NI mgmt). EDA removes it after onboarding. Same-name NS re-onboards by itself. SROS PEs were fine.
+- `asn-pool` gives 100+ to Fabric nodes (leaf-4 got **106**). Standalone DCGW AS must be outside the pool.
+- `edactl get systeminterfaces`: header has `LAST CHANGE` (two words), IPv4 is field **4** in data rows.
+- SROS PE-1 ports `ethernet-1-a-1-1` / `-a-2-1` (connector naming).
+- RIC/BDI put router-2 / bd-4 on dcgw-3/4 even though the WAN-NS VNETs have no interfaces (VNET shows Unknown; expected).
+- **Transient DCI loss with all sessions Established** (16:13–16:2x): dcgw-3↔PE-2 IS-IS adjacency re-formed, WAN BGP HOLDTIME 3 min later; k0r4 load avg 25–41. Self-recovered. Check IS-IS last-transition + host load before changing config.
+- SRL CLI: `show network-instance <vrf> ipv4 route` works; `route-table` prints usage only.
 
 ### Talos SRL DCI (`k0r4`, NS `clab-srl-leaf-spine-dcgw`) — 2026-08-24
 

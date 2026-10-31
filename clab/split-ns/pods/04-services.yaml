@@ -1,0 +1,285 @@
+# Leaf-side services. EVI/VNI/RT pinned to the single-namespace values so the WAN namespace
+# (dcgw-3/4) can define matching router-2 / bd-4.
+apiVersion: services.eda.nokia.com/v2
+kind: VirtualNetwork
+metadata:
+  name: vnet-1
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  bridgeDomains:
+  - name: bd-1
+    spec:
+      type: EVPNVXLAN
+      evi: 101
+      exportTarget: target:1:101
+      importTarget: target:1:101
+      encapOptions: {vxlan: {vni: 201, tunnelIndexPool: tunnel-index-pool}}
+      macLearning: {enabled: true, agingTimeSeconds: 300}
+      macLimit: 2000
+  routers:
+  - name: router-1
+    spec:
+      type: EVPNVXLAN
+      evi: 100
+      exportTarget: target:1:100
+      importTarget: target:1:100
+      encapOptions: {vxlan: {vni: 200, tunnelIndexPool: tunnel-index-pool}}
+      routerID: 1.2.3.4
+      bgp: {enabled: true, autonomousSystem: 65401, ebgpPreference: 170, ibgpPreference: 170, ipv4Unicast: {enabled: true}, minWaitToAdvertiseSeconds: 0, rapidWithdrawl: true, waitForFIBInstall: false}
+  irbInterfaces:
+  - name: irb-1
+    spec:
+      bridgeDomain: bd-1
+      router: router-1
+      ipMTU: 1500
+      ipAddresses:
+      - ipv4Address: {ipPrefix: 172.16.101.254/24, anycast: true, primary: true}
+      - ipv6Address: {ipPrefix: "fc00:11::1/120", primary: true}
+      evpnRouteAdvertisementType: {arpDynamic: true, arpStatic: true, ndDynamic: true, ndStatic: true, rfc9135SymmetricMode: true}
+      hostRoutePopulate: {evpn: {populate: true, datapathProgramming: true}}
+      indexAllocation: {mode: GlobalPool, indexPool: irb-subif-pool}
+      ipv4: {arpTimeoutSeconds: 14400, learnUnsolicitedARP: Disabled}
+      ipv6: {learnUnsolicitedNA: Disabled}
+  vlans:
+  - name: vlan-null-vnet-1
+    spec: {bridgeDomain: bd-1, vlanID: "null", interfaceSelectors: ["eda.nokia.com/vnet-1=vlan-bd-1"]}
+---
+apiVersion: services.eda.nokia.com/v2
+kind: VirtualNetwork
+metadata:
+  name: vnet-2
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  bridgeDomains:
+  - name: bd-2
+    spec:
+      type: EVPNVXLAN
+      evi: 102
+      exportTarget: target:1:102
+      importTarget: target:1:102
+      encapOptions: {vxlan: {vni: 202, tunnelIndexPool: tunnel-index-pool}}
+      macLearning: {enabled: true, agingTimeSeconds: 300}
+  routers:
+  - name: router-2
+    spec:
+      type: EVPNVXLAN
+      evi: 103
+      exportTarget: target:1:103
+      importTarget: target:1:103
+      encapOptions: {vxlan: {vni: 203, tunnelIndexPool: tunnel-index-pool}}
+      routerID: 2.3.4.5
+      bgp: {enabled: true, autonomousSystem: 65402, ebgpPreference: 170, ibgpPreference: 170, ipv4Unicast: {enabled: true}, minWaitToAdvertiseSeconds: 0, rapidWithdrawl: true, waitForFIBInstall: false}
+  irbInterfaces:
+  - name: irb-2
+    spec:
+      bridgeDomain: bd-2
+      router: router-2
+      ipMTU: 1500
+      ipAddresses:
+      - ipv4Address: {ipPrefix: 172.16.201.254/24, anycast: true, primary: true}
+        ipv6Address: {ipPrefix: "fc00:21::1/120", anycast: true, primary: true}
+      evpnRouteAdvertisementType: {arpDynamic: true, arpStatic: true, ndDynamic: true, ndStatic: true, rfc9135SymmetricMode: true}
+      hostRoutePopulate: {evpn: {populate: true, datapathProgramming: true}}
+      indexAllocation: {mode: GlobalPool, indexPool: irb-subif-pool}
+      ipv4: {arpTimeoutSeconds: 14400, learnUnsolicitedARP: Disabled}
+      ipv6: {learnUnsolicitedNA: Disabled}
+  vlans:
+  - name: vlan-null-vnet-2
+    spec: {bridgeDomain: bd-2, vlanID: "null", interfaceSelectors: ["eda.nokia.com/vnet-2=vlan-bd-2"]}
+---
+apiVersion: services.eda.nokia.com/v2
+kind: VirtualNetwork
+metadata:
+  name: vnet-3
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  bridgeDomains:
+  - name: bd-3
+    spec:
+      type: EVPNVXLAN
+      evi: 104
+      exportTarget: target:1:104
+      importTarget: target:1:104
+      encapOptions: {vxlan: {vni: 204, tunnelIndexPool: tunnel-index-pool}}
+      macLearning: {enabled: true, agingTimeSeconds: 300}
+      macLimit: 2000
+  vlans:
+  - name: vlan-null-vnet-3
+    spec: {bridgeDomain: bd-3, vlanID: "null", interfaceSelectors: ["eda.nokia.com/vnet-3=vlan-bd-3"]}
+---
+apiVersion: services.eda.nokia.com/v2
+kind: VirtualNetwork
+metadata:
+  name: vnet-4
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  bridgeDomains:
+  - name: bd-4
+    spec:
+      type: EVPNVXLAN
+      evi: 105
+      exportTarget: target:1:105
+      importTarget: target:1:105
+      encapOptions: {vxlan: {vni: 205, tunnelIndexPool: tunnel-index-pool}}
+      macLearning: {enabled: true, agingTimeSeconds: 300}
+  vlans:
+  - name: vlan-null-vnet-4
+    spec: {bridgeDomain: bd-4, vlanID: "null", interfaceSelectors: ["eda.nokia.com/vnet-4=vlan-bd-4"]}
+---
+apiVersion: services.eda.nokia.com/v2
+kind: VirtualNetwork
+metadata:
+  name: vnet-5
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  bridgeDomains:
+  - name: bd-5
+    spec:
+      type: EVPNVXLAN
+      evi: 106
+      exportTarget: target:1:106
+      importTarget: target:1:106
+      encapOptions: {vxlan: {vni: 206, tunnelIndexPool: tunnel-index-pool}}
+      macLearning: {enabled: true, agingTimeSeconds: 300}
+      macLimit: 2000
+  routers:
+  - name: router-3
+    spec:
+      type: EVPNVXLAN
+      evi: 107
+      exportTarget: target:1:107
+      importTarget: target:1:107
+      encapOptions: {vxlan: {vni: 207, tunnelIndexPool: tunnel-index-pool}}
+      routerID: 3.4.5.6
+      bgp: {enabled: true, autonomousSystem: 65401, ebgpPreference: 170, ibgpPreference: 170, ipv4Unicast: {enabled: true}, minWaitToAdvertiseSeconds: 0, rapidWithdrawl: true, waitForFIBInstall: false}
+  irbInterfaces:
+  - name: irb-5
+    spec:
+      bridgeDomain: bd-5
+      router: router-3
+      ipMTU: 1500
+      ipAddresses:
+      - ipv4Address: {ipPrefix: 172.16.151.254/24, anycast: true, primary: true}
+      evpnRouteAdvertisementType: {arpDynamic: true, arpStatic: true, ndDynamic: true, ndStatic: true, rfc9135SymmetricMode: true}
+      hostRoutePopulate: {evpn: {populate: true, datapathProgramming: true}}
+      indexAllocation: {mode: GlobalPool, indexPool: irb-subif-pool}
+      ipv4: {arpTimeoutSeconds: 14400, learnUnsolicitedARP: Disabled}
+  vlans:
+  - name: vlan-null-vnet-5
+    spec: {bridgeDomain: bd-5, vlanID: "null", interfaceSelectors: ["eda.nokia.com/vnet-5=vlan-bd-5"]}
+---
+apiVersion: services.eda.nokia.com/v2
+kind: VirtualNetwork
+metadata:
+  name: vnet-mh-l2-avtep
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  bridgeDomains:
+  - name: bd-mh-l2-avtep
+    spec:
+      type: EVPNVXLAN
+      evi: 108
+      exportTarget: target:1:108
+      importTarget: target:1:108
+      encapOptions: {vxlan: {vni: 208, tunnelIndexPool: tunnel-index-pool}}
+      macLearning: {enabled: true, agingTimeSeconds: 300}
+      macLimit: 2000
+  routers:
+  - name: router-mh-avtep
+    spec:
+      type: EVPNVXLAN
+      evi: 109
+      exportTarget: target:1:109
+      importTarget: target:1:109
+      encapOptions: {vxlan: {vni: 209, tunnelIndexPool: tunnel-index-pool}}
+      routerID: 10.9.9.10
+      bgp: {enabled: false, ebgpPreference: 170, ibgpPreference: 170, minWaitToAdvertiseSeconds: 0, rapidWithdrawl: true, waitForFIBInstall: false}
+  irbInterfaces:
+  - name: irb-mh-avtep
+    spec:
+      bridgeDomain: bd-mh-l2-avtep
+      router: router-mh-avtep
+      ipMTU: 1500
+      ipAddresses:
+      - ipv4Address: {ipPrefix: 172.16.210.254/24, anycast: true, primary: true}
+      evpnRouteAdvertisementType: {arpDynamic: true, arpStatic: true, ndDynamic: true, ndStatic: true, rfc9135SymmetricMode: true}
+      hostRoutePopulate: {dynamic: {populate: true}, evpn: {populate: true, datapathProgramming: true}, static: {populate: true}}
+      indexAllocation: {mode: GlobalPool, indexPool: irb-subif-pool}
+      ipv4: {arpTimeoutSeconds: 14400, learnUnsolicitedARP: Disabled}
+      l3ProxyARPND: {proxyARP: true, proxyND: true}
+  vlans:
+  - name: vlan-bd-mh-l2-avtep
+    spec: {bridgeDomain: bd-mh-l2-avtep, vlanID: "null", interfaceSelectors: ["eda.nokia.com/vnet-mh-l2-avtep=vlan-bd-mh-l2-avtep"]}
+---
+apiVersion: services.eda.nokia.com/v2
+kind: VirtualNetwork
+metadata:
+  name: vnet-10
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  bridgeDomains:
+  - name: bd-10
+    spec:
+      type: EVPNVXLAN
+      evi: 110
+      exportTarget: target:1:110
+      importTarget: target:1:110
+      encapOptions: {vxlan: {vni: 210, tunnelIndexPool: tunnel-index-pool}}
+      macLearning: {enabled: true, agingTimeSeconds: 300}
+  vlans:
+  - name: vlan-10-vnet-10
+    spec: {bridgeDomain: bd-10, vlanID: pool, interfaceSelectors: ["eda.nokia.com/vnet-10=vlan-10"]}
+---
+apiVersion: services.eda.nokia.com/v2
+kind: RouterInterconnect
+metadata:
+  name: router-interconnect-vnet-1
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  routerRef: {name: router-1}
+  nodeSelectors: ["eda.nokia.com/dci=dc-1"]
+  primaryBGPInstance: {domainId: "65000:200"}
+  interconnectBGPInstance:
+    controlPlane: IPVPN
+    encapsulation: MPLS
+    domainId: "65000:100"
+    evi: 1000
+    exportTarget: target:1:100
+    importTarget: target:1:101
+    mpls: {allowedTunnelTypes: [SR-ISIS]}
+    routeDistinguisher: {type: Type 0, assignedNumber: "2"}
+---
+apiVersion: services.eda.nokia.com/v2
+kind: RouterInterconnect
+metadata:
+  name: router-interconnect-vnet-5
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  routerRef: {name: router-3}
+  nodeSelectors: ["eda.nokia.com/dci=dc-1"]
+  primaryBGPInstance: {domainId: "65000:202"}
+  interconnectBGPInstance:
+    controlPlane: IPVPN
+    encapsulation: MPLS
+    domainId: "65000:102"
+    evi: 1002
+    exportTarget: target:1:105
+    importTarget: target:1:101
+    mpls: {allowedTunnelTypes: [SR-ISIS]}
+    routeDistinguisher: {type: Type 0, assignedNumber: "3"}
+---
+apiVersion: services.eda.nokia.com/v2
+kind: BridgeDomainInterconnect
+metadata:
+  name: bd-interconnect-vnet-3
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  bridgeDomainRef: {name: bd-3}
+  nodeSelectors: ["eda.nokia.com/dci=dc-1"]
+  interconnectBGPInstance:
+    controlPlane: EVPN
+    encapsulation: MPLS
+    evi: 110
+    exportTarget: target:1:300
+    importTarget: target:1:301
+    mpls: {allowedTunnelTypes: [SR-ISIS], controlWord: true}

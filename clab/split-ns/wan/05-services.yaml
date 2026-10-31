@@ -1,0 +1,68 @@
+# DCGW-side halves of the pod-2 services. EVI/VNI/RT must equal the pod namespace definitions.
+apiVersion: services.eda.nokia.com/v2
+kind: VirtualNetwork
+metadata:
+  name: vnet-2
+  namespace: clab-srl-dcgw-wan
+spec:
+  routers:
+  - name: router-2
+    spec:
+      type: EVPNVXLAN
+      evi: 103
+      exportTarget: target:1:103
+      importTarget: target:1:103
+      encapOptions: {vxlan: {vni: 203, tunnelIndexPool: tunnel-index-pool}}
+      routerID: 2.3.4.5
+      bgp: {enabled: true, autonomousSystem: 65402, ebgpPreference: 170, ibgpPreference: 170, ipv4Unicast: {enabled: true}, minWaitToAdvertiseSeconds: 0, rapidWithdrawl: true, waitForFIBInstall: false}
+---
+apiVersion: services.eda.nokia.com/v2
+kind: VirtualNetwork
+metadata:
+  name: vnet-4
+  namespace: clab-srl-dcgw-wan
+spec:
+  bridgeDomains:
+  - name: bd-4
+    spec:
+      type: EVPNVXLAN
+      evi: 105
+      exportTarget: target:1:105
+      importTarget: target:1:105
+      encapOptions: {vxlan: {vni: 205, tunnelIndexPool: tunnel-index-pool}}
+      macLearning: {enabled: true, agingTimeSeconds: 300}
+---
+apiVersion: services.eda.nokia.com/v2
+kind: RouterInterconnect
+metadata:
+  name: router-interconnect-vnet-2
+  namespace: clab-srl-dcgw-wan
+spec:
+  routerRef: {name: router-2}
+  nodeSelectors: ["eda.nokia.com/dci=dc-2"]
+  primaryBGPInstance: {domainId: "65001:201"}
+  interconnectBGPInstance:
+    controlPlane: IPVPN
+    encapsulation: MPLS
+    domainId: "65000:101"
+    evi: 1000
+    exportTarget: target:1:101
+    importPolicy: multi-rt-import
+    mpls: {allowedTunnelTypes: [SR-ISIS]}
+    routeDistinguisher: {type: Type 0, assignedNumber: "2"}
+---
+apiVersion: services.eda.nokia.com/v2
+kind: BridgeDomainInterconnect
+metadata:
+  name: bd-interconnect-vnet-4
+  namespace: clab-srl-dcgw-wan
+spec:
+  bridgeDomainRef: {name: bd-4}
+  nodeSelectors: ["eda.nokia.com/dci=dc-2"]
+  interconnectBGPInstance:
+    controlPlane: EVPN
+    encapsulation: MPLS
+    evi: 111
+    exportTarget: target:1:301
+    importTarget: target:1:300
+    mpls: {allowedTunnelTypes: [SR-ISIS], controlWord: true}

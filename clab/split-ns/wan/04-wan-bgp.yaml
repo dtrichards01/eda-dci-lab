@@ -1,0 +1,61 @@
+# WAN VPN BGP dcgw-3/4 -> dcgw-1/2 (other namespace). ${DCGW1_SYS} ${DCGW2_SYS} rendered from pod-1.
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultBGPGroup
+metadata:
+  name: default-bgp-group-dc-2
+  namespace: clab-srl-dcgw-wan
+spec:
+  localAS:
+    autonomousSystem: 1001
+  peerAS:
+    autonomousSystem: 1000
+  l2VPNEVPN:
+    enabled: true
+  vpnIPv4Unicast:
+    enabled: true
+---
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultBGPPeer
+metadata:
+  name: dcgw-3-dcgw-1-bgp-peer
+  namespace: clab-srl-dcgw-wan
+spec:
+  group: default-bgp-group-dc-2
+  interface: dcgw-3-system0
+  interfaceKind: SystemInterface
+  peerIP: ${DCGW1_SYS}
+  localAS:
+    autonomousSystem: 65402
+  peerAS:
+    autonomousSystem: 65401
+  multiHopMaxHop: 5
+  nextHopSelf: true
+  dynamicNeighbor: false
+  importPolicies: [import-dci-services-dc-2]
+  exportPolicies: [export-dc-2-routes-and-add-soo]
+  vpnIPv4Unicast:
+    enabled: true
+    advertiseIPv6NextHops: true
+---
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultBGPPeer
+metadata:
+  name: dcgw-4-dcgw-2-bgp-peer
+  namespace: clab-srl-dcgw-wan
+spec:
+  group: default-bgp-group-dc-2
+  interface: dcgw-4-system0
+  interfaceKind: SystemInterface
+  peerIP: ${DCGW2_SYS}
+  localAS:
+    autonomousSystem: 65402
+  peerAS:
+    autonomousSystem: 65401
+  multiHopMaxHop: 5
+  nextHopSelf: true
+  dynamicNeighbor: false
+  importPolicies: [import-dci-services-dc-2]
+  exportPolicies: [export-dc-2-routes-and-add-soo]
+  vpnIPv4Unicast:
+    enabled: true
+    advertiseIPv6NextHops: true

@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Status** | Canonical landing page for *which* DCI lab / overlay / WAN underlay / **use case** is live |
-| **Last updated** | 2026-09-11 |
+| **Last updated** | 2026-10-31 |
 | **Share** | This file + sibling GitHub repos below. Cursor skill: `~/.cursor/skills/eda-dci/SKILL.md` |
 | **EDA** | All instances **26.8.1** |
 
@@ -17,7 +17,7 @@ GitHub (private unless noted): [eda-dci-lab](https://github.com/dtrichards01/eda
 
 | Lab | Repo (git) | EDA instance | Namespace | Overlay |
 |-----|------------|--------------|-----------|---------|
-| **SRL IPVPN DCI** | [eda-dci-lab](https://github.com/dtrichards01/eda-dci-lab) | **#2 Talos** `https://100.124.186.55/` | `clab-srl-leaf-spine-dcgw` | RIC **IPVPN**, RTs `target:1:NNN` |
+| **SRL IPVPN DCI** | [eda-dci-lab](https://github.com/dtrichards01/eda-dci-lab) | **#2 Talos** `https://100.124.186.55/` | `clab-srl-leaf-spine-dcgw` (pods + dcgw-1/2) + `clab-srl-dcgw-wan` (dcgw-3/4, PEs) since 2026-10-31 | RIC **IPVPN**, RTs `target:1:NNN` |
 | **SROS EVPN DCI** | [eda-dci-sros-lab](https://github.com/dtrichards01/eda-dci-sros-lab) | **#3 WSL** `https://127.0.0.1:9443` | `clab-3-tier-leaf-spine-dcgw` | RIC **EVPN**, RTs `target:100:100` |
 | **EVPN RIC trial** | [eda-dci-evpn-lab](https://github.com/dtrichards01/eda-dci-evpn-lab) | varies | experimental | Do **not** copy policies from here |
 | **3-site D5+SR-1** | [eda-3-site-bl-spine](https://github.com/dtrichards01/eda-3-site-bl-spine) | **#2 Talos** (CLAB on k0r4) | `clab-3-site-bl-spine` | Fabric **options 1–4** (live = **4** L2) |
@@ -93,6 +93,21 @@ Same CLAB, same vnets/RIC/WAN BGP. Only IGP + tunnel type change. Overlay must s
 **Detail + cutover gotchas:** `docs/SRL-DCI-WAN-IGP-Tech-Note.md` (do not apply whole `fabrics.yaml`; strip leftover `ISL.spec.ospf.ospfv2`; delete leftover OSPF `system0` + Down LDP ifaces or Fabric health stays off 100; no user PE↔PE ISLs).
 
 **PE ISIS `system0`:** keep DCGW user CRs `system-dcgw-*-system0-isis`. YAML still lists `system-sros-pe-*-system0-isis` — confirm vs Fabric-derived before deleting; `isis-instance-backbone` is required (Fabric does not emit a PE ISIS instance).
+
+---
+
+## 3b. Talos SRL — DCGW attachment (PRD options, live 2026-10-31)
+
+Both PRD DCGW models run side by side in the same CLAB. Detail: `clab/split-ns/README.md`.
+
+| PRD option | Nodes | Namespace | How |
+|------------|-------|-----------|-----|
+| **Integrated** (26.4 combined DCGW/borderleaf) | dcgw-1/2 | `clab-srl-leaf-spine-dcgw` | `borderLeafs` of Fabric `pod-1`; Fabric owns underlay + iBGP EVPN (RR = pod-1 spines) |
+| **Standalone**, different namespace, on the spine layer | dcgw-3/4 | `clab-srl-dcgw-wan` | No Fabric. User `DefaultRouter` AS 64906, eBGP underlay to spine-3/4 /31s, iBGP EVPN AS 65402 as RR clients of the pod-2 spines |
+
+WAN: dcgw-1/2 ↔ sros-pe-1 and dcgw-3/4 ↔ sros-pe-2, IS-IS L2 + SR-ISIS, WAN VPN BGP dcgw-1↔3 / dcgw-2↔4 on system IPs.
+Services spanning both namespaces (vnet-2, vnet-4) are defined in each with pinned EVI/VNI/RT.
+Validation 2026-10-31: `scripts/validate-dci-split.sh` **9/9** (L3 hub-spoke both ways, spoke isolation, L2 BDI, leaf-7↔8).
 
 ---
 

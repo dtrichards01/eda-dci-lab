@@ -1,0 +1,28 @@
+apiVersion: core.eda.nokia.com/v1
+kind: IPAllocationPool
+metadata:
+  name: systemipv4-pool
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  segments:
+  - subnet: 11.0.0.0/24
+---
+apiVersion: core.eda.nokia.com/v1
+kind: SubnetAllocationPool
+metadata:
+  name: ipv4-pool
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  segments:
+  - subnet: 12.0.0.0/16
+    subnetLength: 31
+---
+apiVersion: core.eda.nokia.com/v1
+kind: IndexAllocationPool
+metadata:
+  name: sr-node-sid-pool
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  segments:
+  - start: 1
+    size: 64

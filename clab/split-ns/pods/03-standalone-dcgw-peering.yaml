@@ -1,0 +1,280 @@
+# pod-2 spine side of the standalone dcgw-3/4 attachment (DCGWs live in ns clab-srl-dcgw-wan).
+# Underlay: eBGP on the spine-DCGW /31s. Overlay: spines are RRs, dcgw-3/4 are iBGP EVPN clients.
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-3-ethernet-1-9
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  description: standalone DCGW link to dcgw-3 e1-1 (ns clab-srl-dcgw-wan)
+  enabled: true
+  encapType: "Null"
+  lldp: true
+  type: Interface
+  members:
+  - {node: srl-spine-3, interface: ethernet-1-9, enabled: true}
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-3-ethernet-1-10
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  description: standalone DCGW link to dcgw-4 e1-1 (ns clab-srl-dcgw-wan)
+  enabled: true
+  encapType: "Null"
+  lldp: true
+  type: Interface
+  members:
+  - {node: srl-spine-3, interface: ethernet-1-10, enabled: true}
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-4-ethernet-1-9
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  description: standalone DCGW link to dcgw-3 e1-2 (ns clab-srl-dcgw-wan)
+  enabled: true
+  encapType: "Null"
+  lldp: true
+  type: Interface
+  members:
+  - {node: srl-spine-4, interface: ethernet-1-9, enabled: true}
+---
+apiVersion: interfaces.eda.nokia.com/v1
+kind: Interface
+metadata:
+  name: srl-spine-4-ethernet-1-10
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  description: standalone DCGW link to dcgw-4 e1-2 (ns clab-srl-dcgw-wan)
+  enabled: true
+  encapType: "Null"
+  lldp: true
+  type: Interface
+  members:
+  - {node: srl-spine-4, interface: ethernet-1-10, enabled: true}
+---
+apiVersion: routing.eda.nokia.com/v1
+kind: DefaultInterface
+metadata:
+  name: spine-3-e1-9-dcgw-3
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  defaultRouter: router-srl-spine-3
+  interface: srl-spine-3-ethernet-1-9
+  ipMTU: 1500
+  ipv4Addresses: [{ipPrefix: 192.168.220.0/31, primary: true}]
+---
+apiVersion: routing.eda.nokia.com/v1
+kind: DefaultInterface
+metadata:
+  name: spine-3-e1-10-dcgw-4
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  defaultRouter: router-srl-spine-3
+  interface: srl-spine-3-ethernet-1-10
+  ipMTU: 1500
+  ipv4Addresses: [{ipPrefix: 192.168.220.2/31, primary: true}]
+---
+apiVersion: routing.eda.nokia.com/v1
+kind: DefaultInterface
+metadata:
+  name: spine-4-e1-9-dcgw-3
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  defaultRouter: router-srl-spine-4
+  interface: srl-spine-4-ethernet-1-9
+  ipMTU: 1500
+  ipv4Addresses: [{ipPrefix: 192.168.220.4/31, primary: true}]
+---
+apiVersion: routing.eda.nokia.com/v1
+kind: DefaultInterface
+metadata:
+  name: spine-4-e1-10-dcgw-4
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  defaultRouter: router-srl-spine-4
+  interface: srl-spine-4-ethernet-1-10
+  ipMTU: 1500
+  ipv4Addresses: [{ipPrefix: 192.168.220.6/31, primary: true}]
+---
+apiVersion: routingpolicies.eda.nokia.com/v1
+kind: PrefixSet
+metadata:
+  name: standalone-dcgw-pod-2-system
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  prefixes:
+  - {prefix: 11.0.2.3/32, exact: true}
+  - {prefix: 11.0.2.4/32, exact: true}
+---
+apiVersion: routingpolicies.eda.nokia.com/v1
+kind: PrefixSet
+metadata:
+  name: pod-system-host-routes
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  prefixes:
+  - {prefix: 11.0.0.0/24, startRange: 32, endRange: 32}
+---
+apiVersion: routingpolicies.eda.nokia.com/v1
+kind: Policy
+metadata:
+  name: spine-import-standalone-dcgw
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  defaultAction:
+    policyResult: Reject
+  statements:
+  - name: dcgw-system
+    match:
+      protocol: BGP
+      prefixSet: standalone-dcgw-pod-2-system
+    action:
+      policyResult: Accept
+---
+apiVersion: routingpolicies.eda.nokia.com/v1
+kind: Policy
+metadata:
+  name: spine-export-standalone-dcgw
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  defaultAction:
+    policyResult: Reject
+  statements:
+  - name: local-system
+    match:
+      protocol: Local
+      prefixSet: pod-system-host-routes
+    action:
+      policyResult: Accept
+  - name: fabric-bgp
+    match:
+      protocol: BGP
+    action:
+      policyResult: Accept
+---
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultBGPGroup
+metadata:
+  name: ebgp-standalone-dcgw-pod-2
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  description: eBGP underlay to standalone dcgw-3/4
+  peerAS:
+    autonomousSystem: 64906
+  bfd: true
+  ipv4Unicast:
+    enabled: true
+  l2VPNEVPN:
+    enabled: false
+  importPolicies: [spine-import-standalone-dcgw]
+  exportPolicies: [spine-export-standalone-dcgw]
+---
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultBGPGroup
+metadata:
+  name: ibgp-rr-standalone-dcgw-pod-2
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  description: iBGP EVPN RR for standalone dcgw-3/4
+  localAS:
+    autonomousSystem: 65402
+  peerAS:
+    autonomousSystem: 65402
+  client: true
+  clusterID: 1.1.1.2
+  ipv4Unicast:
+    enabled: false
+  l2VPNEVPN:
+    enabled: true
+---
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultBGPPeer
+metadata:
+  name: spine-3-dcgw-3-ebgp
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  group: ebgp-standalone-dcgw-pod-2
+  interface: spine-3-e1-9-dcgw-3
+  interfaceKind: DefaultInterface
+  peerIP: 192.168.220.1
+---
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultBGPPeer
+metadata:
+  name: spine-3-dcgw-4-ebgp
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  group: ebgp-standalone-dcgw-pod-2
+  interface: spine-3-e1-10-dcgw-4
+  interfaceKind: DefaultInterface
+  peerIP: 192.168.220.3
+---
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultBGPPeer
+metadata:
+  name: spine-4-dcgw-3-ebgp
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  group: ebgp-standalone-dcgw-pod-2
+  interface: spine-4-e1-9-dcgw-3
+  interfaceKind: DefaultInterface
+  peerIP: 192.168.220.5
+---
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultBGPPeer
+metadata:
+  name: spine-4-dcgw-4-ebgp
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  group: ebgp-standalone-dcgw-pod-2
+  interface: spine-4-e1-10-dcgw-4
+  interfaceKind: DefaultInterface
+  peerIP: 192.168.220.7
+---
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultBGPPeer
+metadata:
+  name: spine-3-dcgw-3-ibgp
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  group: ibgp-rr-standalone-dcgw-pod-2
+  interface: srl-spine-3-system0
+  interfaceKind: SystemInterface
+  peerIP: 11.0.2.3
+---
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultBGPPeer
+metadata:
+  name: spine-3-dcgw-4-ibgp
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  group: ibgp-rr-standalone-dcgw-pod-2
+  interface: srl-spine-3-system0
+  interfaceKind: SystemInterface
+  peerIP: 11.0.2.4
+---
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultBGPPeer
+metadata:
+  name: spine-4-dcgw-3-ibgp
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  group: ibgp-rr-standalone-dcgw-pod-2
+  interface: srl-spine-4-system0
+  interfaceKind: SystemInterface
+  peerIP: 11.0.2.3
+---
+apiVersion: protocols.eda.nokia.com/v2
+kind: DefaultBGPPeer
+metadata:
+  name: spine-4-dcgw-4-ibgp
+  namespace: clab-srl-leaf-spine-dcgw
+spec:
+  group: ibgp-rr-standalone-dcgw-pod-2
+  interface: srl-spine-4-system0
+  interfaceKind: SystemInterface
+  peerIP: 11.0.2.4

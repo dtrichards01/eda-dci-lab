@@ -1,0 +1,87 @@
+# pod-1: PRD "integrated" option. dcgw-1/2 are borderleafs of the Fabric (26.4 combined DCGW/borderleaf).
+# pod-2: leaf/spine only. Spines are the overlay RRs; standalone dcgw-3/4 (other namespace) peer to them.
+apiVersion: fabrics.eda.nokia.com/v1
+kind: Fabric
+metadata:
+  name: pod-1
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    fabric: pod-1
+spec:
+  leafs:
+    leafNodeSelectors:
+    - role=leaf,fabric=pod-1
+  spines:
+    spineNodeSelectors:
+    - role=spine,fabric=pod-1
+  borderLeafs:
+    borderLeafNodeSelectors:
+    - role=dcgw,fabric=pod-1
+  interSwitchLinks:
+    ipMTU: 1500
+    linkSelectors:
+    - eda.nokia.com/role=interSwitch
+    poolIPv4: ipv4-pool
+  systemPoolIPv4: systemipv4-pool
+  underlayProtocol:
+    protocols:
+    - EBGP
+    bgp:
+      asnPool: asn-pool
+    bfd:
+      enabled: true
+      desiredMinTransmitIntMs: 1000
+      requiredMinReceiveIntMs: 1000
+      requiredMinEchoReceiveIntMs: 1000
+      detectionMultiplier: 3
+  overlayProtocol:
+    protocol: IBGP
+    bgp:
+      autonomousSystem: 65401
+      clusterID: 1.1.1.1
+      rrNodeSelectors:
+      - role=spine,fabric=pod-1
+      rrClientNodeSelectors:
+      - role=leaf,fabric=pod-1
+      - role=dcgw,fabric=pod-1
+---
+apiVersion: fabrics.eda.nokia.com/v1
+kind: Fabric
+metadata:
+  name: pod-2
+  namespace: clab-srl-leaf-spine-dcgw
+  labels:
+    fabric: pod-2
+spec:
+  leafs:
+    leafNodeSelectors:
+    - role=leaf,fabric=pod-2
+  spines:
+    spineNodeSelectors:
+    - role=spine,fabric=pod-2
+  interSwitchLinks:
+    ipMTU: 1500
+    linkSelectors:
+    - eda.nokia.com/role=interSwitch
+    poolIPv4: ipv4-pool
+  systemPoolIPv4: systemipv4-pool
+  underlayProtocol:
+    protocols:
+    - EBGP
+    bgp:
+      asnPool: asn-pool
+    bfd:
+      enabled: true
+      desiredMinTransmitIntMs: 1000
+      requiredMinReceiveIntMs: 1000
+      requiredMinEchoReceiveIntMs: 1000
+      detectionMultiplier: 3
+  overlayProtocol:
+    protocol: IBGP
+    bgp:
+      autonomousSystem: 65402
+      clusterID: 1.1.1.2
+      rrNodeSelectors:
+      - role=spine,fabric=pod-2
+      rrClientNodeSelectors:
+      - role=leaf,fabric=pod-2

@@ -1,0 +1,21 @@
+# WAN backbone simulation: sros-pe-1/2 only. dcgw-3/4 are deliberately not in any Fabric.
+apiVersion: fabrics.eda.nokia.com/v1
+kind: Fabric
+metadata:
+  name: backbone-simulation
+  namespace: clab-srl-dcgw-wan
+  labels:
+    fabric: backbone
+spec:
+  borderLeafs:
+    borderLeafNodeSelectors:
+    - role = backbone, fabric = backbone
+  interSwitchLinks:
+    ipMTU: 1500
+    linkSelectors:
+    - eda.nokia.com/role = wan-interSwitch
+    poolIPv4: wan-interface-ipv4-pool
+  systemPoolIPv4: systemipv4-pool
+  underlayProtocol:
+    protocols:
+    - ISIS
