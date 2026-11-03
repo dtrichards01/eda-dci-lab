@@ -59,6 +59,10 @@ Native edges: `services/l2/interface-labels/edge-l2-vnet-3-4.yaml` (leaf-2 e1-6,
 
 ---
 
+### Redundant gateways and loop avoidance
+
+Set `routeDistinguisher: Auto` on **both** BGP instances of each BDI. EDA then gives both gateways in a pair the same RD and multicast originating IP (the lower system IP of the pair), so the two never flood to each other and each frame crosses the WAN once. No interconnect Ethernet Segment or shared loopback is used. Give each gateway in a pair its own underlay AS, or the partner rejects the backup copy of the DCI routes that comes back through the fabric route reflectors. Detail and live evidence: `docs/DCI-SPLIT-NS-PLUMBING-Tech-Note.md` section 7.
+
 ## 3. Hybrid WAN — EVPN for L2 + VPNv4 for L3
 
 WAN BGP peers carry **both** address families:

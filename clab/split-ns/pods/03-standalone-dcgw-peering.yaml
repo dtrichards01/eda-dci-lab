@@ -163,6 +163,7 @@ metadata:
   namespace: clab-srl-leaf-spine-dcgw
 spec:
   description: eBGP underlay to standalone dcgw-3/4
+  # dcgw-3 is 64906; the dcgw-4 peers override this with 64907.
   peerAS:
     autonomousSystem: 64906
   bfd: true
@@ -212,6 +213,7 @@ spec:
   interface: spine-3-e1-10-dcgw-4
   interfaceKind: DefaultInterface
   peerIP: 192.168.220.3
+  peerAS: {autonomousSystem: 64907}
 ---
 apiVersion: protocols.eda.nokia.com/v2
 kind: DefaultBGPPeer
@@ -234,6 +236,7 @@ spec:
   interface: spine-4-e1-10-dcgw-4
   interfaceKind: DefaultInterface
   peerIP: 192.168.220.7
+  peerAS: {autonomousSystem: 64907}
 ---
 apiVersion: protocols.eda.nokia.com/v2
 kind: DefaultBGPPeer

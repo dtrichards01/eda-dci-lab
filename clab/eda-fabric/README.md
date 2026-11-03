@@ -8,7 +8,7 @@ Exported from live EDA cluster. These define the **three fabrics** and **manual 
 |------|----------|
 | `fabrics.yaml` | `backbone-simulation`, `pod-1`, `pod-2` (**do not apply whole file** — live backbone pool is `wan-interface-ipv4-pool`) |
 | `isls.yaml` | Option 1 — 6 ISL CRs, **OSPF on / ISIS off** (dcgw mesh + dcgw↔X1b PE) |
-| `isls-isis.yaml` | Option 2 (live) — same six ISLs, **ISIS on / OSPF off**; PE side `isis-instance-backbone` (Fabric does not emit a PE instance) |
+| `isls-isis.yaml` | Option 2 (live) — same six ISLs, **ISIS on / OSPF off**; PE side `isis-instance-backbone` (the Fabric's own IS-IS instance has no SR-MPLS) |
 
 WAN IGP cutover (does not wipe vnets/RIC): `scripts/switch-wan-ospf.sh` / `scripts/switch-wan-isis.sh`. Tech note: `docs/SRL-DCI-WAN-IGP-Tech-Note.md`.
 

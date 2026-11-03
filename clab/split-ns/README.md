@@ -14,6 +14,8 @@ namespaces on Talos #2 to validate both DCGW attachment models from the PRD:
 | `clab-srl-dcgw-wan` | dcgw-3/4, sros-pe-1/2 |
 
 Cross-namespace links are not TopoLinks. Each end is an `Interface` + `DefaultInterface` in its own namespace.
+How the underlay, BGP sessions and policies fit together, and why DCI can't be tested in branch-1:
+[`docs/DCI-SPLIT-NS-PLUMBING-Tech-Note.md`](../../docs/DCI-SPLIT-NS-PLUMBING-Tech-Note.md).
 
 | Link | Pod NS end | WAN NS end | Protocol |
 |------|------------|------------|----------|
@@ -48,7 +50,13 @@ Values only known after the Fabrics come up (`${POD2_SPINE_AS}`, `${SPINE3_SYS}`
 `${DCGW1_SYS}`, `${DCGW2_SYS}`, PE port names) are written by the `vars` phase to `~/eda-rebuild/split-ns.vars`
 and rendered by `scripts/split-ns-render.py`.
 
-dcgw-3/4 underlay AS is **64906**, outside `asn-pool` (pool 100+ hands 106 to srl-leaf-4).
+dcgw-3 underlay AS is **64906** and dcgw-4 is **64907**, both outside `asn-pool` (pool 100+ hands 106 to srl-leaf-4).
+They must differ, as dcgw-1/2 (100/102) do. Otherwise each gateway rejects its partner's copy of the DCI routes
+reflected by the pod-2 spines (AS-path loop), and DC2 has no backup path. See the tech note, section 7 (L2 DCI loop avoidance and gateway redundancy).
+
+Do not try to make dcgw-3/4 border leaves of `backbone-simulation` to get Fabric-allocated ASNs. That Fabric has an
+IS-IS underlay, so it builds DefaultRouters with no BGP at all (`borderLeafs.asnPool` doesn't change that), and EDA
+rejects an eBGP overlay over an IS-IS underlay. Dry-run tested 2026-11-03.
 
 ## Procedure (k0r4)
 

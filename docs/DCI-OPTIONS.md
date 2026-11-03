@@ -92,7 +92,7 @@ Same CLAB, same vnets/RIC/WAN BGP. Only IGP + tunnel type change. Overlay must s
 
 **Detail + cutover gotchas:** `docs/SRL-DCI-WAN-IGP-Tech-Note.md` (do not apply whole `fabrics.yaml`; strip leftover `ISL.spec.ospf.ospfv2`; delete leftover OSPF `system0` + Down LDP ifaces or Fabric health stays off 100; no user PE↔PE ISLs).
 
-**PE ISIS `system0`:** keep DCGW user CRs `system-dcgw-*-system0-isis`. YAML still lists `system-sros-pe-*-system0-isis` — confirm vs Fabric-derived before deleting; `isis-instance-backbone` is required (Fabric does not emit a PE ISIS instance).
+**PE ISIS `system0`:** keep DCGW user CRs `system-dcgw-*-system0-isis`. YAML still lists `system-sros-pe-*-system0-isis` — confirm vs Fabric-derived before deleting; `isis-instance-backbone` is required. The Fabric emits its own IS-IS instance (`instance-backbone-simulation` in the split lab) but with no SR-MPLS, so SR comes from the user instance.
 
 ---
 
@@ -103,7 +103,7 @@ Both PRD DCGW models run side by side in the same CLAB. Detail: `clab/split-ns/R
 | PRD option | Nodes | Namespace | How |
 |------------|-------|-----------|-----|
 | **Integrated** (26.4 combined DCGW/borderleaf) | dcgw-1/2 | `clab-srl-leaf-spine-dcgw` | `borderLeafs` of Fabric `pod-1`; Fabric owns underlay + iBGP EVPN (RR = pod-1 spines) |
-| **Standalone**, different namespace, on the spine layer | dcgw-3/4 | `clab-srl-dcgw-wan` | No Fabric. User `DefaultRouter` AS 64906, eBGP underlay to spine-3/4 /31s, iBGP EVPN AS 65402 as RR clients of the pod-2 spines |
+| **Standalone**, different namespace, on the spine layer | dcgw-3/4 | `clab-srl-dcgw-wan` | No Fabric. User `DefaultRouter` AS 64906 (dcgw-3) / 64907 (dcgw-4), eBGP underlay to spine-3/4 /31s, iBGP EVPN AS 65402 as RR clients of the pod-2 spines |
 
 WAN: dcgw-1/2 ↔ sros-pe-1 and dcgw-3/4 ↔ sros-pe-2, IS-IS L2 + SR-ISIS, WAN VPN BGP dcgw-1↔3 / dcgw-2↔4 on system IPs.
 Services live only in the pod namespace. The dc-2 RIC (vnet-2) and BDI (vnet-4) live in `clab-srl-dcgw-wan` with dcgw-3/4 and reference `router-2` / `bd-4` via `routerRef.namespace` / `bridgeDomainRef.namespace`.

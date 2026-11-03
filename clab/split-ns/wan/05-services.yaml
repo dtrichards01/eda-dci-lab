@@ -27,6 +27,10 @@ metadata:
 spec:
   bridgeDomainRef: {name: bd-4, namespace: clab-srl-leaf-spine-dcgw}
   nodeSelectors: ["eda.nokia.com/dci=dc-2"]
+  # Both RDs are required with redundant DCGWs. Auto makes both gateways advertise the same RD and originating IP
+  # (the lower system IP of the pair), so they never flood to each other. Without it, BUM loops over the WAN.
+  primaryBGPInstance:
+    routeDistinguisher: {administrator: Auto, assignedNumber: Auto}
   interconnectBGPInstance:
     controlPlane: EVPN
     encapsulation: MPLS
@@ -34,3 +38,4 @@ spec:
     exportTarget: target:1:301
     importTarget: target:1:300
     mpls: {allowedTunnelTypes: [SR-ISIS], controlWord: true}
+    routeDistinguisher: {administrator: Auto, assignedNumber: Auto}

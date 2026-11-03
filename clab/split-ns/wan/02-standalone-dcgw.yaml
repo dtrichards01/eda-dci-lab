@@ -1,6 +1,8 @@
 # PRD "standalone" DCGW option: dcgw-3/4 are not managed by the Fabrics app and sit in a different
 # namespace from the pod-2 fabric they serve. Attached to the pod-2 spine layer.
-#   underlay: eBGP (AS 64906, outside asn-pool) to srl-spine-3/4 on /31s
+#   underlay: eBGP to srl-spine-3/4 on /31s. dcgw-3 AS 64906, dcgw-4 AS 64907 (outside asn-pool).
+#             The pair needs different ASNs, or each rejects the other's copy of the DCI routes
+#             reflected by the pod-2 spines (AS-path loop) and DC2 has no backup path.
 #   overlay : iBGP EVPN AS 65402, RR clients of the pod-2 spines (system0 to system0)
 # ${POD2_SPINE_AS} ${SPINE3_SYS} ${SPINE4_SYS} are rendered from Fabric pod-2 status.
 apiVersion: routing.eda.nokia.com/v1
@@ -39,7 +41,7 @@ spec:
   ecmp: 256
   bgp:
     enabled: true
-    autonomousSystem: 64906
+    autonomousSystem: 64907
     ebgpPreference: 170
     ibgpPreference: 170
     rapidWithdrawl: true

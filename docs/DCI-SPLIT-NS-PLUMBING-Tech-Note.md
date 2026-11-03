@@ -26,7 +26,7 @@ flowchart LR
   end
   subgraph wanns [Namespace clab-srl-dcgw-wan]
     pe1[sros-pe-1] --- pe2[sros-pe-2]
-    g34[dcgw-3/4 AS 64906]
+    g34[dcgw-3 AS 64906 / dcgw-4 AS 64907]
   end
   g12 -- "e1-5, IS-IS + SR-MPLS (hand-built)" --- pe1
   pe2 -- "e1-6, IS-IS + SR-MPLS (ISL)" --- g34
@@ -90,7 +90,7 @@ IS-IS runs only on the WAN-facing interfaces. It is not redistributed into eithe
 
 ## 4. Attaching the standalone dcgw-3/4 to pod-2 (all hand-built)
 
-dcgw-3/4 have a user `DefaultRouter` each (`router-dcgw-3`/`-4`, **AS 64906**, router-ID 11.0.2.3/.4). AS 64906 sits outside `asn-pool`, because the pool hands 106 to srl-leaf-4.
+dcgw-3/4 have a user `DefaultRouter` each (`router-dcgw-3` **AS 64906**, `router-dcgw-4` **AS 64907**, router-ID 11.0.2.3/.4). Both sit outside `asn-pool`, because the pool hands 106 to srl-leaf-4. The two must differ; section 7 explains why.
 
 **Four cross-namespace /31s**, each with a DefaultInterface on both ends:
 
@@ -105,8 +105,8 @@ dcgw-3/4 have a user `DefaultRouter` each (`router-dcgw-3`/`-4`, **AS 64906**, r
 
 | Session | Spine side (pod NS) | DCGW side (WAN NS) |
 |---------|---------------------|--------------------|
-| **eBGP underlay**, interface /31, IPv4 unicast only, BFD | group `ebgp-standalone-dcgw-pod-2`, peer AS 64906. Peers `spine-N-dcgw-M-ebgp` | group `ebgp-underlay-pod-2`, peer AS 108. Peers `dcgw-M-spine-N-ebgp` |
-| **iBGP EVPN overlay**, system0 to system0, EVPN only | group `ibgp-rr-standalone-dcgw-pod-2`: AS 65402, `client: true`, cluster 1.1.1.2. **dcgw-3/4 become route-reflector clients of the pod-2 spines.** Peers `spine-N-dcgw-M-ibgp` to 11.0.2.3/.4 | group `ibgp-overlay-pod-2`: local AS 65402 (overrides 64906). Peers `dcgw-M-spine-N-ibgp` to 11.0.0.13/.14 |
+| **eBGP underlay**, interface /31, IPv4 unicast only, BFD | group `ebgp-standalone-dcgw-pod-2`, peer AS 64906; the two dcgw-4 peers override it with 64907. Peers `spine-N-dcgw-M-ebgp` | group `ebgp-underlay-pod-2`, peer AS 108. Peers `dcgw-M-spine-N-ebgp` |
+| **iBGP EVPN overlay**, system0 to system0, EVPN only | group `ibgp-rr-standalone-dcgw-pod-2`: AS 65402, `client: true`, cluster 1.1.1.2. **dcgw-3/4 become route-reflector clients of the pod-2 spines.** Peers `spine-N-dcgw-M-ibgp` to 11.0.2.3/.4 | group `ibgp-overlay-pod-2`: local AS 65402 (overrides 64906/64907). Peers `dcgw-M-spine-N-ibgp` to 11.0.0.13/.14 |
 
 **Underlay policies** keep the exchange down to loopbacks:
 
@@ -154,24 +154,45 @@ Interconnects pick their gateways with the TopoNode label `eda.nokia.com/dci=dc-
 
 The hub-and-spoke route targets give spoke isolation: both spokes import only the hub's `target:1:101`. The hub RIC uses an import policy instead of `importTarget`, because one RIC can't use both (eda golden rule 3).
 
-The BDIs set `routeDistinguisher: Auto` on **both** BGP instances. With redundant gateways and no RD, the pair forms no interconnect Ethernet segment (I-ES), and broadcast, unknown-unicast and multicast traffic loops over the WAN.
+The BDIs set `routeDistinguisher: Auto` on **both** BGP instances. That gives both gateways in a pair the same RD and originating IP, so they never flood to each other. Without it, broadcast, unknown-unicast and multicast traffic loops over the WAN. Section 7 has the detail.
 
 Don't create copies of vnet-2 or vnet-4 in the WAN namespace. An earlier build did; the copies had no interfaces and showed Unknown.
 
-## 7. What EDA built versus what was added by hand
+## 7. L2 DCI loop avoidance and gateway redundancy (best practice)
+
+Read from the switches on 2026-11-03, before and after giving dcgw-4 its own AS.
+
+**How the redundant pair avoids loops.** The BDIs don't use an RFC 9014 interconnect Ethernet Segment: each gateway shows 0 Ethernet Segments and no route type 1 or 4. They also need no shared loopback. With `routeDistinguisher: Auto` on both BGP instances, EDA gives both gateways in a pair the same RD and the same multicast (route type 3) originating IP: the lower system IP of the pair. The partner doesn't own that IP; it is only a route attribute. The BGP next-hop stays each gateway's own system IP, so traffic always lands on a real node.
+
+| Pair | RD, DC side / WAN side | Originating IP | Next-hop |
+|------|------------------------|----------------|----------|
+| dcgw-1 / dcgw-2 (`bd-3`) | `11.0.0.7:104` / `11.0.0.7:110` | 11.0.0.7 | own system IP |
+| dcgw-3 / dcgw-4 (`bd-4`) | `11.0.2.3:105` / `11.0.2.3:111` | 11.0.2.3 | own system IP |
+
+Because both gateways advertise the same route, neither treats its partner as a flood destination. dcgw-1's flood lists hold only the local leaf on the VXLAN side and dcgw-3 on the MPLS side. Every receiver picks one of the two copies by BGP best path, so each broadcast, unknown-unicast or multicast frame takes one gateway in and one out. In effect it is active/standby, decided by best path rather than by designated-forwarder election.
+
+**Backup path through the fabric.** Each gateway also passes the WAN-side L2 routes into its own fabric's route reflectors, so the partner learns a second copy. That copy is the backup if the partner's own DCI peer fails. The traffic still goes straight over the WAN SR-ISIS tunnel, because the next-hop is the remote gateway. The leaves drop these routes on route target (`keep-all-routes false`), and only the gateways use `target:1:300` / `target:1:301`. Keep those route targets out of every fabric VNET. Only the EVPN family is carried this way; L3 (VPN-IPv4) has no fabric backup and does not need one, because each gateway re-originates the type-5 routes on its own.
+
+**Use a different AS on each gateway in a pair.** The backup copy carries the AS of the gateway that reflected it. If both gateways share an AS, the partner rejects the copy as an AS-path loop and the pair has no backup. A likely result, not tested by failover, is that when dcgw-1 fails, dcgw-3 has no DC1 routes but still wins the pod-2 multicast best path, so broadcast and ARP traffic from DC2 is dropped. dcgw-1/2 already differ (100 and 102 from `asn-pool`). dcgw-3/4 shared 64906 until 2026-11-03; dcgw-4 is now 64907 (transaction 135867), and dcgw-4 holds two valid backup copies of DC1's routes via spine-3/4.
+
+The spines reflect only their best copy, and never back to the gateway it came from. So the gateway whose copy is currently best (dcgw-3, lower router ID) shows no standing backup. If its DCI peer fails, it withdraws its copy, the spines switch to the partner's copy, and it then learns that copy. Checks: `scripts/check-l2-dci-loop.sh`, `check-l2-dci-loop-routes.sh`, `check-l2-dci-backup-path.sh`, `verify-dcgw-distinct-as.sh`.
+
+**Not an option: border leaves of `backbone-simulation`.** An IS-IS-underlay Fabric builds border-leaf DefaultRouters with no BGP, even with `borderLeafs.asnPool` set, so the hand-built pod-2 and DCI peers fail validation. EDA also rejects an eBGP overlay over an IS-IS underlay. A Fabric hands out a per-node AS only with an eBGP underlay, which here means a border leaf of `pod-2` in the pod namespace (dry-runs 135823, 135841 and 135842).
+
+## 8. What EDA built versus what was added by hand
 
 | Built by EDA from a Fabric or ISL | Added by hand |
 |-----------------------------------|---------------|
 | pod-1 and pod-2 underlay eBGP and overlay iBGP, including dcgw-1/2 as pod-1 border leaves | 6 cross-namespace /31s as 12 DefaultInterfaces |
 | ISLs with IS-IS on dcgw-1 to dcgw-2, dcgw-3 to dcgw-4, dcgw-3/4 to pe-2 | DefaultISISInterfaces on dcgw-1/2 e1-5 and pe-1 c1/c2, plus passive system0 on every DCGW and PE |
 | Fabric `backbone-simulation` (pe-1 to pe-2 IS-IS) | Three DefaultISISInstances with SR-MPLS, the LabelBlock `srgb-wan`, non-overlapping pools in both namespaces |
-| Interconnect VRFs, MAC-VRFs and their WAN BGP instances | DefaultRouters for dcgw-3/4 (AS 64906, static router IDs) |
+| Interconnect VRFs, MAC-VRFs and their WAN BGP instances | DefaultRouters for dcgw-3/4 (AS 64906 / 64907, static router IDs) |
 | | 4 DefaultBGPGroups and 16 DefaultBGPPeers for the pod-2 attachment, and 4 underlay Policies with 4 PrefixSets |
 | | 2 DCI DefaultBGPGroups and 4 DefaultBGPPeers (dcgw-1 to dcgw-3, dcgw-2 to dcgw-4, one per end) |
 | | SOO/tag Policies, CommunitySets and TagSets in both namespaces, plus `multi-rt-import` and `vpn-import-rts` |
 | | TopoNode labels `eda.nokia.com/dci=dc-1/dc-2` |
 
-## 8. In branch-1 (branch twin on .62)
+## 9. In branch-1 (branch twin on .62)
 
 The cross-namespace cables cannot be simulated there. TopoLinks and SimLinks have no namespace field, and production has no TopoLink for these 6 cables anyway. After every Restore or Rebase, the branch shows:
 
@@ -186,7 +207,7 @@ The cross-namespace cables cannot be simulated there. TopoLinks and SimLinks hav
 
 The branch is good for reviewing intent and config diffs, and for testing inside each DC. It cannot prove DCI end to end. That needs either Nokia support for simulated links across namespaces, or a branch-only layout with all DCI nodes in one namespace.
 
-## 9. Validation (production)
+## 10. Validation (production)
 
 - `scripts/validate-dci-split.sh`: 9 checks. Exit code equals the number of failed checks.
 - On a DCGW: `show network-instance default protocols isis adjacency`, `show network-instance default tunnel-table` (rows must be `sr-isis`), and `show network-instance default protocols bgp neighbor` (DCI peer Established with `evpn` and `l3vpn-ipv4-unicast`).
