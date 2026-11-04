@@ -2,6 +2,39 @@
 
 Maps each CLAB client to EDA `Interface` CR and VirtualNetwork selector labels.
 
+## Current Talos state: DCI client ports are Dot1q (2026-11-03, txn 136211)
+
+For microsegmentation co-existence (`eda-microsegmentation-demo/talos/`), the 8 DCI client ports moved from
+`encapType: Null` to `Dot1q`, and each DCI VLAN entry (names still `vlan-null-vnet-N`) carries a real VLAN ID.
+DCI clients hold their address and default route on `eth1.<vlan>`, not `eth1`. Tenancy (`eth2`) is unchanged.
+The microsegmentation tests use other VLANs (75–120) on the same ports, with specific routes only.
+
+| Client | Leaf port | VNet | VLAN | Address on `eth1.<vlan>` |
+|--------|-----------|------|------|--------------------------|
+| client-1 | leaf-1 e1-5 | vnet-1 | 101 | 172.16.101.1/24 |
+| client-2 | leaf-2 e1-6 | vnet-1 | 101 | 172.16.101.2/24 |
+| client-3 | leaf-3 e1-5 | vnet-3 (L2 stretch) | 103 | 172.16.105.3/24 |
+| client-4 | leaf-4 e1-5 | vnet-5 spoke | 105 | 172.16.151.1/24 |
+| client-5 | leaf-5 e1-5 | vnet-2 hub | 102 | 172.16.201.1/24 |
+| client-6 | leaf-6 e1-6 | vnet-2 hub | 102 | 172.16.201.2/24 |
+| client-7 | leaf-7 e1-5 | vnet-4 (L2 stretch) | 104 | 172.16.105.1/24 |
+| client-8 | leaf-8 e1-5 | vnet-4 (L2 stretch) | 104 | 172.16.105.2/24 |
+
+Rollback: `eda-microsegmentation-demo/talos/gate1-rollback.yaml` plus `talos/scripts/dci-clients-to-vlan.sh rollback`.
+Regression for all projects: `eda-microsegmentation-demo/talos/scripts/regression-other-projects.sh`.
+`eda-fw-integration/scripts/fw-vni-verify.sh` reads `dev eth1` only, so its DCI rows come back empty.
+
+**Not DCI services:** the DC gateways also carry two microsegmentation-owned IPVPN interconnects (2026-11-04,
+txn 136821): `router-interconnect-ms-dci-1` (dc-1, VRF `router-ms-dci-1`, RD 65471:2) and
+`router-interconnect-ms-dci-2` (`clab-srl-dcgw-wan`, dc-2, VRF `router-ms-dci-2`, RD 65481:2), RTs
+`target:1:4190`/`4191`, client VLAN 120.
+
+**Leaf reboots:** all eight leaves were rebooted on 2026-11-04 (to activate `lpm-source-lookup`). A containerlab
+leaf reboot drops its veths and the clients' VLAN subinterfaces; use
+`eda-microsegmentation-demo/talos/scripts/leaf-reboot.sh` rather than a bare `docker start`.
+
+The tables below describe the earlier untagged layout and are kept for reference.
+
 ## Native L3/L2 (encap Null)
 
 **Operational Talos (2026-08-24)** — 8-client lab `~/3-tier-dci/clab-s-spine-spine-leaf-srl-only.yaml`. Short docker names `client-1`…`client-8`. L3 stitch RTs: vnet-1 `1:100`, hub vnet-2 `1:101` + `importPolicy: multi-rt-import`, vnet-5 `1:105`. Hub community set `vpn-import-rts` = `1:100` + `1:105` (`matchSetOptions: Any`).
